@@ -14,7 +14,7 @@ RHEA_DIR = os.path.join(DATA_DIR, "rhea")
 
 # Folder for reference data
 CUR_DIR = os.getcwd()
-REF_DIR = os.path.join(CUR_DIR, os.pardir, 'data')
+REF_DIR = os.path.join(CUR_DIR, os.pardir, 'files')
 
 # Strings used in the modules
 CHEBI = "chebi"

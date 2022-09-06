@@ -1,14 +1,14 @@
-# matcher.py
-# Matcher class for running annotation predictions
+# recommender.py
+# Recomender for running annotation predictions
 
 
 import os
 import pickle
 
-from annotation_recommender import constants as cn
-from annotation_recommender import tools
-from annotation_recommender import species_annotation as sa
-from annotation_recommender import reaction_annotation as ra
+from AMAS import constants as cn
+from AMAS import tools
+from AMAS import species_annotation as sa
+from AMAS import reaction_annotation as ra
 
 
 
