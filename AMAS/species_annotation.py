@@ -1,7 +1,7 @@
 """Annotation for Species."""
 
-from annotation_recommender import constants as cn
-from annotation_recommender import tools
+from AMAS import constants as cn
+from AMAS import tools
 
 import editdistance
 import libsbml
@@ -12,12 +12,12 @@ import pickle
 # below might be in constants or main script
 with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
   ref_shortened_chebi_to_formula = pickle.load(f)
-with open(os.path.join(cn.REF_DIR, 'chebi_synonyms.pickle'), 'rb') as f:
-  chebi_synonyms = pickle.load(f)
-#
-chebi_low_synonyms = dict()
-for one_k in chebi_synonyms.keys():
-  chebi_low_synonyms[one_k] = list(set([val.lower() for val in chebi_synonyms[one_k]]))
+with open(os.path.join(cn.REF_DIR, 'chebi_low_synonyms.pickle'), 'rb') as f:
+  chebi_low_synonyms = pickle.load(f)
+# #
+# chebi_low_synonyms = dict()
+# for one_k in chebi_synonyms.keys():
+#   chebi_low_synonyms[one_k] = list(set([val.lower() for val in chebi_synonyms[one_k]]))
 
 species_rf = pickle.load(open(os.path.join(cn.REF_DIR, 'species_randomforestcv.sav'), 'rb'))
 

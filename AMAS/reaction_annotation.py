@@ -22,7 +22,7 @@ with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 
 with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
   ref_shortened_chebi_to_formula = pickle.load(f)
 
-with open(os.path.join(os.REF_DIR, 'dat_ref_mat.pickle'), 'rb') as handle:
+with open(os.path.join(cn.REF_DIR, 'dat_ref_mat.pickle'), 'rb') as handle:
   ref_dat = pickle.load(handle)
 # first of list is list of columns
 cols = ref_dat[0]
