@@ -38,7 +38,8 @@ reaction_rf = pickle.load(open(os.path.join(cn.REF_DIR, 'reaction_randomforestcv
 
 class ReactionAnnotation(object):
 
-  def __init__(self, libsbml_fpath=None, exist_qualifier=cn.RHEA):
+  def __init__(self, libsbml_fpath=None, 
+               inp_tuple=None):
     # self.exist_annotation stores 
     # existing KEGG Reaction or Rhea annotations in the model.
     # If none exists, set None.
@@ -76,8 +77,15 @@ class ReactionAnnotation(object):
         else:
           exist_annotation[one_id] = list(set(reac_dict_kegg[one_id]))
       self.exist_annotation = exist_annotation
+      self.reaction_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
+                                  for val in self.model.getListOfReactions()}
+    elif inp_tuple is not None:
+      self.model = None
+      self.reaction_components = inp_tuple[0]
+      self.exist_annotation = inp_tuple[1]
     else:
       self.model = None
+      self.reaction_components = None
       self.exist_annotation = None
     # Attributes after prediction
     self.candidates = None
@@ -166,16 +174,19 @@ class ReactionAnnotation(object):
     """
     # get libsbml.reaction and their IDs
     if inp_reac_list is not None:
-      reactions = [self.model.getReaction(val) for val in inp_reac_list]
+      # reactions = [self.model.getReaction(val) for val in inp_reac_list]
       reaction_ids = inp_reac_list
     else:
-      reactions = self.model.getListOfReactions()
-      reaction_ids = [val.getId() for val in reactions]
+      # reactions = self.model.getListOfReactions()
+      reaction_ids = list(self.reaction_components.keys())
+      # reaction_ids = [val.getId() for val in reactions]
     # get dictionary of reaction ID: species component
     r2pred_spec_formulas = dict()
-    for one_reaction in reactions:
-      r2pred_spec_formulas[one_reaction.getId()] = {one_spec:inp_spec_dict[one_spec] \
-                                                    for one_spec in self.getReactionComponents(one_reaction)}
+    for one_rid in reaction_ids:
+      r2pred_spec_formulas[one_rid] = {one_spec:inp_spec_dict[one_spec] \
+                                       for one_spec in self.reaction_components[one_rid]}
+      # r2pred_spec_formulas[one_reaction.getId()] = {one_spec:inp_spec_dict[one_spec] \
+      #                                               for one_spec in self.getReactionComponents(one_reaction)}
     # prepare query df for prediction
     query_df = pd.DataFrame(0, 
                             index=inp_ref_mat.columns,
