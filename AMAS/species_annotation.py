@@ -10,9 +10,9 @@ import os
 import pickle
 
 # below might be in constants or main script
-with open(os.path.join(cn.CHEBI_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
+with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
   ref_shortened_chebi_to_formula = pickle.load(f)
-with open(os.path.join(cn.CHEBI_DIR, 'chebi_synonyms.pickle'), 'rb') as f:
+with open(os.path.join(cn.REF_DIR, 'chebi_synonyms.pickle'), 'rb') as f:
   chebi_synonyms = pickle.load(f)
 #
 chebi_low_synonyms = dict()

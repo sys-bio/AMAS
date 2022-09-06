@@ -1,7 +1,7 @@
 """Annotation for Reactions."""
 
-from annotation_recommender import constants as cn
-from annotation_recommender import tools
+from AMAS import constants as cn
+from AMAS import tools
 
 import libsbml
 import numpy as np
@@ -10,16 +10,29 @@ import pickle
 import pandas as pd
 
 
-with open(os.path.join(cn.RHEA_DIR, 'rhea_all2bi.pkl'), 'rb') as f:
+with open(os.path.join(cn.REF_DIR, 'rhea_all2bi.pkl'), 'rb') as f:
   ref_rhea2bi = pickle.load(f)
-with open(os.path.join(cn.RHEA_DIR, 'kegg2rhea_bi.pickle'), 'rb') as handle:
+with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi.pickle'), 'rb') as handle:
   ref_kegg2rhea_bi = pickle.load(handle)
-with open(os.path.join(cn.RHEA_DIR, 'rhea2chebi_reference.pkl'), 'rb') as f:
+with open(os.path.join(cn.REF_DIR, 'rhea2chebi_reference.pkl'), 'rb') as f:
   ref_rhea_to_chebi = pickle.load(f)
-with open(os.path.join(cn.CHEBI_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
+with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
   ref_shortened_chebi_to_formula = pickle.load(f)
-with open(os.path.join(cn.ALGO_DIR, 'binary_ref_df.pickle'), 'rb') as handle:
-    ref_mat = pickle.load(handle)
+
+with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
+  ref_shortened_chebi_to_formula = pickle.load(f)
+
+with open(os.path.join(os.REF_DIR, 'dat_ref_mat.pickle'), 'rb') as handle:
+  ref_dat = pickle.load(handle)
+# first of list is list of columns
+cols = ref_dat[0]
+# second, list of indices
+inds = ref_dat[1]
+# third, list of index (column, [non-zero rows])
+ref_mat_pairs = ref_dat[2]
+ref_mat = pd.DataFrame(0, index=inds, columns=cols)
+for val in ref_mat_pairs:
+  ref_mat.iloc[val[1], val[0]] = 1
 
 reaction_rf = pickle.load(open(os.path.join(cn.REF_DIR, 'reaction_randomforestcv.sav'), 'rb'))
 
