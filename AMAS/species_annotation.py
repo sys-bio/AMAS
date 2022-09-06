@@ -24,21 +24,30 @@ species_rf = pickle.load(open(os.path.join(cn.REF_DIR, 'species_randomforestcv.s
 
 class SpeciesAnnotation(object):
 
-  def __init__(self, libsbml_fpath=None):
+  def __init__(self, libsbml_fpath=None,
+               inp_tuple=None):
     # self.exist_annotation stores existing CHEBI annotations in the model
     # If none exists, set None
     if libsbml_fpath is not None:
       reader = libsbml.SBMLReader()
       document = reader.readSBML(libsbml_fpath)
       self.model = document.getModel()
+      self.names = {val.getId():val.name for val in self.model.getListOfSpecies()}
       exist_annotation_raw = {val.getId():tools.getQualifierFromString(val.getAnnotationString(), cn.CHEBI) \
                         for val in self.model.getListOfSpecies()}
       exist_annotation_filt = {val:exist_annotation_raw[val] for val in exist_annotation_raw.keys() \
                                if exist_annotation_raw[val] is not None}
       self.exist_annotation = {k:tools.transformCHEBIToFormula(exist_annotation_filt[k], ref_shortened_chebi_to_formula) \
                                for k in exist_annotation_filt.keys()}
+    # inp_tuple: ({species_id:species_name}, {species_id: [CHEBI annotations]})
+    elif inp_tuple is not None:
+      self.model = None
+      self.names = inp_tuple[0]
+      self.exist_annotation = {k:tools.transformCHEBIToFormula(exist_annotation_filt[k], ref_shortened_chebi_to_formula) \
+                               for k in inp_tuple[1].keys()}
     else:
       self.model = None
+      self.names = None
       self.exist_annotation = None
     # Below are predicted annotations;
     # Once created, each will be {species_ID: float/str-list}
@@ -114,11 +123,13 @@ class SpeciesAnnotation(object):
       result = dict()
       # If no list if given, predict all elements' annotations
       if inp_spec_list is None:
-        spec_list = [val.getId() for val in self.model.getListOfSpecies()]
+        spec_list = list(self.names)
+        # spec_list = [val.getId() for val in self.model.getListOfSpecies()]
       else:
         spec_list = inp_spec_list
       for one_spec_id in spec_list:
-        one_spec_name = self.model.getSpecies(one_spec_id).name.lower()
+        one_spec_name = self.names[one_spec_id].lower()
+        # one_spec_name = self.model.getSpecies(one_spec_id).name.lower()
         if len(one_spec_name) == 0:
           one_spec_name = one_spec_id.lower()
         result[one_spec_id] = self.predictAnnotationByEditDistance(inp_str=one_spec_name)
@@ -191,8 +202,9 @@ class SpeciesAnnotation(object):
     -------
     res_name: str
     """
-    one_species = self.model.getSpecies(inp_id)
-    species_name = one_species.name
+    species_name = self.names[inp_id]
+    # one_species = self.model.getSpecies(inp_id)
+    # species_name = one_species.name
     if len(species_name) > 0:
       res_name = species_name
     else:
