@@ -1,6 +1,7 @@
 # recommender.py
 # Recomender for running annotation predictions
 
+import collections
 import libsbml
 import os
 import pickle
@@ -12,6 +13,11 @@ from AMAS import reaction_annotation as ra
 
 with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi.pickle'), 'rb') as handle:
   ref_kegg2rhea_bi = pickle.load(handle)
+with open(os.path.join(cn.REF_DIR, 'rhea_all2bi.pkl'), 'rb') as f:
+  ref_rhea2bi = pickle.load(f)
+
+
+Recommendation = collections.namedtuple('Recommendation', ['id', 'credibility_score', 'candidates'])
 
 
 class Recommender(object):
@@ -68,11 +74,79 @@ class Recommender(object):
       reac_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
                          for val in self.model.getListOfReactions()}
       reaction_tuple = (reac_components, reac_exist_annotation)
-      self.reactions = ra.ReactionAnnotataion(inp_tuple=reaction_tuple)
+      self.reactions = ra.ReactionAnnotation(inp_tuple=reaction_tuple)
+
+  def getSpeciesAnnotation(self, name_to_annotate):
+    """
+    Predict annotations of species using
+    the provided IDs (argument).
+    Can be a singuler (string) or a list of
+    strings. 
+
+    Parameters
+    ----------
+    name_to_annotate: str/list-str
+        ID of species to annotate
+
+    Returns
+    -------
+    result: Recommendation (namedtuple)
+
+    """
+    if isinstance(name_to_annotate, str):
+      inp_list = [name_to_annotate]
+    else:
+      inp_list = name_to_annotate
+
+    pred_result = self.species.predictAnnotationByName(inp_list)
+    pred_score = self.species.evaluatePredictedSpeciesAnnotation(inp_list)
+    urls = {k:['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'+val[0][6:] \
+            for val in pred_resul[k][cn.CHEBI]] \
+            for k in inp_list}
+    result = [Recommendation(k,
+                             pred_score[k],
+                             pred_result[k][cn.MATCH_SCORE],
+                             urls[k]) \
+              for k in pred_score.keys()]e
+    return result
+
+  def getReactionAnnotation(self, name_to_annotate):
+    """
+    Predict annotations of reactions using
+    the provided IDs (argument). 
+    Can be either singular (string) or plural
+
+    Parameters
+    ----------
+    name_to_annotate: str/list-str
+        ID of reactions to annotate
+
+    Returns
+    -------
+    result: Recommendation (namedtuple)
+
+    """
+    # if isinstance(name_to_annotate, str):
+    #   inp_list = [name_to_annotate]
+    # else:
+    #   inp_list = name_to_annotate
+
+    # pred_result = self.species.predictAnnotationByName(inp_list)
+    # pred_score = self.species.evaluatePredictedSpeciesAnnotation(inp_list)
+    # urls = {k:['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'+val[0][6:] \
+    #         for val in pred_resul[k][cn.CHEBI]] \
+    #         for k in inp_list}
+    # result = [Recommendation(k,
+    #                          pred_score[k],
+    #                          pred_result[k][cn.MATCH_SCORE],
+    #                          urls[k]) \
+    #           for k in pred_score.keys()]e
+    # return result
 
 
 
 
-    # species_annotation = sa.SpeciesAnnotation(libsbml_fpath)
-    # reaction_anotation = ra.ReactionAnnotataion(libsbml_fpath)
+
+
+
     
