@@ -85,7 +85,7 @@ class SpeciesAnnotation(object):
                       if dist_dict_min[one_k]==min_min_dist and one_k in ref_shortened_chebi_to_formula.keys()]
     # Results are sorted based on match_score (average of 1 - (editdistance/len_synonyms)
     res_tuple = [(one_chebi,
-                  np.round(np.mean([1.0-editdistance.eval(inp_str.lower(), val)/len(val) \
+                  np.round(np.max([1.0-editdistance.eval(inp_str.lower(), val)/len(val) \
                                     for val in chebi_low_synonyms[one_chebi]]), 2)) \
                  for one_chebi in min_min_chebis] 
     res_tuple.sort(key=operator.itemgetter(1), reverse=True)
@@ -249,7 +249,8 @@ class SpeciesAnnotation(object):
     """
     name_lengths = [len(self.getNameToUse(inp_id=val)) for val in inp_list]
     nums_candidates = [len(self.candidates[val]) for val in inp_list]
-    match_scores = [self.match_score[val] for val in inp_list]
+    # Only using average for now. May need to recollect information
+    match_scores = [np.mean([val[1] for val in self.match_score[val]]) for val in inp_list]
     data2prediction = list(zip(name_lengths, nums_candidates, match_scores))
     # # loaded_model is loaded fitted logistic regression CV model
     # pred_probs = [val[1] for val in fitted_model.predict(data2prediction)]

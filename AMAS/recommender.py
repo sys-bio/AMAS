@@ -3,6 +3,7 @@
 
 import collections
 import libsbml
+import numpy as np
 import os
 import pickle
 
@@ -17,7 +18,8 @@ with open(os.path.join(cn.REF_DIR, 'rhea_all2bi.pkl'), 'rb') as f:
   ref_rhea2bi = pickle.load(f)
 
 
-Recommendation = collections.namedtuple('Recommendation', ['id', 'credibility_score', 'candidates'])
+Recommendation = collections.namedtuple('Recommendation',
+                                        ['id', 'credibility_score', 'candidates', 'urls'])
 
 
 class Recommender(object):
@@ -100,14 +102,14 @@ class Recommender(object):
 
     pred_result = self.species.predictAnnotationByName(inp_list)
     pred_score = self.species.evaluatePredictedSpeciesAnnotation(inp_list)
-    urls = {k:['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'+val[0][6:] \
-            for val in pred_resul[k][cn.CHEBI]] \
+    urls = {k:['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'+val[6:] \
+            for val in pred_result[k][cn.CHEBI]] \
             for k in inp_list}
     result = [Recommendation(k,
-                             pred_score[k],
+                             np.round(pred_score[k], 2),
                              pred_result[k][cn.MATCH_SCORE],
                              urls[k]) \
-              for k in pred_score.keys()]e
+              for k in pred_score.keys()]
     return result
 
   def getReactionAnnotation(self, name_to_annotate):
