@@ -6,10 +6,10 @@ import os
 import sys
 import unittest
 
-from annotation_recommender import species_annotation as sa
-from annotation_recommender import reaction_annotation as ra
-from annotation_recommender import constants as cn
-from annotation_recommender import tools
+from AMAS import species_annotation as sa
+from AMAS import reaction_annotation as ra
+from AMAS import constants as cn
+from AMAS import tools
 
 
 E_COLI_PATH = os.path.join(os.getcwd(), 'e_coli_core.xml')
@@ -38,14 +38,14 @@ class TestReactionAnnotation(unittest.TestCase):
     pred_species = self.spec_cl.predictAnnotationByName(inp_spec_list=COMPONENTS)
     pred_reaction = self.reac_cl.predictAnnotation(inp_spec_dict=self.spec_cl.formula,
                                                    inp_reac_list=[R_PFK])
-
-  def testGetMatchScore(self):
-    one_dict = {'R1': {'M1': 0.7}}
-    one_match_score = self.reac_cl.getMatchScore(score_dict=one_dict)
-    self.assertEqual(one_match_score, 0.7)
+  ### Was used for iteration algorithm
+  # def testGetMatchScore(self):
+  #   one_dict = {'R1': {'M1': 0.7}}
+  #   one_match_score = self.reac_cl.getMatchScore(score_dict=one_dict)
+  #   self.assertEqual(one_match_score, 0.7)
 
   def testGetReactionComponents(self):
-  	# When argument is string, i.e., reaction ID
+    # When argument is string, i.e., reaction ID
     one_comps = self.reac_cl.getReactionComponents(R_PFK)
     self.assertEqual(COMPONENTS, set(one_comps))
     # When argument is a libsbml.Reaction instance
@@ -54,33 +54,28 @@ class TestReactionAnnotation(unittest.TestCase):
     self.assertEqual(COMPONENTS, set(two_comps))
 
   def testPredictAnnotation(self):
-    self.assertTrue(ONE_CANDIDATE in self.reac_cl.match_score[R_PFK])
-    self.assertEqual(self.reac_cl.match_score[R_PFK][ONE_CANDIDATE],
-                     0.8)
+    self.assertTrue(ONE_CANDIDATE in [val[0] for val in self.reac_cl.match_score[R_PFK]])
+    self.assertTrue(0.8 in [val[1] for val in self.reac_cl.match_score[R_PFK]])
 
   def testGetBestOneCandidates(self):
-  	# When argument is directly given
-    one_match_score = {'R1': {'RHEA:1': 0.5, 'RHEA:2': 1.0}}
+    # When argument is directly given
+    one_match_score = {'R1': [('RHEA:1', 1.0), ('RHEA:2', 0.5)]}
     self.assertEqual(self.reac_cl.getBestOneCandidates(one_match_score)['R1'],
-                     ['RHEA:2'])
+                     ['RHEA:1'])
     # When argument is not given
     self.assertEqual(self.reac_cl.getBestOneCandidates()[R_PFK],
                      [ONE_CANDIDATE])
 
-  def testUpdateSpeciesByAReaction(self):
-    chebi2update = self.reac_cl.updateSpeciesByAReaction(inp_rid=R_PFK,
-                                                         inp_spec_dict=self.spec_cl.formula,
-                                                         inp_rhea=ONE_CANDIDATE)
-    self.assertEqual(chebi2update[ATP], [ONE_CHEBI])
-
+  ### Was used for iteration algorithm
+  # def testUpdateSpeciesByAReaction(self):
+  #   chebi2update = self.reac_cl.updateSpeciesByAReaction(inp_rid=R_PFK,
+  #                                                        inp_spec_dict=self.spec_cl.formula,
+  #                                                        inp_rhea=ONE_CANDIDATE)
+  #   self.assertEqual(chebi2update[ATP], [ONE_CHEBI])
 
   def testGetAccuracy(self):
     pred = {R_PFK: ['RHEA:16112']}
     self.assertEqual(self.reac_cl.getAccuracy(pred_annotation=pred), 1.0)
-
-
-
-
 
 
 

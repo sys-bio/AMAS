@@ -6,6 +6,7 @@ from AMAS import tools
 import editdistance
 import libsbml
 import numpy as np
+import operator
 import os
 import pickle
 
@@ -35,27 +36,30 @@ class SpeciesAnnotation(object):
       self.names = {val.getId():val.name for val in self.model.getListOfSpecies()}
       exist_annotation_raw = {val.getId():tools.getQualifierFromString(val.getAnnotationString(), cn.CHEBI) \
                         for val in self.model.getListOfSpecies()}
-      exist_annotation_filt = {val:exist_annotation_raw[val] for val in exist_annotation_raw.keys() \
+      exist_annotation_chebi = {val:exist_annotation_raw[val] for val in exist_annotation_raw.keys() \
                                if exist_annotation_raw[val] is not None}
-      self.exist_annotation = {k:tools.transformCHEBIToFormula(exist_annotation_filt[k], ref_shortened_chebi_to_formula) \
-                               for k in exist_annotation_filt.keys()}
+      self.exist_annotation = exist_annotation_chebi
+      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(exist_annotation_chebi[k], ref_shortened_chebi_to_formula) \
+                                       for k in exist_annotation_chebi.keys()}
     # inp_tuple: ({species_id:species_name}, {species_id: [CHEBI annotations]})
     elif inp_tuple is not None:
       self.model = None
       self.names = inp_tuple[0]
-      self.exist_annotation = {k:tools.transformCHEBIToFormula(exist_annotation_filt[k], ref_shortened_chebi_to_formula) \
-                               for k in inp_tuple[1].keys()}
+      self.exist_annotation = inp_tuple[1]
+      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(inp_tuple[1][k], ref_shortened_chebi_to_formula) \
+                                       for k in inp_tuple[1].keys()}
     else:
       self.model = None
       self.names = None
       self.exist_annotation = None
-    # Below are predicted annotations;
+      self.exist_annotation_formula = None
+    # Below are predicted annotations in dictionary format
     # Once created, each will be {species_ID: float/str-list}
-    self.match_score = None
-    self.candidates = None
-    self.formula = None
+    self.match_score = dict()
+    self.candidates = dict()
+    self.formula = dict()
       
-
+  # FUTURE: check whether editdistance can be parallelized 
   def predictAnnotationByEditDistance(self, inp_str):
     """
     Predict annotation using the argument string 
@@ -77,14 +81,30 @@ class SpeciesAnnotation(object):
     dist_dict_min = {one_k:np.min([editdistance.eval(inp_str.lower(), val) for val in chebi_low_synonyms[one_k]]) \
                      for one_k in chebi_low_synonyms.keys() if one_k in ref_shortened_chebi_to_formula.keys()}
     min_min_dist = np.min([dist_dict_min[val] for val in dist_dict_min.keys()])
-    one_match_score = 1 - min_min_dist/len(inp_str)
-    one_result[cn.MATCH_SCORE] = one_match_score
     min_min_chebis = [one_k for one_k in dist_dict_min.keys() \
                       if dist_dict_min[one_k]==min_min_dist and one_k in ref_shortened_chebi_to_formula.keys()]
-    # predicted formula of the species
-    one_result[cn.CHEBI] = min_min_chebis
+    # Results are sorted based on match_score (average of 1 - (editdistance/len_synonyms)
+    res_tuple = [(one_chebi,
+                  np.round(np.max([1.0-editdistance.eval(inp_str.lower(), val)/len(val) \
+                                    for val in chebi_low_synonyms[one_chebi]]), 2)) \
+                 for one_chebi in min_min_chebis] 
+    res_tuple.sort(key=operator.itemgetter(1), reverse=True)
+    #  CHEBI part is added, because we want a sorted list after computing res_tuple
+    one_result[cn.CHEBI] = [val[0] for val in res_tuple]
+    one_result[cn.MATCH_SCORE] = res_tuple
     min_min_formula = list(set([ref_shortened_chebi_to_formula[val] for val in min_min_chebis]))
     one_result[cn.FORMULA] = min_min_formula
+    # dist_dict_min = {one_k:np.min([editdistance.eval(inp_str.lower(), val) for val in chebi_low_synonyms[one_k]]) \
+    #                  for one_k in chebi_low_synonyms.keys() if one_k in ref_shortened_chebi_to_formula.keys()}
+    # min_min_dist = np.min([dist_dict_min[val] for val in dist_dict_min.keys()])
+    # one_match_score = 1 - min_min_dist/len(inp_str)
+    # one_result[cn.MATCH_SCORE] = one_match_score
+    # min_min_chebis = [one_k for one_k in dist_dict_min.keys() \
+    #                   if dist_dict_min[one_k]==min_min_dist and one_k in ref_shortened_chebi_to_formula.keys()]
+    # # predicted formula of the species
+    # one_result[cn.CHEBI] = min_min_chebis
+    # min_min_formula = list(set([ref_shortened_chebi_to_formula[val] for val in min_min_chebis]))
+    # one_result[cn.FORMULA] = min_min_formula
     return one_result
 
 
@@ -136,11 +156,11 @@ class SpeciesAnnotation(object):
     else:
       result = {val:self.predictAnnotationByEditDistance(inp_str=specnames_dict[val]) \
                 for val in specnames_dict.keys()}      
-    #
+    # Might separate method or just leave it?
     if update:
-      self.match_score = {spec_id:result[spec_id][cn.MATCH_SCORE] for spec_id in result.keys()}
-      self.candidates = {spec_id:result[spec_id][cn.CHEBI] for spec_id in result.keys()}
-      self.formula = {spec_id:result[spec_id][cn.FORMULA] for spec_id in result.keys()}
+      self.match_score.update({spec_id:result[spec_id][cn.MATCH_SCORE] for spec_id in result.keys()})
+      self.candidates.update({spec_id:result[spec_id][cn.CHEBI] for spec_id in result.keys()})
+      self.formula.update({spec_id:result[spec_id][cn.FORMULA] for spec_id in result.keys()})
     return result
 
 
@@ -160,7 +180,7 @@ class SpeciesAnnotation(object):
     ----------
     ref_annotation: dict
         {species_id: [str-annotation]}
-        if None, get self.exist_annotation
+        if None, get self.exist_annotation_formula
     pred_annotation: dict
         {species_id: [str-annotation]}
         if None, get self.candidates
@@ -171,7 +191,7 @@ class SpeciesAnnotation(object):
     """
     accuracy = []
     if ref_annotation is None:
-      ref = self.exist_annotation
+      ref = self.exist_annotation_formula
     else:
       ref = ref_annotation
     if pred_annotation is None:
@@ -229,7 +249,8 @@ class SpeciesAnnotation(object):
     """
     name_lengths = [len(self.getNameToUse(inp_id=val)) for val in inp_list]
     nums_candidates = [len(self.candidates[val]) for val in inp_list]
-    match_scores = [self.match_score[val] for val in inp_list]
+    # Only using average for now. May need to recollect information
+    match_scores = [np.mean([val[1] for val in self.match_score[val]]) for val in inp_list]
     data2prediction = list(zip(name_lengths, nums_candidates, match_scores))
     # # loaded_model is loaded fitted logistic regression CV model
     # pred_probs = [val[1] for val in fitted_model.predict(data2prediction)]

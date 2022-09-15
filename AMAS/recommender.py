@@ -1,7 +1,10 @@
 # recommender.py
 # Recomender for running annotation predictions
 
+import collections
+import itertools
 import libsbml
+import numpy as np
 import os
 import pickle
 
@@ -12,14 +15,17 @@ from AMAS import reaction_annotation as ra
 
 with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi.pickle'), 'rb') as handle:
   ref_kegg2rhea_bi = pickle.load(handle)
+with open(os.path.join(cn.REF_DIR, 'rhea_all2bi.pkl'), 'rb') as f:
+  ref_rhea2bi = pickle.load(f)
+
+
+Recommendation = collections.namedtuple('Recommendation',
+                                        ['id', 'credibility_score', 'candidates', 'urls'])
 
 
 class Recommender(object):
 
   def __init__(self, libsbml_fpath=None, exist_qualifier=cn.RHEA):
-  	# creates both species & reaction annotation class instances
-  	# 
-    pass
     # First of all, collect model information from libsbml model
     # and send the informaton to create species/reaction annotations
     if libsbml_fpath:
@@ -68,11 +74,126 @@ class Recommender(object):
       reac_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
                          for val in self.model.getListOfReactions()}
       reaction_tuple = (reac_components, reac_exist_annotation)
-      self.reactions = ra.ReactionAnnotataion(inp_tuple=reaction_tuple)
+      self.reactions = ra.ReactionAnnotation(inp_tuple=reaction_tuple)
+
+
+  def getSpeciesAnnotation(self, name_to_annotate):
+    """
+    Predict annotations of species using
+    the provided IDs (argument).
+    Can be a singuler (string) or a list of
+    strings. 
+
+    Parameters
+    ----------
+    name_to_annotate: str/list-str
+        ID of species to annotate
+
+    Returns
+    -------
+    result: Recommendation (namedtuple)
+
+    """
+    if isinstance(name_to_annotate, str):
+      inp_list = [name_to_annotate]
+    else:
+      inp_list = name_to_annotate
+
+    pred_result = self.species.predictAnnotationByName(inp_list)
+    pred_score = self.species.evaluatePredictedSpeciesAnnotation(inp_list)
+    urls = {k:['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'+val[6:] \
+            for val in pred_result[k][cn.CHEBI]] \
+            for k in inp_list}
+    result = [Recommendation(k,
+                             np.round(pred_score[k], 2),
+                             pred_result[k][cn.MATCH_SCORE],
+                             urls[k]) \
+              for k in pred_score.keys()]
+    return result
+
+  def getReactionAnnotation(self, name_to_annotate):
+    """
+    Predict annotations of reactions using
+    the provided IDs (argument). 
+    Can be either singular (string) or plural
+
+    Parameters
+    ----------
+    name_to_annotate: str/list-str
+        ID of reactions to annotate
+
+    Returns
+    -------
+    result: Recommendation (namedtuple)
+
+    """
+    if isinstance(name_to_annotate, str):
+      inp_list = [name_to_annotate]
+    else:
+      inp_list = name_to_annotate
+    # First, collect all species IDs to annotate
+    specs_to_annotate = list(set(itertools.chain(*[self.reactions.reaction_components[val] \
+                                                   for val in inp_list])))
+    # For now, just predict all species and continue? 
+    spec_results = self.getSpeciesAnnotation(specs_to_annotate)
+    pred_formulas = self.species.formula
+    # Use predicted species in formula
+    pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
+                                                     inp_reac_list=inp_list)
+    pred_score = self.reactions.evaluatePredictedReactionAnnotation(inp_list)
+    urls = {k:['https://www.rhea-db.org/rhea/'+val[0][5:] \
+            for val in pred_reaction[k]] \
+            for k in inp_list}
+    result = [Recommendation(k,
+                             np.round(pred_score[k], 2),
+                             pred_reaction[k],
+                             urls[k]) \
+              for k in pred_score.keys()]
+    return result
+
+
+  def updateSpeciesAnnotation(self, update_dict):
+    """
+    Update annotation of species; 
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+
+    """
+    pass
+
+
+  def updateReactionAnnotation(self, update_dict):
+    """
+    Update annotation of reactions; 
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+
+    """
+    pass
+
+
+  def reportAnnotation(self):
+    """
+    Create (and save) a report (or table)
+    summarizing predicted anntoations.
+    """
 
 
 
 
-    # species_annotation = sa.SpeciesAnnotation(libsbml_fpath)
-    # reaction_anotation = ra.ReactionAnnotataion(libsbml_fpath)
+
+
+
+
+
     
