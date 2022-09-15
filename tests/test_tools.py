@@ -7,8 +7,8 @@ import pickle
 import sys
 import unittest
 
-from annotation_recommender import constants as cn
-from annotation_recommender import tools
+from AMAS import constants as cn
+from AMAS import tools
 
 with open(os.path.join(cn.CHEBI_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
   ref_chebi2formula = pickle.load(f)

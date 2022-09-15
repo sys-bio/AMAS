@@ -2,6 +2,7 @@
 # Recomender for running annotation predictions
 
 import collections
+import itertools
 import libsbml
 import numpy as np
 import os
@@ -25,9 +26,6 @@ Recommendation = collections.namedtuple('Recommendation',
 class Recommender(object):
 
   def __init__(self, libsbml_fpath=None, exist_qualifier=cn.RHEA):
-  	# creates both species & reaction annotation class instances
-  	# 
-    pass
     # First of all, collect model information from libsbml model
     # and send the informaton to create species/reaction annotations
     if libsbml_fpath:
@@ -77,6 +75,7 @@ class Recommender(object):
                          for val in self.model.getListOfReactions()}
       reaction_tuple = (reac_components, reac_exist_annotation)
       self.reactions = ra.ReactionAnnotation(inp_tuple=reaction_tuple)
+
 
   def getSpeciesAnnotation(self, name_to_annotate):
     """
@@ -128,22 +127,68 @@ class Recommender(object):
     result: Recommendation (namedtuple)
 
     """
-    # if isinstance(name_to_annotate, str):
-    #   inp_list = [name_to_annotate]
-    # else:
-    #   inp_list = name_to_annotate
+    if isinstance(name_to_annotate, str):
+      inp_list = [name_to_annotate]
+    else:
+      inp_list = name_to_annotate
+    # First, collect all species IDs to annotate
+    specs_to_annotate = list(set(itertools.chain(*[self.reactions.reaction_components[val] \
+                                                   for val in inp_list])))
+    # For now, just predict all species and continue? 
+    spec_results = self.getSpeciesAnnotation(specs_to_annotate)
+    pred_formulas = self.species.formula
+    # Use predicted species in formula
+    pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
+                                                     inp_reac_list=inp_list)
+    pred_score = self.reactions.evaluatePredictedReactionAnnotation(inp_list)
+    urls = {k:['https://www.rhea-db.org/rhea/'+val[0][5:] \
+            for val in pred_reaction[k]] \
+            for k in inp_list}
+    result = [Recommendation(k,
+                             np.round(pred_score[k], 2),
+                             pred_reaction[k],
+                             urls[k]) \
+              for k in pred_score.keys()]
+    return result
 
-    # pred_result = self.species.predictAnnotationByName(inp_list)
-    # pred_score = self.species.evaluatePredictedSpeciesAnnotation(inp_list)
-    # urls = {k:['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'+val[0][6:] \
-    #         for val in pred_resul[k][cn.CHEBI]] \
-    #         for k in inp_list}
-    # result = [Recommendation(k,
-    #                          pred_score[k],
-    #                          pred_result[k][cn.MATCH_SCORE],
-    #                          urls[k]) \
-    #           for k in pred_score.keys()]e
-    # return result
+
+  def updateSpeciesAnnotation(self, update_dict):
+    """
+    Update annotation of species; 
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+
+    """
+    pass
+
+
+  def updateReactionAnnotation(self, update_dict):
+    """
+    Update annotation of reactions; 
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+
+
+    """
+    pass
+
+
+  def reportAnnotation(self):
+    """
+    Create (and save) a report (or table)
+    summarizing predicted anntoations.
+    """
+
+
 
 
 
