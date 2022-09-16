@@ -20,7 +20,7 @@ with open(os.path.join(cn.REF_DIR, 'rhea_all2bi.pkl'), 'rb') as f:
 
 
 Recommendation = collections.namedtuple('Recommendation',
-                                        ['id', 'credibility_score', 'candidates', 'urls'])
+                                        ['id', 'credibility', 'candidates', 'urls'])
 
 
 class Recommender(object):
