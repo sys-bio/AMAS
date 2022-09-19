@@ -1,5 +1,6 @@
 editdistance
-python-libsbml
 nose
 numpy
 pandas
+python-libsbml
+scikit-learn
