@@ -11,7 +11,7 @@ from AMAS import constants as cn
 from AMAS import recommender
 from AMAS import tools
 
-BIOMD_190_PATH = os.path.join(os.getcwd(), 'BIOMD0000000190.xml')
+BIOMD_190_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000190.xml')
 ONE_SPEC_CAND = ('CHEBI:15414', 1.0)
 ONE_SPEC_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414'
 ONE_REAC_CAND = ('RHEA:28830', 1.0)

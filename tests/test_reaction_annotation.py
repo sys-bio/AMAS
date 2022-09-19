@@ -12,8 +12,8 @@ from AMAS import constants as cn
 from AMAS import tools
 
 
-E_COLI_PATH = os.path.join(os.getcwd(), 'e_coli_core.xml')
-BIOMD_248_PATH = os.path.join(os.getcwd(), 'BIOMD0000000248.xml')
+E_COLI_PATH = os.path.join(cn.TEST_DIR, 'e_coli_core.xml')
+BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
 # Below ??
 # M_FDP_C = 'M_fdp_c'
 # M_ATP_C = 'M_atp_c'

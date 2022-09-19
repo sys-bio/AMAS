@@ -10,9 +10,9 @@ import unittest
 from AMAS import constants as cn
 from AMAS import tools
 
-with open(os.path.join(cn.CHEBI_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
+with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
   ref_chebi2formula = pickle.load(f)
-BIOMD_248_PATH = os.path.join(os.getcwd(), 'BIOMD0000000248.xml')
+BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
 
 #############################
 # Tests
