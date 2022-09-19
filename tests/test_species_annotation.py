@@ -13,8 +13,8 @@ from AMAS import constants as cn
 from AMAS import tools
 
 
-E_COLI_PATH = os.path.join(os.getcwd(), 'e_coli_core.xml')
-BIOMD_248_PATH = os.path.join(os.getcwd(), 'BIOMD0000000248.xml')
+E_COLI_PATH = os.path.join(cn.TEST_DIR, 'e_coli_core.xml')
+BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
 # IDs of species
 M_FDP_C = 'M_fdp_c'
 M_ATP_C = 'M_atp_c'
@@ -28,7 +28,7 @@ class TestSpeciesAnnotation(unittest.TestCase):
 
   def setUp(self):
     self.spec_cl = sa.SpeciesAnnotation(libsbml_fpath = E_COLI_PATH)
-  
+    
   def testPredictAnnotationByEditDistance(self):
     one_spec_name = self.spec_cl.model.getSpecies(M_FDP_C).name.lower()
     one_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=one_spec_name)
