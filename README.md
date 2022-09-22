@@ -17,5 +17,5 @@ Result is a namedtuple 'Recommendation', with attributes including id, credibili
 Similarly, recommendation of a reaction can be also obtained using `.getReactionAnnotation` method. 
 <img src="https://github.com/woosubs/AMAS/raw/main/png/getreaction_annotation.png" width="800"/>
 
-Recommendation of a reaction uses Rhea instead database. 
+Recommendation of a reaction uses Rhea database. 
 <img src="https://github.com/woosubs/AMAS/raw/main/png/reac_recommendation.png" width="800"/>
