@@ -25,6 +25,7 @@ def doSetup(install_requires):
       long_description=open('README.md').read(),
       long_description_content_type='text/markdown',
       package_dir={'AMAS': 'AMAS'},
+      package_data={'AMAS': ['files/*.*']},
       install_requires=install_requires,
       include_package_data=True,
       classifiers=[
