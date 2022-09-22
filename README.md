@@ -11,6 +11,8 @@ First, class instance should be created using ``AMAS.recommender.Recommender`` w
 Next, to get recommendation for species, user can use the `.getSpeciesAnnotation` method. 
 <img src="https://github.com/woosubs/AMAS/raw/main/png/getspecies_annotation.png" width="800"/>
 
+When the `pred_id` argument is used, Recommender will search the model to find an available display name for prediction. Alternativel, user can use the `pred_str` argument to make a direct prediction, which does not need a pre-loaded model in the constructor. 
+
 Result is a namedtuple 'Recommendation', with attributes including id, credibility, recommended CHEBI terms, and the urls of such terms. 
 <img src="https://github.com/woosubs/AMAS/raw/main/png/spec_recommendation.png" width="800"/>
 
