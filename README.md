@@ -21,6 +21,7 @@ Result is a namedtuple 'Recommendation', with attributes including id, credibili
 <img src="https://github.com/woosubs/AMAS/raw/main/png/spec_recommendation.png" width="800"/>
 
 Similarly, recommendation of a reaction can be also obtained using the `.getReactionAnnotation` method. 
+
 <img src="https://github.com/woosubs/AMAS/raw/main/png/getreaction_annotation.png" width="800"/>
 
 Recommendation of a reaction uses Rhea database. 
