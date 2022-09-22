@@ -43,41 +43,103 @@ class Recommender(object):
     self.species = sa.SpeciesAnnotation(inp_tuple=spec_tuple)
     self.reactions = ra.ReactionAnnotation(inp_tuple=reac_tuple)
 
-  def getSpeciesAnnotation(self, name_to_annotate):
+  ## Previous version; 
+  # def getSpeciesAnnotation(self, name_to_annotate):
+  #   """
+  #   Predict annotations of species using
+  #   the provided IDs (argument).
+  #   Can be a singuler (string) or a list of
+  #   strings. 
+
+  #   Parameters
+  #   ----------
+  #   name_to_annotate: str/list-str
+  #       ID of species to annotate
+
+  #   Returns
+  #   -------
+  #   result: Recommendation (namedtuple)
+
+  #   """
+  #   if isinstance(name_to_annotate, str):
+  #     inp_list = [name_to_annotate]
+  #   else:
+  #     inp_list = name_to_annotate
+
+  #   pred_result = self.species.predictAnnotationByName(inp_list)
+  #   pred_score = self.species.evaluatePredictedSpeciesAnnotation(inp_list)
+  #   urls = {k:['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'+val[6:] \
+  #           for val in pred_result[k][cn.CHEBI]] \
+  #           for k in inp_list}
+  #   result = [Recommendation(k,
+  #                            np.round(pred_score[k], 2),
+  #                            pred_result[k][cn.MATCH_SCORE],
+  #                            urls[k]) \
+  #             for k in pred_score.keys()]
+  #   return result
+
+  # New version after discussion with Joe & Steve et al. 
+  def getSpeciesAnnotation(self, pred_str=None, pred_id=None):
     """
     Predict annotations of species using
-    the provided IDs (argument).
-    Can be a singuler (string) or a list of
-    strings. 
+    the provided string or ID.
+    If pred_str is given, directly run the string;
+    if pred_id is given, search for species ID and display name 
+    to find useable name. 
 
     Parameters
     ----------
-    name_to_annotate: str/list-str
-        ID of species to annotate
+    pred_str: str
+        Species name to predict annotation withh
+    pred_id: str
+        ID of species (search for name using it)
 
     Returns
     -------
     result: Recommendation (namedtuple)
 
     """
-    if isinstance(name_to_annotate, str):
-      inp_list = [name_to_annotate]
-    else:
-      inp_list = name_to_annotate
-
-    pred_result = self.species.predictAnnotationByName(inp_list)
-    pred_score = self.species.evaluatePredictedSpeciesAnnotation(inp_list)
-    urls = {k:['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'+val[6:] \
-            for val in pred_result[k][cn.CHEBI]] \
-            for k in inp_list}
-    result = [Recommendation(k,
-                             np.round(pred_score[k], 2),
-                             pred_result[k][cn.MATCH_SCORE],
-                             urls[k]) \
-              for k in pred_score.keys()]
+    if pred_str:
+      name_to_use = pred_str
+      given_id = pred_str
+    elif pred_id:
+      name_to_use = self.species.getNameToUse(inp_id=pred_id)
+      given_id = pred_id
+    pred_res = self.species.predictAnnotationByEditDistance(name_to_use)  
+    pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res)
+    urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[cn.CHEBI]]
+    result = Recommendation(given_id,
+                            np.round(pred_score, 2),
+                            pred_res[cn.MATCH_SCORE],
+                            urls)
     return result
 
-  def getReactionAnnotation(self, name_to_annotate):
+  def getSpeciesListAnnotation(self, pred_list, id=False):
+    """
+    Get annotation of multiple species,
+    given as a list (or an iterable object).
+    self.getSpeciesAnnotation is applied to
+    each element. 
+
+    Parameters
+    ----------
+    pred_list: str-list
+        :List of predicrted annotation
+    id: bool
+        :Indicator whether given strings are ids or direct names
+
+    Returns
+    -------
+    list-Recommendation (list-namedtuple)
+    """
+    if id:
+      return [self.getSpeciesAnnotation(pred_id=val) \
+              for val in pred_list]
+    else:
+      return [self.getSpeciesAnnotation(pred_str=val) \
+              for val in pred_list]
+
+  def getReactionAnnotation(self, pred_id):
     """
     Predict annotations of reactions using
     the provided IDs (argument). 
@@ -93,29 +155,71 @@ class Recommender(object):
     result: Recommendation (namedtuple)
 
     """
-    if isinstance(name_to_annotate, str):
-      inp_list = [name_to_annotate]
-    else:
-      inp_list = name_to_annotate
+    # For now, just predict all species and continue? 
+    specs2predict = self.reactions.reaction_components[pred_id]
+    spec_results = self.getSpeciesListAnnotation(specs2predict, id=True)
+    # based on the function above; need to recreate it. 
+    pred_formulas = dict()
+    for one_recom in spec_results:
+      cands = [val[0] for val in one_recom.candidates]
+      forms = list(set([sa.ref_shortened_chebi_to_formula[k] \
+               for k in cands if k in sa.ref_shortened_chebi_to_formula.keys()]))
+      pred_formulas[one_recom.id] = forms
+    #
+    pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
+                                                     inp_reac_list=[pred_id])
+    pred_score = self.reactions.evaluatePredictedReactionAnnotation([pred_id])
+    urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_reaction[pred_id]]
+    result = Recommendation(pred_id,
+                            np.round(pred_score[pred_id], 2),
+                            pred_reaction[pred_id],
+                            urls)
+    return result
+
+  def getReactionListAnnotation(self, pred_list):
+    """
+    Get annotation of multiple reactions.
+    Instead of applying getReactionAnnotation 
+    for each reaction,
+    it'll predict all component species first
+    and proceed (this will reduce computational cost).
+
+    Parameters
+    ----------
+    pred_list: str-list
+
+    Returns
+    -------
+    list-Reccommendation (list-namedtuple)
+    """
     # First, collect all species IDs to annotate
     specs_to_annotate = list(set(itertools.chain(*[self.reactions.reaction_components[val] \
-                                                   for val in inp_list])))
+                                                   for val in pred_list])))
     # For now, just predict all species and continue? 
-    spec_results = self.getSpeciesAnnotation(specs_to_annotate)
-    pred_formulas = self.species.formula
+    spec_results = self.getSpeciesListAnnotation(specs_to_annotate, id=True)
+    # pred_formulas = self.species.formula
+    pred_formulas = dict()
+    for one_recom in spec_results:
+      cands = [val[0] for val in one_recom.candidates]
+      forms = list(set([sa.ref_shortened_chebi_to_formula[k] \
+               for k in cands if k in sa.ref_shortened_chebi_to_formula.keys()]))
+      pred_formulas[one_recom.id] = forms
     # Use predicted species in formula
     pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
-                                                     inp_reac_list=inp_list)
-    pred_score = self.reactions.evaluatePredictedReactionAnnotation(inp_list)
-    urls = {k:['https://www.rhea-db.org/rhea/'+val[0][5:] \
+                                                     inp_reac_list=pred_list)
+    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_list)
+    urls = {k:[cn.RHEA_DEFAULT_URL+val[0][5:] \
             for val in pred_reaction[k]] \
-            for k in inp_list}
+            for k in pred_list}
     result = [Recommendation(k,
                              np.round(pred_score[k], 2),
                              pred_reaction[k],
                              urls[k]) \
               for k in pred_score.keys()]
     return result
+    # return [self.getReactionAnnotation(pred_id=val) \
+    #         for val in pred_list]    
+
 
   def _parseSBML(self, sbml):
     """

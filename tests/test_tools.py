@@ -11,7 +11,7 @@ from AMAS import constants as cn
 from AMAS import tools
 
 with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
-  ref_chebi2formula = pickle.load(f)
+  ref_shortened_chebi_to_formula = pickle.load(f)
 BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
 
 #############################
@@ -45,7 +45,7 @@ class TestFunctions(unittest.TestCase):
 
   def testTransformCHEBIToFormula(self):
     res = tools.transformCHEBIToFormula(inp_list=['CHEBI:18357', 'CHEBI:10'],
-                                        ref_to_formula_dict=ref_chebi2formula)
+                                        ref_to_formula_dict=ref_shortened_chebi_to_formula)
     self.assertTrue('C8NO3' in res)
     self.assertTrue('C36N2O6' in res)
 

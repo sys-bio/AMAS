@@ -63,11 +63,14 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertEqual(self.spec_cl.getNameToUse('M_glc__D_e'), 'D-Glucose')
 
   def testEvaluatePredictedSpeciesAnnotation(self):
-    one_pred_spec = self.spec_cl.predictAnnotationByName(inp_spec_list=ONESET_SPECIES_IDS)
-    scores = self.spec_cl.evaluatePredictedSpeciesAnnotation(ONESET_SPECIES_IDS)
-    self.assertEqual(scores[M_FDP_C], 1.0)
-    self.assertTrue(scores[M_ATP_C] < 0.04)  
-    self.assertTrue(scores[M_ATP_C] > 0.038)    
+    fdp_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=M_FDP_C)
+    fdp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred_result=fdp_pred_spec)
+    self.assertTrue(fdp_score < 0.15)
+    self.assertTrue(fdp_score > 0.14)
+    atp_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=M_ATP_C)
+    atp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred_result=atp_pred_spec)
+    self.assertTrue(atp_score < 0.08)  
+    self.assertTrue(atp_score > 0.07)    
   
 
 

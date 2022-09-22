@@ -14,11 +14,6 @@ from AMAS import tools
 
 E_COLI_PATH = os.path.join(cn.TEST_DIR, 'e_coli_core.xml')
 BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
-# Below ??
-# M_FDP_C = 'M_fdp_c'
-# M_ATP_C = 'M_atp_c'
-# ONESET_SPECIES_IDS = [M_FDP_C, M_ATP_C]
-
 # ID of a reaction
 R_PFK = 'R_PFK'
 ATP = 'M_atp_c'
