@@ -23,4 +23,9 @@ CHEBI = "chebi"
 RHEA = "rhea"
 KEGG_REACTION = "kegg.reaction"
 MATCH_SCORE = "match_score"
+NAME_USED = "name_used"
 FORMULA = "formula"
+
+# Default URLs for CHEBI/Rhea
+CHEBI_DEFAULT_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'
+RHEA_DEFAULT_URL = 'https://www.rhea-db.org/rhea/'

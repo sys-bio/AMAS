@@ -19,12 +19,9 @@ with open(os.path.join(cn.REF_DIR, 'rhea2chebi_reference.pkl'), 'rb') as f:
   ref_rhea_to_chebi = pickle.load(f)
 with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
   ref_shortened_chebi_to_formula = pickle.load(f)
-
-with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
-  ref_shortened_chebi_to_formula = pickle.load(f)
-
 with open(os.path.join(cn.REF_DIR, 'dat_ref_mat.pickle'), 'rb') as handle:
   ref_dat = pickle.load(handle)
+
 # first of list is list of columns
 cols = ref_dat[0]
 # second, list of indices
@@ -415,7 +412,6 @@ class ReactionAnnotation(object):
                                min_match_score,
                                max_match_score,
                                var_match_score))
-
     pred_probs = fitted_model.predict(data2prediction)
     # Collect probability to be correct
     res = {val[0]:val[1] for val in list(zip(inp_list, pred_probs))}

@@ -85,21 +85,11 @@ class SpeciesAnnotation(object):
                  for one_chebi in min_min_chebis] 
     res_tuple.sort(key=operator.itemgetter(1), reverse=True)
     #  CHEBI part is added, because we want a sorted list after computing res_tuple
+    one_result[cn.NAME_USED] = inp_str
     one_result[cn.CHEBI] = [val[0] for val in res_tuple]
     one_result[cn.MATCH_SCORE] = res_tuple
     min_min_formula = list(set([ref_shortened_chebi_to_formula[val] for val in min_min_chebis]))
     one_result[cn.FORMULA] = min_min_formula
-    # dist_dict_min = {one_k:np.min([editdistance.eval(inp_str.lower(), val) for val in chebi_low_synonyms[one_k]]) \
-    #                  for one_k in chebi_low_synonyms.keys() if one_k in ref_shortened_chebi_to_formula.keys()}
-    # min_min_dist = np.min([dist_dict_min[val] for val in dist_dict_min.keys()])
-    # one_match_score = 1 - min_min_dist/len(inp_str)
-    # one_result[cn.MATCH_SCORE] = one_match_score
-    # min_min_chebis = [one_k for one_k in dist_dict_min.keys() \
-    #                   if dist_dict_min[one_k]==min_min_dist and one_k in ref_shortened_chebi_to_formula.keys()]
-    # # predicted formula of the species
-    # one_result[cn.CHEBI] = min_min_chebis
-    # min_min_formula = list(set([ref_shortened_chebi_to_formula[val] for val in min_min_chebis]))
-    # one_result[cn.FORMULA] = min_min_formula
     return one_result
 
 
@@ -203,6 +193,7 @@ class SpeciesAnnotation(object):
         accuracy.append(False)
     return np.mean(accuracy)
 
+
   def getNameToUse(self, inp_id):
     """
     Get name to use;
@@ -218,15 +209,15 @@ class SpeciesAnnotation(object):
     res_name: str
     """
     species_name = self.names[inp_id]
-    # one_species = self.model.getSpecies(inp_id)
-    # species_name = one_species.name
     if len(species_name) > 0:
       res_name = species_name
     else:
       res_name = inp_id
     return res_name
 
-  def evaluatePredictedSpeciesAnnotation(self, inp_list,
+  def evaluatePredictedSpeciesAnnotation(self,
+                                         pred_result=None,
+                                         id_list=None,
                                          fitted_model=species_rf):
     """
     Evaluate the quality of annotation;
@@ -234,7 +225,12 @@ class SpeciesAnnotation(object):
     
     Parameters
     ---------
-    inp_list: str-list?
+    pred_result: dict 
+        Result of prediction of one species.
+        {'name_used':str, 'chebi':[str-chebi],
+         'match_score': [chebi_tuples],
+         'formula': [str-formula]}
+    id_list: str-list
         List of species IDs to evaluate
 
     Returns
@@ -242,15 +238,17 @@ class SpeciesAnnotation(object):
     res: dict {species_id: level-of-species-prediction-being-correct}
         Information of whether confident or not
     """
-    name_lengths = [len(self.getNameToUse(inp_id=val)) for val in inp_list]
-    nums_candidates = [len(self.candidates[val]) for val in inp_list]
-    # Only using average for now. May need to recollect information
-    match_scores = [np.mean([val[1] for val in self.match_score[val]]) for val in inp_list]
-    data2prediction = list(zip(name_lengths, nums_candidates, match_scores))
-    # # loaded_model is loaded fitted logistic regression CV model
-    # pred_probs = [val[1] for val in fitted_model.predict(data2prediction)]
-    # Collect probability to be correct
-    res = {val[0]:val[1] for val in list(zip(inp_list, fitted_model.predict(data2prediction)))}
-    return res
+    name_length = len(pred_result)
+    num_candidates = len(pred_result[cn.CHEBI])
+    match_score = np.mean([val[1] for val in pred_result[cn.MATCH_SCORE]])
+
+    # name_lengths = [len(self.getNameToUse(inp_id=val)) for val in id_list]
+    # nums_candidates = [len(self.candidates[val]) for val in id_list]
+    # # Only using average for now. May need to recollect information
+    # match_scores = [np.mean([val[1] for val in self.match_score[val]]) for val in id_list]
+    # data2prediction = list(zip(name_lengths, nums_candidates, match_scores))
+    # # Collect probability to be correct
+    # res = {val[0]:val[1] for val in list(zip(id_list, fitted_model.predict(data2prediction)))}
+    return fitted_model.predict([[name_length, num_candidates, match_score]])[0]
 
 
