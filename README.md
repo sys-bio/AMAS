@@ -11,6 +11,11 @@ First, class instance should be created using ``AMAS.recommender.Recommender`` w
 Next, to get recommendation for species, user can use `.getSpeciesAnnotation` method. 
 <img src="https://github.com/woosubs/AMAS/raw/main/png/getspecies_annotation.png" width="800"/>
 
-Result is a namedtuple "Recommendation", with attributes including id, credibility, recommended CHEBI terms, and the urls of such terms. 
+Result is a namedtuple 'Recommendation', with attributes including id, credibility, recommended CHEBI terms, and the urls of such terms. 
 <img src="https://github.com/woosubs/AMAS/raw/main/png/spec_recommendation.png" width="800"/>
 
+Similarly, recommendation of a reaction can be also obtained using `.getReactionAnnotation` method. 
+<img src="https://github.com/woosubs/AMAS/raw/main/png/getreaction_annotation.png" width="800"/>
+
+Recommendation of a reaction uses Rhea instead database. 
+<img src="https://github.com/woosubs/AMAS/raw/main/png/reac_recommendation.png" width="800"/>
