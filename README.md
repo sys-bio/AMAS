@@ -7,3 +7,4 @@ AMAS (Automatic Model Annotation System) predicts and recommends annotations of 
 ## Example
 First, class instance should be created using ``AMAS.recommender.Recommender``.
 
+<img src="https://github.com/woosubs/AMAS/raw/main/png/create_instance.png" width="800"/>
