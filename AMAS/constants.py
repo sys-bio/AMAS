@@ -8,7 +8,7 @@ import os
 # Folder for reference data
 # CUR_DIR = os.getcwd()
 CUR_DIR = os.path.dirname(os.path.realpath(__file__))
-REF_DIR = os.path.join(CUR_DIR, os.pardir, 'files')
+REF_DIR = os.path.join(CUR_DIR, 'files')
 TEST_DIR = os.path.join(CUR_DIR, os.pardir, 'tests')
 
 # Strings used in the modules
