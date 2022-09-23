@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 INSTALL_REQUIRES = [
-    "compress_pickle"
+    "compress-pickle"
     "coverage==5.5",
     "coveralls",
     "editdistance"
