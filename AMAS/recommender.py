@@ -39,44 +39,10 @@ class Recommender(object):
       spec_tuple = model_specs[0]
       reac_tuple = model_specs[1]
     else:
-      return None
+      spec_tuple = None
+      reac_tuple = None
     self.species = sa.SpeciesAnnotation(inp_tuple=spec_tuple)
     self.reactions = ra.ReactionAnnotation(inp_tuple=reac_tuple)
-
-  ## Previous version; 
-  # def getSpeciesAnnotation(self, name_to_annotate):
-  #   """
-  #   Predict annotations of species using
-  #   the provided IDs (argument).
-  #   Can be a singuler (string) or a list of
-  #   strings. 
-
-  #   Parameters
-  #   ----------
-  #   name_to_annotate: str/list-str
-  #       ID of species to annotate
-
-  #   Returns
-  #   -------
-  #   result: Recommendation (namedtuple)
-
-  #   """
-  #   if isinstance(name_to_annotate, str):
-  #     inp_list = [name_to_annotate]
-  #   else:
-  #     inp_list = name_to_annotate
-
-  #   pred_result = self.species.predictAnnotationByName(inp_list)
-  #   pred_score = self.species.evaluatePredictedSpeciesAnnotation(inp_list)
-  #   urls = {k:['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'+val[6:] \
-  #           for val in pred_result[k][cn.CHEBI]] \
-  #           for k in inp_list}
-  #   result = [Recommendation(k,
-  #                            np.round(pred_score[k], 2),
-  #                            pred_result[k][cn.MATCH_SCORE],
-  #                            urls[k]) \
-  #             for k in pred_score.keys()]
-  #   return result
 
   # New version after discussion with Joe & Steve et al. 
   def getSpeciesAnnotation(self, pred_str=None, pred_id=None):
