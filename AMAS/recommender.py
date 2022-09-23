@@ -2,21 +2,21 @@
 # Recomender for running annotation predictions
 
 import collections
+import compress_pickle
 import itertools
 import libsbml
 import numpy as np
 import os
-import pickle
 
 from AMAS import constants as cn
 from AMAS import tools
 from AMAS import species_annotation as sa
 from AMAS import reaction_annotation as ra
 
-with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi.pickle'), 'rb') as handle:
-  ref_kegg2rhea_bi = pickle.load(handle)
-with open(os.path.join(cn.REF_DIR, 'rhea_all2bi.pkl'), 'rb') as f:
-  ref_rhea2bi = pickle.load(f)
+with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi_comp.lzma'), 'rb') as handle:
+  ref_kegg2rhea_bi = compress_pickle.load(handle)
+with open(os.path.join(cn.REF_DIR, 'rhea_all2bi_comp.lzma'), 'rb') as f:
+  ref_rhea2bi = compress_pickle.load(f)
 
 
 Recommendation = collections.namedtuple('Recommendation',

@@ -3,6 +3,7 @@
 from AMAS import constants as cn
 from AMAS import tools
 
+import compress_pickle
 import editdistance
 import libsbml
 import numpy as np
@@ -10,11 +11,12 @@ import operator
 import os
 import pickle
 
+
 # below might be in constants or main script
-with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
-  ref_shortened_chebi_to_formula = pickle.load(f)
-with open(os.path.join(cn.REF_DIR, 'chebi_low_synonyms.pickle'), 'rb') as f:
-  chebi_low_synonyms = pickle.load(f)
+with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
+  ref_shortened_chebi_to_formula = compress_pickle.load(f)
+with open(os.path.join(cn.REF_DIR, 'chebi_low_synonyms_comp.lzma'), 'rb') as f:
+  chebi_low_synonyms = compress_pickle.load(f)
 species_rf = pickle.load(open(os.path.join(cn.REF_DIR, 'species_randomforestcv.sav'), 'rb'))
 
 
