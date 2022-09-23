@@ -1,3 +1,4 @@
+compress-pickle
 editdistance
 nose
 numpy
