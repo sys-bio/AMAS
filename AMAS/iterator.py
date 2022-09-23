@@ -5,14 +5,14 @@ can be refactored into class in future..
 """
 
 import os
-import pickle
+import compress_pickle
 
 from AMAS import constants as cn
 from AMAS import tools
 from AMAS import species_annotation as sa
 from AMAS import reaction_annotation as ra
 
-with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
+with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
   ref_shortened_chebi_to_formula = pickle.load(f)
 
 
