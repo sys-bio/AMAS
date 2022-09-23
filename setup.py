@@ -1,23 +1,23 @@
 from setuptools import setup, find_packages
 
 INSTALL_REQUIRES = [
-    "compress-pickle"
+    "compress-pickle",
     "coverage==5.5",
     "coveralls",
-    "editdistance"
+    "editdistance",
     "nose",
     "numpy",
     "pandas",
     "python-libsbml",
     "pyyaml",
-    "requests"
+    "requests",
     "scikit-learn"
     ]
 
 def doSetup(install_requires):
   setup(
-      name='AMAS',
-      version='0.0.1',
+      name='AMASsb',
+      version='0.0.3',
       author='Woosub Shin',
       author_email='woosubs@umich.edu',
       packages=find_packages(exclude=['tests', 'notebooks']),
@@ -26,7 +26,6 @@ def doSetup(install_requires):
       long_description=open('README.md').read(),
       long_description_content_type='text/markdown',
       package_dir={'AMAS': 'AMAS'},
-      package_data={'AMAS': ['files/*.*']},
       install_requires=install_requires,
       include_package_data=True,
       classifiers=[
