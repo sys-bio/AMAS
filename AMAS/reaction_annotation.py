@@ -3,24 +3,25 @@
 from AMAS import constants as cn
 from AMAS import tools
 
+import compress_pickle
 import libsbml
 import numpy as np
 import operator
 import os
-import pickle
 import pandas as pd
+import pickle
 
 
-with open(os.path.join(cn.REF_DIR, 'rhea_all2bi.pkl'), 'rb') as f:
-  ref_rhea2bi = pickle.load(f)
-with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi.pickle'), 'rb') as handle:
-  ref_kegg2rhea_bi = pickle.load(handle)
-with open(os.path.join(cn.REF_DIR, 'rhea2chebi_reference.pkl'), 'rb') as f:
-  ref_rhea_to_chebi = pickle.load(f)
-with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_30apr2022.pickle'), 'rb') as f:
-  ref_shortened_chebi_to_formula = pickle.load(f)
-with open(os.path.join(cn.REF_DIR, 'dat_ref_mat.pickle'), 'rb') as handle:
-  ref_dat = pickle.load(handle)
+with open(os.path.join(cn.REF_DIR, 'rhea_all2bi_comp.lzma'), 'rb') as f:
+  ref_rhea2bi = compress_pickle.load(f)
+with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi_comp.lzma'), 'rb') as handle:
+  ref_kegg2rhea_bi = compress_pickle.load(handle)
+with open(os.path.join(cn.REF_DIR, 'rhea2chebi_comp.lzma'), 'rb') as f:
+  ref_rhea_to_chebi = compress_pickle.load(f)
+with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
+  ref_shortened_chebi_to_formula = compress_pickle.load(f)
+with open(os.path.join(cn.REF_DIR, 'dat_ref_mat_comp.lzma'), 'rb') as handle:
+  ref_dat = compress_pickle.load(handle)
 
 # first of list is list of columns
 cols = ref_dat[0]
