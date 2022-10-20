@@ -1,7 +1,7 @@
 # recommender.py
 # Recomender for running annotation predictions
 
-import collections
+# import collections
 import compress_pickle
 import itertools
 import libsbml
@@ -18,9 +18,6 @@ with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi_comp.lzma'), 'rb') as handle:
 with open(os.path.join(cn.REF_DIR, 'rhea_all2bi_comp.lzma'), 'rb') as f:
   ref_rhea2bi = compress_pickle.load(f)
 
-
-Recommendation = collections.namedtuple('Recommendation',
-                                        ['id', 'credibility', 'candidates', 'urls'])
 
 
 class Recommender(object):
@@ -45,7 +42,10 @@ class Recommender(object):
     self.reactions = ra.ReactionAnnotation(inp_tuple=reac_tuple)
 
   # New version after discussion with Joe & Steve et al. 
-  def getSpeciesAnnotation(self, pred_str=None, pred_id=None):
+  def getSpeciesAnnotation(self,
+                           pred_str=None,
+                           pred_id=None,
+                           update=False):
     """
     Predict annotations of species using
     the provided string or ID.
@@ -74,10 +74,10 @@ class Recommender(object):
     pred_res = self.species.predictAnnotationByEditDistance(name_to_use)  
     pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res)
     urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[cn.CHEBI]]
-    result = Recommendation(given_id,
-                            np.round(pred_score, 2),
-                            pred_res[cn.MATCH_SCORE],
-                            urls)
+    result = cn.Recommendation(given_id,
+                              np.round(pred_score, 2),
+                              pred_res[cn.MATCH_SCORE],
+                              urls)
     return result
 
   def getSpeciesListAnnotation(self, pred_list, id=False):
@@ -136,10 +136,10 @@ class Recommender(object):
                                                      inp_reac_list=[pred_id])
     pred_score = self.reactions.evaluatePredictedReactionAnnotation([pred_id])
     urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_reaction[pred_id]]
-    result = Recommendation(pred_id,
-                            np.round(pred_score[pred_id], 2),
-                            pred_reaction[pred_id],
-                            urls)
+    result = cn.Recommendation(pred_id,
+                               np.round(pred_score[pred_id], 2),
+                               pred_reaction[pred_id],
+                               urls)
     return result
 
   def getReactionListAnnotation(self, pred_list):
@@ -177,10 +177,10 @@ class Recommender(object):
     urls = {k:[cn.RHEA_DEFAULT_URL+val[0][5:] \
             for val in pred_reaction[k]] \
             for k in pred_list}
-    result = [Recommendation(k,
-                             np.round(pred_score[k], 2),
-                             pred_reaction[k],
-                             urls[k]) \
+    result = [cn.Recommendation(k,
+                               np.round(pred_score[k], 2),
+                               pred_reaction[k],
+                               urls[k]) \
               for k in pred_score.keys()]
     return result
     # return [self.getReactionAnnotation(pred_id=val) \

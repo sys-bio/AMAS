@@ -13,7 +13,7 @@ from AMAS import species_annotation as sa
 from AMAS import reaction_annotation as ra
 
 with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
-  ref_shortened_chebi_to_formula = pickle.load(f)
+  ref_shortened_chebi_to_formula = compress_pickle.load(f)
 
 
 def iterateAndGetUpdatedResults(spec_cl,

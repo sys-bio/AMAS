@@ -254,3 +254,44 @@ class SpeciesAnnotation(object):
     return fitted_model.predict([[name_length, num_candidates, match_score]])[0]
 
 
+  def updateSpeciesWithRecommendation(self, inp_recom):
+    """
+    Update species_annotation class using
+    Recommendation namedtuple.
+  
+    self.candidates is a sorted list of tuples,
+    (chebi_id: match_score)
+    self.formula is a unsorted list of unique formulas
+  
+    Parameters
+    ----------
+    inp_recom: Recommendation
+       Result of recom.getSpeciesAnnotation
+  
+    Returns
+    -------
+    None
+    """
+    self.candidates.update({inp_recom.id: inp_recom.candidates})
+    formulas2update = list(set([ref_shortened_chebi_to_formula[val[0]] for val in inp_recom.candidates]))
+    self.formula.update({inp_recom.id: formulas2update})
+    return None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

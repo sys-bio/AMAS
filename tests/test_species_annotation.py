@@ -19,6 +19,14 @@ BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
 M_FDP_C = 'M_fdp_c'
 M_ATP_C = 'M_atp_c'
 ONESET_SPECIES_IDS = [M_FDP_C, M_ATP_C]
+ONE_CHEBI = 'CHEBI:15414'
+DUMMY_RECOMMENDATION = cn.Recommendation('SAM',
+                                         1.0,
+                                         [('CHEBI:15414', 1.0), ('CHEBI:59789', 1.0)],
+                                         ['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414',
+                                         'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A59789'])
+DUMMY_ID = 'SAM'
+
 
 
 #############################
@@ -72,8 +80,12 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertTrue(atp_score < 0.08)  
     self.assertTrue(atp_score > 0.07)    
   
-
-
+  def testUpdateSpeciesWithRecommendation(self):
+    one_upd = self.spec_cl.updateSpeciesWithRecommendation(DUMMY_RECOMMENDATION)
+    self.assertEqual(one_upd, None)
+    self.assertTrue(('CHEBI:15414', 1.0) in self.spec_cl.candidates[DUMMY_ID])
+    one_formula = sa.ref_shortened_chebi_to_formula[ONE_CHEBI]
+    self.assertTrue(one_formula in self.spec_cl.formula[DUMMY_ID])
 
 
 
