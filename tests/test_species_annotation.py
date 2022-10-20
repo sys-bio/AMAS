@@ -25,6 +25,7 @@ DUMMY_RECOMMENDATION = cn.Recommendation('SAM',
                                          [('CHEBI:15414', 1.0), ('CHEBI:59789', 1.0)],
                                          ['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414',
                                          'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A59789'])
+DUMMY_ID = 'SAM'
 
 
 
@@ -82,9 +83,9 @@ class TestSpeciesAnnotation(unittest.TestCase):
   def testUpdateSpeciesWithRecommendation(self):
     one_upd = self.spec_cl.updateSpeciesWithRecommendation(DUMMY_RECOMMENDATION)
     self.assertEqual(one_upd, None)
-    self.assertEqual(('CHEBI:15414', 1.0), self.spec_cl.candidates[0])
+    self.assertTrue(('CHEBI:15414', 1.0) in self.spec_cl.candidates[DUMMY_ID])
     one_formula = sa.ref_shortened_chebi_to_formula[ONE_CHEBI]
-    self.assertTrue(one_formula in self.spec_cl.formula)
+    self.assertTrue(one_formula in self.spec_cl.formula[DUMMY_ID])
 
 
 
