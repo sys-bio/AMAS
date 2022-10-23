@@ -52,14 +52,16 @@ class TestReactionAnnotation(unittest.TestCase):
     self.assertTrue(ONE_CANDIDATE in [val[0] for val in self.reac_cl.match_score[R_PFK]])
     self.assertTrue(0.8 in [val[1] for val in self.reac_cl.match_score[R_PFK]])
 
-  def testGetBestOneCandidates(self):
-    # When argument is directly given
-    one_match_score = {'R1': [('RHEA:1', 1.0), ('RHEA:2', 0.5)]}
-    self.assertEqual(self.reac_cl.getBestOneCandidates(one_match_score)['R1'],
-                     ['RHEA:1'])
-    # When argument is not given
-    self.assertEqual(self.reac_cl.getBestOneCandidates()[R_PFK],
-                     [ONE_CANDIDATE])
+
+# Probably unncessary
+  # def testGetBestOneCandidates(self):
+  #   # When argument is directly given
+  #   one_match_score = {'R1': [('RHEA:1', 1.0), ('RHEA:2', 0.5)]}
+  #   self.assertEqual(self.reac_cl.getBestOneCandidates(one_match_score)['R1'],
+  #                    ['RHEA:1'])
+  #   # When argument is not given
+  #   self.assertEqual(self.reac_cl.getBestOneCandidates()[R_PFK],
+  #                    [ONE_CANDIDATE])
 
   ### Was used for iteration algorithm
   # def testUpdateSpeciesByAReaction(self):

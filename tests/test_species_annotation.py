@@ -18,6 +18,7 @@ BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
 # IDs of species
 M_FDP_C = 'M_fdp_c'
 M_ATP_C = 'M_atp_c'
+M_AMP_C = 'M_amp_c'
 ONESET_SPECIES_IDS = [M_FDP_C, M_ATP_C]
 ONE_CHEBI = 'CHEBI:15414'
 DUMMY_RECOMMENDATION = cn.Recommendation('SAM',
@@ -26,7 +27,11 @@ DUMMY_RECOMMENDATION = cn.Recommendation('SAM',
                                          ['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414',
                                          'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A59789'])
 DUMMY_ID = 'SAM'
-
+# Dummy data for evaluation
+DUMMY_REF = {'a': ['ABC', 'BCD'],
+              'b': ['DEF']}
+DUMMY_PRED = {'a': ['ABC'],
+             'b': ['AAA']}
 
 
 #############################
@@ -55,17 +60,37 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertEqual(one_pred_spec[M_FDP_C][cn.FORMULA],  ['C6O12P2'])
 
   def testGetAccuracy(self):
-    # test with a dummy name
-    dummy_ref1 = {'a': ['ABC', 'BCD'],
-                  'b': ['DEF']}
-    pref_ref1 = {'a': ['ABC'],
-                 'b': ['AAA']}
-    accuracy1 = self.spec_cl.getAccuracy(ref_annotation=dummy_ref1,
-                                         pred_annotation=pref_ref1)
+    accuracy1 = self.spec_cl.getAccuracy(ref_annotation=DUMMY_REF,
+                                         pred_annotation=DUMMY_PRED)
     self.assertEqual(accuracy1, 0.5)
     one_pred_spec = self.spec_cl.predictAnnotationByName(inp_spec_list=[M_FDP_C])
     accuracy2 = self.spec_cl.getAccuracy()
     self.assertEqual(accuracy2, 1.0)
+
+
+  def testGetRecall(self):
+    recall1 = self.spec_cl.getRecall(ref_annotation=DUMMY_REF,
+                                     pred_annotation=DUMMY_PRED,
+                                     mean=True)
+    self.assertEqual(recall1, 0.25)
+    one_pred_spec = self.spec_cl.predictAnnotationByName(inp_spec_list=[M_AMP_C])
+    one_res_formula = {M_AMP_C: one_pred_spec[M_AMP_C][cn.FORMULA]}
+    recall2 = self.spec_cl.getRecall(pred_annotation=one_res_formula,
+                                     mean=True)
+    self.assertEqual(recall2, 1.0)
+
+
+  def testGetPrecision(self):
+    precision1 = self.spec_cl.getPrecision(ref_annotation=DUMMY_REF,
+                                           pred_annotation=DUMMY_PRED,
+                                           mean=True)
+    self.assertEqual(precision1, 0.5)
+    one_pred_spec = self.spec_cl.predictAnnotationByName(inp_spec_list=[M_AMP_C])
+    one_res_formula = {M_AMP_C: one_pred_spec[M_AMP_C][cn.FORMULA]}
+    precision2 = self.spec_cl.getPrecision(pred_annotation=one_res_formula,
+                                           mean=True)
+    self.assertEqual(precision2, 0.1)
+
 
   def testGetNameToUse(self):
     self.assertEqual(self.spec_cl.getNameToUse('M_glc__D_e'), 'D-Glucose')
@@ -83,8 +108,8 @@ class TestSpeciesAnnotation(unittest.TestCase):
   def testUpdateSpeciesWithRecommendation(self):
     one_upd = self.spec_cl.updateSpeciesWithRecommendation(DUMMY_RECOMMENDATION)
     self.assertEqual(one_upd, None)
-    self.assertTrue(('CHEBI:15414', 1.0) in self.spec_cl.candidates[DUMMY_ID])
-    one_formula = sa.ref_shortened_chebi_to_formula[ONE_CHEBI]
+    self.assertTrue((ONE_CHEBI, 1.0) in self.spec_cl.candidates[DUMMY_ID])
+    one_formula = cn.ref_chebi2formula[ONE_CHEBI]
     self.assertTrue(one_formula in self.spec_cl.formula[DUMMY_ID])
 
 

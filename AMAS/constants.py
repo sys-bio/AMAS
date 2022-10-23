@@ -4,6 +4,7 @@ Constants for modlues
 """
 
 import collections
+import compress_pickle
 import os
 
 # Folder for reference data
@@ -26,3 +27,6 @@ RHEA_DEFAULT_URL = 'https://www.rhea-db.org/rhea/'
 # Output; namedtuple 'Recommendation'
 Recommendation = collections.namedtuple('Recommendation',
                                         ['id', 'credibility', 'candidates', 'urls'])
+
+with open(os.path.join(REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
+  ref_chebi2formula = compress_pickle.load(f)
