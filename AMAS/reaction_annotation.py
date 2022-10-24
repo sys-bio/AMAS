@@ -368,6 +368,70 @@ class ReactionAnnotation(object):
         accuracy.append(False)
     return np.mean(accuracy)
 
+  def getRecall(self,
+                ref_annotation=None,
+                pred_annotation=None,
+                mean=True):
+    """
+    Compute recall of predicted reactionm
+    annotations by comparing them with 
+    reference. 
+    More straightforward than species
+    as it doens't have to convert to formulas.
+
+    Parameters
+    ----------
+    ref_annotation: dict
+        {reaction_id: [str-annotation, i.e., Rhea]}
+        if None, get self.exist_annotation_formula
+    pred_annotation: dict
+        {reaction_id: [str-annotation, i.e., Rhea]}
+        if None, get self.candidates  
+    mean: bool
+        If True, get model-level average
+        If False, get value of each ID
+
+    Returns
+    -------
+    : float/dict{id: float}
+        Depending on the 'mean' argument
+    """
+    pass
+
+
+  def getPrecision(self,
+                   ref_annotation=None,
+                   pred_annotation=None,
+                   mean=True):
+    """
+    Compute precision of predicted reactionm
+    annotations by comparing them with 
+    reference. 
+    More straightforward than species
+    as it doens't have to convert to formulas.
+
+    Parameters
+    ----------
+    ref_annotation: dict
+        {reaction_id: [str-annotation, i.e., Rhea]}
+        if None, get self.exist_annotation_formula
+    pred_annotation: dict
+        {reaction_id: [str-annotation, i.e., Rhea]}
+        if None, get self.candidates  
+    mean: bool
+        If True, get model-level average
+        If False, get value of each ID
+
+    Returns
+    -------
+    : float/dict{id: float}
+        Depending on the 'mean' argument
+    """
+    pass
+
+
+
+
   # Develop a method to evaluate results using fitted model
   def evaluatePredictedReactionAnnotation(self, inp_dict,
                                           fitted_model=reaction_rf):

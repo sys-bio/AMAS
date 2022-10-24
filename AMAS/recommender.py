@@ -154,10 +154,10 @@ class Recommender(object):
                                                      inp_reac_list=[pred_id],
                                                      update=update)
     pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_reaction)
-    urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_reaction[pred_id]]
+    urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_reaction[cn.MATCH_SCORE][pred_id]]
     result = cn.Recommendation(pred_id,
                                np.round(pred_score[pred_id], 2),
-                               pred_reaction[pred_id],
+                               pred_reaction[cn.MATCH_SCORE][pred_id],
                                urls)
     return result
 
@@ -195,11 +195,11 @@ class Recommender(object):
                                                      update=update)
     pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_reaction)
     urls = {k:[cn.RHEA_DEFAULT_URL+val[0][5:] \
-            for val in pred_reaction[k]] \
+            for val in pred_reaction[cn.MATCH_SCORE][k]] \
             for k in pred_list}
     result = [cn.Recommendation(k,
                                np.round(pred_score[k], 2),
-                               pred_reaction[k],
+                               pred_reaction[cn.MATCH_SCORE][k],
                                urls[k]) \
               for k in pred_score.keys()]
     return result 
