@@ -13,12 +13,14 @@ REF_DIR = os.path.join(CUR_DIR, 'files')
 TEST_DIR = os.path.join(CUR_DIR, os.pardir, 'tests')
 
 # Strings used in the modules
+CANDIDATES = 'candidates'
 CHEBI = "chebi"
 RHEA = "rhea"
 KEGG_REACTION = "kegg.reaction"
 MATCH_SCORE = "match_score"
 NAME_USED = "name_used"
 FORMULA = "formula"
+QUERY_DF = 'query_df'
 
 # Default URLs for CHEBI/Rhea
 CHEBI_DEFAULT_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'

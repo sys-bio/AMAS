@@ -2,6 +2,7 @@
 # Test for ReactionAnnotation class
 
 import libsbml
+import numpy as np
 import os
 import sys
 import unittest
@@ -55,7 +56,8 @@ class TestReactionAnnotation(unittest.TestCase):
     self.assertTrue(0.8 in [val[1] for val in match_scores_dict[R_PFK]])
 
   def testEvaluatePredictedReactionAnnotation(self):
-    pass
+    one_eval = self.reac_cl.evaluatePredictedReactionAnnotation(inp_dict=self.pred_reaction)
+    self.assertEqual(np.round(one_eval[R_PFK],2), 0.91)
 
 
 # Probably unncessary

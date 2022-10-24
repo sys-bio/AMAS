@@ -374,26 +374,34 @@ class ReactionAnnotation(object):
     """
     Evaluate the quality of annotation;
     for each individual species.
+    inp_dict is a dictionary of dictionaries,
+    a result of self.predictAnnotation().
+    All informaton needed for prediction 
+    is supposed to come from inp_dict, 
+    not the stored reaction class itself.
   
     Parameters
     ---------
     inp_dict: dict
-        {Reaction ID: number of candidatees}
+        {'candidates': {reactionID: [candidates in RHEA]},
+         'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
+         'query_df': query_df}
 
     Returns
     -------  
-    res: dict {reaction_id: probability-of-species-prediction-being-correct}
-        Information of whether confident or not
+    res: dict {reaction_id: probability-of-reaction-prediction-being-correct}
+        Information of how algorithm is confident about the result
     """
     # candidates_info = self.candidates
-    cands_num_dict = {one_k: len(inp_dict[one_k]) for one_k in inp_dict.keys()}
-    inp_list = list(inp_dict.keys())
+    candidates_dict = inp_dict[cn.CANDIDATES]
+    cands_num_dict = {one_k: len(candidates_dict[one_k]) for one_k in candidates_dict.keys()}
+    inp_list = list(candidates_dict.keys())
     num_candidates = [cands_num_dict[val] for val in inp_list]
     # num_candidates = [len(candidates_info[val]) for val in inp_list]
-    multi_mat = ref_mat.dot(self.query_df)
+    multi_mat = ref_mat.dot(inp_dict[cn.QUERY_DF])
     maxes = multi_mat.max()
     max_match = [maxes[val] for val in inp_list]
-    match_scores = self.match_score
+    match_scores = inp_dict[cn.MATCH_SCORE]
     mean_match_score = [np.mean([val[1] for val in match_scores[k]]) for k in inp_list]
     med_match_score = [np.median([val[1] for val in match_scores[k]]) for k in inp_list]
     min_match_score = [np.min([val[1] for val in match_scores[k]]) for k in inp_list]
