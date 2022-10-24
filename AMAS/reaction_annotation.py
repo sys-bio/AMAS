@@ -18,8 +18,8 @@ with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi_comp.lzma'), 'rb') as handle:
   ref_kegg2rhea_bi = compress_pickle.load(handle)
 with open(os.path.join(cn.REF_DIR, 'rhea2chebi_comp.lzma'), 'rb') as f:
   ref_rhea_to_chebi = compress_pickle.load(f)
-with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
-  ref_shortened_chebi_to_formula = compress_pickle.load(f)
+# with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
+#   ref_shortened_chebi_to_formula = compress_pickle.load(f)
 with open(os.path.join(cn.REF_DIR, 'dat_ref_mat_comp.lzma'), 'rb') as handle:
   ref_dat = compress_pickle.load(handle)
 
@@ -91,7 +91,7 @@ class ReactionAnnotation(object):
     self.match_score = None
     self.sum_match_score = None
     self.query_df = None
-    self.one_candidates = None
+    # self.one_candidates = None
 
   # def getMatchScore(self, score_dict):
   #   """
@@ -141,7 +141,7 @@ class ReactionAnnotation(object):
                         inp_spec_dict,
                         inp_reac_list=None,
                         inp_ref_mat=ref_mat,
-                        update=True):
+                        update=False):
     """
     Predict 1) reaction annotation candidates 
     and 2) match score of them
@@ -158,27 +158,21 @@ class ReactionAnnotation(object):
         Reference matrix
     update: bool
         Whether to save results as class attrributes or just return them.
-        If True, only match_score is returned.
+        If True, only match_score is returned (and values are updated).
         If False, all relevant information is returned
 
-      
     Returns
     -------
-    (If inplace=True)
-    pred_match_score: dict
-        Confidence score of each prediction
-        {reaction ID: {Rhea ID: float between 0.0-1.0}}
-    (If inplace=False)
-    res_dict: dict
+    : dict
+        {'candidates': {reactionID: [candidates in RHEA]},
+         'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
+         'query_df': query_df}
     """
     # get libsbml.reaction and their IDs
     if inp_reac_list is not None:
-      # reactions = [self.model.getReaction(val) for val in inp_reac_list]
       reaction_ids = inp_reac_list
     else:
-      # reactions = self.model.getListOfReactions()
       reaction_ids = list(self.reaction_components.keys())
-      # reaction_ids = [val.getId() for val in reactions]
     # get dictionary of reaction ID: species component
     r2pred_spec_formulas = dict()
     for one_rid in reaction_ids:
@@ -208,57 +202,53 @@ class ReactionAnnotation(object):
       pred_cands[one_rid] = candidates
       # Now, match_scpre (calculated per each candidate) => replaced as a tuple
       match_score_per_cand = []
-      # match_score_per_cand = dict()
       for one_cand in candidates:
         if one_cand in ref_rhea2bi.keys():
           num_matches = maxes[one_rid]
           num_maxpos_matches = len(inp_ref_mat.loc[one_cand, :].to_numpy().nonzero()[0])
           match_score_per_cand.append((one_cand, num_matches/num_maxpos_matches))
-          # match_score_per_cand[one_cand] = num_matches / num_maxpos_matches
       match_score_per_cand.sort(key=operator.itemgetter(1), reverse=True)
       pred_match_score[one_rid] = match_score_per_cand
     if update:
       self.candidates = pred_cands
       self.match_score = pred_match_score
-      # self.sum_match_score = self.getMatchScore(pred_match_score)
       self.query_df = query_df
-      self.one_candidates = self.getBestOneCandidates(self.match_score)
-      return pred_match_score
-    else:
-      return {'candidates': pred_cands,
-              'match_score': pred_match_score,
-              # 'sum_match_score': self.getMatchScore(pred_match_score),
-              'query_df': query_df,
-              'one_candidates': self.getBestOneCandidates(self.match_score)}
+      # self.one_candidates = self.getBestOneCandidates(self.match_score)
+      # return pred_match_score
+    #
+    return {'candidates': pred_cands,
+            'match_score': pred_match_score,
+            'query_df': query_df}
+              # 'one_candidates': self.getBestOneCandidates(self.match_score)}
 
-  # Changed as match_score was changed to a tuple (rhea_term, match_score)
-  def getBestOneCandidates(self, inp_match_score=None):
-    """
-    Get a dictinoary of {reaction_id: [single candidate]}.
-    If self.predictAnnotation should have been already run. 
+  # # Changed as match_score was changed to a tuple (rhea_term, match_score)
+  # def getBestOneCandidates(self, inp_match_score=None):
+  #   """
+  #   Get a dictinoary of {reaction_id: [single candidate]}.
+  #   If self.predictAnnotation should have been already run. 
 
-    Parameters
-    ----------
-    inp_match_score: dict
-        {reaction_id: {Rhea_id: match_score(i.e., float)}}
+  #   Parameters
+  #   ----------
+  #   inp_match_score: dict
+  #       {reaction_id: {Rhea_id: match_score(i.e., float)}}
 
-    Returns
-    -------
-    ranked_one_cands: dict
-        {reaction_id: [one Rhea_id]}
-    """
-    if inp_match_score is None:
-      match_score = self.match_score
-    else:
-      match_score = inp_match_score
-    ranked_one_cands = dict()
-    for one_k in match_score.keys():
-      # already sorted; just need to get the first element. 
-      ranked_one_cands[one_k] = [match_score[one_k][0][0]]
-      # one_itm = pd.DataFrame.from_dict(match_score[one_k], orient='index', columns=['match_score'])
-      # one_itm.sort_values(ascending=False, by='match_score', inplace=True)
-      # ranked_one_cands[one_k] = [one_itm.index[0]]
-    return ranked_one_cands
+  #   Returns
+  #   -------
+  #   ranked_one_cands: dict
+  #       {reaction_id: [one Rhea_id]}
+  #   """
+  #   if inp_match_score is None:
+  #     match_score = self.match_score
+  #   else:
+  #     match_score = inp_match_score
+  #   ranked_one_cands = dict()
+  #   for one_k in match_score.keys():
+  #     # already sorted; just need to get the first element. 
+  #     ranked_one_cands[one_k] = [match_score[one_k][0][0]]
+  #     # one_itm = pd.DataFrame.from_dict(match_score[one_k], orient='index', columns=['match_score'])
+  #     # one_itm.sort_values(ascending=False, by='match_score', inplace=True)
+  #     # ranked_one_cands[one_k] = [one_itm.index[0]]
+  #   return ranked_one_cands
 
   # TODO: will be updated when iteration gets updated. 
   # def updateSpeciesByAReaction(self, 
@@ -291,7 +281,7 @@ class ReactionAnnotation(object):
   #   if inp_rhea in ref_rhea2bi.keys():
   #     if ref_rhea2bi[inp_rhea] in ref_rhea_to_chebi.keys():
   #       rhea_term_to_chebi_elements = [val for val in ref_rhea_to_chebi[ref_rhea2bi[inp_rhea]] \
-  #                                      if val in ref_shortened_chebi_to_formula.keys()]
+  #                                      if val in cn.ref_chebi2formula.keys()]
   #     else:
   #       return None
   #   else:
@@ -320,7 +310,7 @@ class ReactionAnnotation(object):
   #       if one_incl_formula in spec2predicted_formula[one_specid]:
   #         possibly_correct_species_ids.append(one_specid)
   #         for one_chebi_term in rhea_term_to_chebi_elements:
-  #           if one_incl_formula == ref_shortened_chebi_to_formula[one_chebi_term]:
+  #           if one_incl_formula == cn.ref_chebi2formula[one_chebi_term]:
   #             chebi_term_already_used_in_prediction.append(one_chebi_term)
   #   remaining_chebi = [val for val in rhea_term_to_chebi_elements \
   #                      if val not in chebi_term_already_used_in_prediction]
@@ -378,29 +368,104 @@ class ReactionAnnotation(object):
         accuracy.append(False)
     return np.mean(accuracy)
 
+  def getRecall(self,
+                ref_annotation=None,
+                pred_annotation=None,
+                mean=True):
+    """
+    Compute recall of predicted reactionm
+    annotations by comparing them with 
+    reference. 
+    More straightforward than species
+    as it doens't have to convert to formulas.
+
+    Parameters
+    ----------
+    ref_annotation: dict
+        {reaction_id: [str-annotation, i.e., Rhea]}
+        if None, get self.exist_annotation_formula
+    pred_annotation: dict
+        {reaction_id: [str-annotation, i.e., Rhea]}
+        if None, get self.candidates  
+    mean: bool
+        If True, get model-level average
+        If False, get value of each ID
+
+    Returns
+    -------
+    : float/dict{id: float}
+        Depending on the 'mean' argument
+    """
+    pass
+
+
+  def getPrecision(self,
+                   ref_annotation=None,
+                   pred_annotation=None,
+                   mean=True):
+    """
+    Compute precision of predicted reactionm
+    annotations by comparing them with 
+    reference. 
+    More straightforward than species
+    as it doens't have to convert to formulas.
+
+    Parameters
+    ----------
+    ref_annotation: dict
+        {reaction_id: [str-annotation, i.e., Rhea]}
+        if None, get self.exist_annotation_formula
+    pred_annotation: dict
+        {reaction_id: [str-annotation, i.e., Rhea]}
+        if None, get self.candidates  
+    mean: bool
+        If True, get model-level average
+        If False, get value of each ID
+
+    Returns
+    -------
+    : float/dict{id: float}
+        Depending on the 'mean' argument
+    """
+    pass
+
+
+
+
   # Develop a method to evaluate results using fitted model
-  def evaluatePredictedReactionAnnotation(self, inp_list,
+  def evaluatePredictedReactionAnnotation(self, inp_dict,
                                           fitted_model=reaction_rf):
     """
     Evaluate the quality of annotation;
     for each individual species.
+    inp_dict is a dictionary of dictionaries,
+    a result of self.predictAnnotation().
+    All informaton needed for prediction 
+    is supposed to come from inp_dict, 
+    not the stored reaction class itself.
   
     Parameters
     ---------
-    inp_list: str-list?
-        List of reactions to evaluate (one or more)
+    inp_dict: dict
+        {'candidates': {reactionID: [candidates in RHEA]},
+         'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
+         'query_df': query_df}
 
     Returns
     -------  
-    res: dict {reaction_id: probability-of-species-prediction-being-correct}
-        Information of whether confident or not
+    res: dict {reaction_id: probability-of-reaction-prediction-being-correct}
+        Information of how algorithm is confident about the result
     """
-    candidates_info = self.candidates
-    num_candidates = [len(candidates_info[val]) for val in inp_list]
-    multi_mat = ref_mat.dot(self.query_df)
+    # candidates_info = self.candidates
+    candidates_dict = inp_dict[cn.CANDIDATES]
+    cands_num_dict = {one_k: len(candidates_dict[one_k]) for one_k in candidates_dict.keys()}
+    inp_list = list(candidates_dict.keys())
+    num_candidates = [cands_num_dict[val] for val in inp_list]
+    # num_candidates = [len(candidates_info[val]) for val in inp_list]
+    multi_mat = ref_mat.dot(inp_dict[cn.QUERY_DF])
     maxes = multi_mat.max()
     max_match = [maxes[val] for val in inp_list]
-    match_scores = self.match_score
+    match_scores = inp_dict[cn.MATCH_SCORE]
     mean_match_score = [np.mean([val[1] for val in match_scores[k]]) for k in inp_list]
     med_match_score = [np.median([val[1] for val in match_scores[k]]) for k in inp_list]
     min_match_score = [np.min([val[1] for val in match_scores[k]]) for k in inp_list]

@@ -56,9 +56,13 @@ class Recommender(object):
     Parameters
     ----------
     pred_str: str
-        Species name to predict annotation withh
+        Species name to predict annotation with
     pred_id: str
         ID of species (search for name using it)
+    update: bool
+        If true, update existing species annotations
+        (i.e., replace or create new entries)
+        in self.species.candidates and self.species.formula
 
     Returns
     -------
@@ -78,9 +82,14 @@ class Recommender(object):
                               np.round(pred_score, 2),
                               pred_res[cn.MATCH_SCORE],
                               urls)
+    if update:
+      _ = self.species.updateSpeciesWithRecommendation(result)
     return result
 
-  def getSpeciesListAnnotation(self, pred_list, id=False):
+  def getSpeciesListAnnotation(self,
+                               pred_strs=None,
+                               pred_ids=None,
+                               update=False):
     """
     Get annotation of multiple species,
     given as a list (or an iterable object).
@@ -89,23 +98,29 @@ class Recommender(object):
 
     Parameters
     ----------
-    pred_list: str-list
-        :List of predicrted annotation
-    id: bool
-        :Indicator whether given strings are ids or direct names
+    pred_strs: str-list
+        :Species names to predict annotations with
+    pred_ids: str-list
+        :Species IDs to predict annotations with
+         (model info should have been already loaded)
+    update: bool
+        :If true, update the current annotations
+         (i.e., 
 
     Returns
     -------
     list-Recommendation (list-namedtuple)
     """
-    if id:
-      return [self.getSpeciesAnnotation(pred_id=val) \
-              for val in pred_list]
-    else:
-      return [self.getSpeciesAnnotation(pred_str=val) \
-              for val in pred_list]
+    if pred_strs:
+      return [self.getSpeciesAnnotation(pred_str=val, update=update) \
+              for val in pred_strs]
+    elif pred_ids:
+      return [self.getSpeciesAnnotation(pred_id=val, update=update) \
+              for val in pred_ids]
 
-  def getReactionAnnotation(self, pred_id):
+  def getReactionAnnotation(self, pred_id,
+                            use_exist_speices_annotation=False,
+                            update=True):
     """
     Predict annotations of reactions using
     the provided IDs (argument). 
@@ -113,8 +128,11 @@ class Recommender(object):
 
     Parameters
     ----------
-    name_to_annotate: str/list-str
-        ID of reactions to annotate
+    pred_id: str
+        A single ID of reaction to annotate
+    # TODO:
+    use_exist_speices_annotation: bool
+        If True, use existing species annotation
 
     Returns
     -------
@@ -123,26 +141,27 @@ class Recommender(object):
     """
     # For now, just predict all species and continue? 
     specs2predict = self.reactions.reaction_components[pred_id]
-    spec_results = self.getSpeciesListAnnotation(specs2predict, id=True)
+    spec_results = self.getSpeciesListAnnotation(pred_ids=specs2predict)
     # based on the function above; need to recreate it. 
     pred_formulas = dict()
     for one_recom in spec_results:
-      cands = [val[0] for val in one_recom.candidates]
-      forms = list(set([sa.ref_shortened_chebi_to_formula[k] \
-               for k in cands if k in sa.ref_shortened_chebi_to_formula.keys()]))
+      chebis = [val[0] for val in one_recom.candidates]
+      forms = list(set([cn.ref_chebi2formula[k] \
+               for k in chebis if k in cn.ref_chebi2formula.keys()]))
       pred_formulas[one_recom.id] = forms
     #
     pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
-                                                     inp_reac_list=[pred_id])
-    pred_score = self.reactions.evaluatePredictedReactionAnnotation([pred_id])
-    urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_reaction[pred_id]]
+                                                     inp_reac_list=[pred_id],
+                                                     update=update)
+    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_reaction)
+    urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_reaction[cn.MATCH_SCORE][pred_id]]
     result = cn.Recommendation(pred_id,
                                np.round(pred_score[pred_id], 2),
-                               pred_reaction[pred_id],
+                               pred_reaction[cn.MATCH_SCORE][pred_id],
                                urls)
     return result
 
-  def getReactionListAnnotation(self, pred_list):
+  def getReactionListAnnotation(self, pred_list, update=True):
     """
     Get annotation of multiple reactions.
     Instead of applying getReactionAnnotation 
@@ -162,30 +181,28 @@ class Recommender(object):
     specs_to_annotate = list(set(itertools.chain(*[self.reactions.reaction_components[val] \
                                                    for val in pred_list])))
     # For now, just predict all species and continue? 
-    spec_results = self.getSpeciesListAnnotation(specs_to_annotate, id=True)
+    spec_results = self.getSpeciesListAnnotation(pred_ids=specs_to_annotate)
     # pred_formulas = self.species.formula
     pred_formulas = dict()
     for one_recom in spec_results:
       cands = [val[0] for val in one_recom.candidates]
-      forms = list(set([sa.ref_shortened_chebi_to_formula[k] \
-               for k in cands if k in sa.ref_shortened_chebi_to_formula.keys()]))
+      forms = list(set([cn.ref_chebi2formula[k] \
+               for k in cands if k in cn.ref_chebi2formula.keys()]))
       pred_formulas[one_recom.id] = forms
     # Use predicted species in formula
     pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
-                                                     inp_reac_list=pred_list)
-    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_list)
+                                                     inp_reac_list=pred_list,
+                                                     update=update)
+    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_reaction)
     urls = {k:[cn.RHEA_DEFAULT_URL+val[0][5:] \
-            for val in pred_reaction[k]] \
+            for val in pred_reaction[cn.MATCH_SCORE][k]] \
             for k in pred_list}
     result = [cn.Recommendation(k,
                                np.round(pred_score[k], 2),
-                               pred_reaction[k],
+                               pred_reaction[cn.MATCH_SCORE][k],
                                urls[k]) \
               for k in pred_score.keys()]
-    return result
-    # return [self.getReactionAnnotation(pred_id=val) \
-    #         for val in pred_list]    
-
+    return result 
 
   def _parseSBML(self, sbml):
     """

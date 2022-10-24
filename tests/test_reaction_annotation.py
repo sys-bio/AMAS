@@ -2,6 +2,7 @@
 # Test for ReactionAnnotation class
 
 import libsbml
+import numpy as np
 import os
 import sys
 import unittest
@@ -31,8 +32,9 @@ class TestReactionAnnotation(unittest.TestCase):
     self.spec_cl = sa.SpeciesAnnotation(libsbml_fpath = E_COLI_PATH)
     self.reac_cl = ra.ReactionAnnotation(libsbml_fpath = E_COLI_PATH)
     pred_species = self.spec_cl.predictAnnotationByName(inp_spec_list=COMPONENTS)
-    pred_reaction = self.reac_cl.predictAnnotation(inp_spec_dict=self.spec_cl.formula,
-                                                   inp_reac_list=[R_PFK])
+    self.pred_reaction = self.reac_cl.predictAnnotation(inp_spec_dict=self.spec_cl.formula,
+                                                        inp_reac_list=[R_PFK],
+                                                        update=True)
   ### Was used for iteration algorithm
   # def testGetMatchScore(self):
   #   one_dict = {'R1': {'M1': 0.7}}
@@ -49,17 +51,24 @@ class TestReactionAnnotation(unittest.TestCase):
     self.assertEqual(COMPONENTS, set(two_comps))
 
   def testPredictAnnotation(self):
-    self.assertTrue(ONE_CANDIDATE in [val[0] for val in self.reac_cl.match_score[R_PFK]])
-    self.assertTrue(0.8 in [val[1] for val in self.reac_cl.match_score[R_PFK]])
+    match_scores_dict = self.pred_reaction[cn.MATCH_SCORE]
+    self.assertTrue(ONE_CANDIDATE in [val[0] for val in match_scores_dict[R_PFK]])
+    self.assertTrue(0.8 in [val[1] for val in match_scores_dict[R_PFK]])
 
-  def testGetBestOneCandidates(self):
-    # When argument is directly given
-    one_match_score = {'R1': [('RHEA:1', 1.0), ('RHEA:2', 0.5)]}
-    self.assertEqual(self.reac_cl.getBestOneCandidates(one_match_score)['R1'],
-                     ['RHEA:1'])
-    # When argument is not given
-    self.assertEqual(self.reac_cl.getBestOneCandidates()[R_PFK],
-                     [ONE_CANDIDATE])
+  def testEvaluatePredictedReactionAnnotation(self):
+    one_eval = self.reac_cl.evaluatePredictedReactionAnnotation(inp_dict=self.pred_reaction)
+    self.assertEqual(np.round(one_eval[R_PFK],2), 0.91)
+
+
+# Probably unncessary
+  # def testGetBestOneCandidates(self):
+  #   # When argument is directly given
+  #   one_match_score = {'R1': [('RHEA:1', 1.0), ('RHEA:2', 0.5)]}
+  #   self.assertEqual(self.reac_cl.getBestOneCandidates(one_match_score)['R1'],
+  #                    ['RHEA:1'])
+  #   # When argument is not given
+  #   self.assertEqual(self.reac_cl.getBestOneCandidates()[R_PFK],
+  #                    [ONE_CANDIDATE])
 
   ### Was used for iteration algorithm
   # def testUpdateSpeciesByAReaction(self):

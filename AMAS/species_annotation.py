@@ -13,8 +13,8 @@ import pickle
 
 
 # below might be in constants or main script
-with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
-  ref_shortened_chebi_to_formula = compress_pickle.load(f)
+# with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
+#   ref_shortened_chebi_to_formula = compress_pickle.load(f)
 with open(os.path.join(cn.REF_DIR, 'chebi_low_synonyms_comp.lzma'), 'rb') as f:
   chebi_low_synonyms = compress_pickle.load(f)
 species_rf = pickle.load(open(os.path.join(cn.REF_DIR, 'species_randomforestcv.sav'), 'rb'))
@@ -36,14 +36,14 @@ class SpeciesAnnotation(object):
       exist_annotation_chebi = {val:exist_annotation_raw[val] for val in exist_annotation_raw.keys() \
                                if exist_annotation_raw[val] is not None}
       self.exist_annotation = exist_annotation_chebi
-      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(exist_annotation_chebi[k], ref_shortened_chebi_to_formula) \
+      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(exist_annotation_chebi[k], cn.ref_chebi2formula) \
                                        for k in exist_annotation_chebi.keys()}
     # inp_tuple: ({species_id:species_name}, {species_id: [CHEBI annotations]})
     elif inp_tuple is not None:
       self.model = None
       self.names = inp_tuple[0]
       self.exist_annotation = inp_tuple[1]
-      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(inp_tuple[1][k], ref_shortened_chebi_to_formula) \
+      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(inp_tuple[1][k], cn.ref_chebi2formula) \
                                        for k in inp_tuple[1].keys()}
     else:
       self.model = None
@@ -76,10 +76,10 @@ class SpeciesAnnotation(object):
     one_result = dict()
     # For now, choose the terms that are included in the CHEBI-formula mapping reference
     dist_dict_min = {one_k:np.min([editdistance.eval(inp_str.lower(), val) for val in chebi_low_synonyms[one_k]]) \
-                     for one_k in chebi_low_synonyms.keys() if one_k in ref_shortened_chebi_to_formula.keys()}
+                     for one_k in chebi_low_synonyms.keys() if one_k in cn.ref_chebi2formula.keys()}
     min_min_dist = np.min([dist_dict_min[val] for val in dist_dict_min.keys()])
     min_min_chebis = [one_k for one_k in dist_dict_min.keys() \
-                      if dist_dict_min[one_k]==min_min_dist and one_k in ref_shortened_chebi_to_formula.keys()]
+                      if dist_dict_min[one_k]==min_min_dist and one_k in cn.ref_chebi2formula.keys()]
     # Results are sorted based on match_score (average of 1 - (editdistance/len_synonyms)
     res_tuple = [(one_chebi,
                   np.round(np.max([1.0-editdistance.eval(inp_str.lower(), val)/len(val) \
@@ -90,7 +90,7 @@ class SpeciesAnnotation(object):
     one_result[cn.NAME_USED] = inp_str
     one_result[cn.CHEBI] = [val[0] for val in res_tuple]
     one_result[cn.MATCH_SCORE] = res_tuple
-    min_min_formula = list(set([ref_shortened_chebi_to_formula[val] for val in min_min_chebis]))
+    min_min_formula = list(set([cn.ref_chebi2formula[val] for val in min_min_chebis]))
     one_result[cn.FORMULA] = min_min_formula
     return one_result
 
@@ -187,6 +187,7 @@ class SpeciesAnnotation(object):
       pred = pred_annotation
     ref_keys = set(ref.keys())
     pred_keys = set(pred.keys())
+    # select species that can be evaluated
     species_to_test = ref_keys.intersection(pred_keys)
     for one_k in species_to_test:
       if set(ref[one_k]).intersection(pred[one_k]):
@@ -194,6 +195,106 @@ class SpeciesAnnotation(object):
       else:
         accuracy.append(False)
     return np.mean(accuracy)
+
+
+  def getRecall(self,
+               ref_annotation=None,
+               pred_annotation=None,
+               mean=True):
+    """
+    More precise version of 'accuracy',
+    recall is the fraction of correct
+    elements detected. Currently,
+    it is calculated as the fraction of 
+    correct chemical formula detected
+
+    Parameters
+    ----------
+    ref_annotation: dict
+        {species_id: [str-annotation, i.e., formula]}
+        if None, get self.exist_annotation_formula
+    pred_annotation: dict
+        {species_id: [str-annotation, i.e., formula]}
+        if None, get self.candidates  
+    mean: bool
+        If True, get model-level average
+        If False, get value of each ID
+
+    Returns
+    -------
+    : float/dict{id: float}
+        Depending on the 'mean' argument
+    """
+    recall = dict()
+    if ref_annotation is None:
+      ref = self.exist_annotation_formula
+    else:
+      ref = ref_annotation
+    if pred_annotation is None:
+      pred = self.formula
+    else:
+      pred = pred_annotation
+    ref_keys = set(ref.keys())
+    pred_keys = set(pred.keys())
+    # select species that can be evaluated
+    species_to_test = ref_keys.intersection(pred_keys)
+    # go through each species
+    for one_k in species_to_test:
+      num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+      recall[one_k] = num_intersection / len(set(ref[one_k]))
+    if mean:
+      return np.mean([recall[val] for val in recall.keys()])
+    else:
+      return recall
+
+
+  def getPrecision(self,
+                   ref_annotation=None,
+                   pred_annotation=None,
+                   mean=True):
+    """
+    A complementary term of 'recall'
+    recall is the fraction of correct
+    elements detected from all detected formulas. 
+  
+    Parameters
+    ----------
+    ref_annotation: dict
+        {species_id: [str-annotation, i.e., formula]}
+        if None, get self.exist_annotation_formula
+    pred_annotation: dict
+        {species_id: [str-annotation, i.e., formula]}
+        if None, get self.candidates  
+    mean: bool
+        If True, get model-level average
+        If False, get value of each ID
+
+    Returns
+    -------
+    : float/dict{id: float}
+        Depending on the 'mean' argument
+    """
+    precision = dict()
+    if ref_annotation is None:
+      ref = self.exist_annotation_formula
+    else:
+      ref = ref_annotation
+    if pred_annotation is None:
+      pred = self.formula
+    else:
+      pred = pred_annotation
+    ref_keys = set(ref.keys())
+    pred_keys = set(pred.keys())
+    # select species that can be evaluated
+    species_to_test = ref_keys.intersection(pred_keys)
+    # go through each species
+    for one_k in species_to_test:
+      num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+      precision[one_k] = num_intersection / len(set(pred[one_k]))
+    if mean:
+      return np.mean([precision[val] for val in precision.keys()])
+    else:
+      return precision
 
 
   def getNameToUse(self, inp_id):
@@ -273,7 +374,7 @@ class SpeciesAnnotation(object):
     None
     """
     self.candidates.update({inp_recom.id: inp_recom.candidates})
-    formulas2update = list(set([ref_shortened_chebi_to_formula[val[0]] for val in inp_recom.candidates]))
+    formulas2update = list(set([cn.ref_chebi2formula[val[0]] for val in inp_recom.candidates]))
     self.formula.update({inp_recom.id: formulas2update})
     return None
 
