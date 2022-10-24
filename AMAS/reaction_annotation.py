@@ -163,12 +163,10 @@ class ReactionAnnotation(object):
 
     Returns
     -------
-    (If inplace=True)
-    pred_match_score: dict
-        Match score of each prediction
-        {reaction ID: (Rhea ID, match score: float between 0.0-1.0)}
-    (If inplace=False)
-    res_dict: dict
+    : dict
+        {'candidates': {reactionID: [candidates in RHEA]},
+         'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
+         'query_df': query_df}
     """
     # get libsbml.reaction and their IDs
     if inp_reac_list is not None:
@@ -216,11 +214,11 @@ class ReactionAnnotation(object):
       self.match_score = pred_match_score
       self.query_df = query_df
       # self.one_candidates = self.getBestOneCandidates(self.match_score)
-      return pred_match_score
-    else:
-      return {'candidates': pred_cands,
-              'match_score': pred_match_score,
-              'query_df': query_df}
+      # return pred_match_score
+    #
+    return {'candidates': pred_cands,
+            'match_score': pred_match_score,
+            'query_df': query_df}
               # 'one_candidates': self.getBestOneCandidates(self.match_score)}
 
   # # Changed as match_score was changed to a tuple (rhea_term, match_score)
