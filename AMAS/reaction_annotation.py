@@ -396,7 +396,27 @@ class ReactionAnnotation(object):
     : float/dict{id: float}
         Depending on the 'mean' argument
     """
-    pass
+    recall = dict()
+    if ref_annotation is None:
+      ref = self.exist_annotation
+    else:
+      ref = ref_annotation
+    if pred_annotation is None:
+      pred = self.candidaates
+    else:
+      pred = pred_annotation
+    ref_keys = set(ref.keys())
+    pred_keys = set(pred.keys())
+    # select species that can be evaluated
+    species_to_test = ref_keys.intersection(pred_keys)
+    # go through each species
+    for one_k in species_to_test:
+      num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+      recall[one_k] = num_intersection / len(set(ref[one_k]))
+    if mean:
+      return np.mean([recall[val] for val in recall.keys()])
+    else:
+      return recall
 
 
   def getPrecision(self,
@@ -427,8 +447,27 @@ class ReactionAnnotation(object):
     : float/dict{id: float}
         Depending on the 'mean' argument
     """
-    pass
-
+    precision = dict()
+    if ref_annotation is None:
+      ref = self.exist_annotation
+    else:
+      ref = ref_annotation
+    if pred_annotation is None:
+      pred = self.candidates
+    else:
+      pred = pred_annotation
+    ref_keys = set(ref.keys())
+    pred_keys = set(pred.keys())
+    # select species that can be evaluated
+    species_to_test = ref_keys.intersection(pred_keys)
+    # go through each species
+    for one_k in species_to_test:
+      num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+      precision[one_k] = num_intersection / len(set(pred[one_k]))
+    if mean:
+      return np.mean([precision[val] for val in precision.keys()])
+    else:
+      return precision
 
 
 

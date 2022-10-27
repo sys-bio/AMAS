@@ -79,7 +79,7 @@ class TestRecommender(unittest.TestCase):
     self.assertTrue(ONE_REAC_URL in one_res.urls)
 
   def testGetReactionListAnnotation(self):
-    reacs = self.recom.getReactionListAnnotation(pred_list=[REACTION_ODC, REACTION_SAMDC])
+    reacs = self.recom.getReactionListAnnotation(pred_ids=[REACTION_ODC, REACTION_SAMDC])
     one_res = reacs[0]
     self.assertEqual(one_res.id, REACTION_ODC)
     self.assertEqual(one_res.credibility, 1.0)

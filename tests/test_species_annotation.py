@@ -27,7 +27,7 @@ DUMMY_RECOMMENDATION = cn.Recommendation('SAM',
                                          ['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414',
                                          'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A59789'])
 DUMMY_ID = 'SAM'
-# Dummy data for evaluation
+# Dummy data for calculating accuracy, recalll & precision
 DUMMY_REF = {'a': ['ABC', 'BCD'],
               'b': ['DEF']}
 DUMMY_PRED = {'a': ['ABC'],
