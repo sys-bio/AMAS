@@ -12,9 +12,6 @@ from AMAS import tools
 from AMAS import species_annotation as sa
 from AMAS import reaction_annotation as ra
 
-# with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
-#   ref_shortened_chebi_to_formula = compress_pickle.load(f)
-
 
 def iterateAndGetUpdatedResults(spec_cl,
                                 reac_cl,
@@ -35,7 +32,7 @@ def iterateAndGetUpdatedResults(spec_cl,
       
   Returns
   -------
-  result: dict
+  dict
       e.g., rep (int) 
           Last iteration position (actual run - 1) when algorithm quit
   """
@@ -66,7 +63,7 @@ def iterateAndGetUpdatedResults(spec_cl,
     upd_spec_formula_dict = dict()
     for one_k in cur_spec_formula_dict.keys():
       if one_k in all_upd_spec.keys():
-        upd_spec_formula_dict[one_k] = list(set([cn.ref_chebi2formula[val] for val in all_upd_spec[one_k]]))
+        upd_spec_formula_dict[one_k] = list(set([cn.REF_CHEBI2FORMULA[val] for val in all_upd_spec[one_k]]))
       else:
         upd_spec_formula_dict[one_k] = cur_spec_formula_dict[one_k]
 

@@ -1,5 +1,8 @@
 # recommender.py
-# Recomender for running annotation predictions
+"""
+Recomender for running annotation predictions.
+This module is going to be directly used by the users.
+"""
 
 # import collections
 import compress_pickle
@@ -13,12 +16,6 @@ from AMAS import tools
 from AMAS import species_annotation as sa
 from AMAS import reaction_annotation as ra
 
-with open(os.path.join(cn.REF_DIR, 'kegg2rhea_bi_comp.lzma'), 'rb') as handle:
-  ref_kegg2rhea_bi = compress_pickle.load(handle)
-with open(os.path.join(cn.REF_DIR, 'rhea_all2bi_comp.lzma'), 'rb') as f:
-  ref_rhea2bi = compress_pickle.load(f)
-
-
 
 class Recommender(object):
 
@@ -26,6 +23,18 @@ class Recommender(object):
                libsbml_cl=None, 
                libsbml_fpath=None,
                model_specs=None):
+    """
+    Parameters
+    ----------
+    libsbml_cl: libsbml.SBMLDocument
+        A libsbml document class instance
+    libsbml_fpath: str
+        File path of an SBML model
+    mdoel_specs: tuple/list
+        Iterable object of two tuples including model specifications
+    """
+
+
     # First of all, collect model information from libsbml model
     # and send the informaton to create species/reaction annotations
     if libsbml_cl:
@@ -66,7 +75,7 @@ class Recommender(object):
 
     Returns
     -------
-    result: Recommendation (namedtuple)
+    Recommendation (namedtuple)
 
     """
     if pred_str:
@@ -136,8 +145,7 @@ class Recommender(object):
 
     Returns
     -------
-    result: Recommendation (namedtuple)
-
+    Recommendation (namedtuple)
     """
     # For now, just predict all species and continue? 
     specs2predict = self.reactions.reaction_components[pred_id] 
@@ -153,8 +161,8 @@ class Recommender(object):
       spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species)
       for one_recom in spec_results:
         chebis = [val[0] for val in one_recom.candidates]
-        forms = list(set([cn.ref_chebi2formula[k] \
-                 for k in chebis if k in cn.ref_chebi2formula.keys()]))
+        forms = list(set([cn.REF_CHEBI2FORMULA[k] \
+                 for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
         pred_formulas[one_recom.id] = forms
 
 
@@ -164,8 +172,8 @@ class Recommender(object):
     # pred_formulas = dict()
     # for one_recom in spec_results:
     #   chebis = [val[0] for val in one_recom.candidates]
-    #   forms = list(set([cn.ref_chebi2formula[k] \
-    #            for k in chebis if k in cn.ref_chebi2formula.keys()]))
+    #   forms = list(set([cn.REF_CHEBI2FORMULA[k] \
+    #            for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
     #   pred_formulas[one_recom.id] = forms
     pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
                                                      inp_reac_list=[pred_id],
@@ -213,8 +221,8 @@ class Recommender(object):
       spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species)
       for one_recom in spec_results:
         chebis = [val[0] for val in one_recom.candidates]
-        forms = list(set([cn.ref_chebi2formula[k] \
-                 for k in chebis if k in cn.ref_chebi2formula.keys()]))
+        forms = list(set([cn.REF_CHEBI2FORMULA[k] \
+                 for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
         pred_formulas[one_recom.id] = forms
 
 
@@ -227,8 +235,8 @@ class Recommender(object):
     # pred_formulas = dict()
     # for one_recom in spec_results:
     #   cands = [val[0] for val in one_recom.candidates]
-    #   forms = list(set([cn.ref_chebi2formula[k] \
-    #            for k in cands if k in cn.ref_chebi2formula.keys()]))
+    #   forms = list(set([cn.REF_CHEBI2FORMULA[k] \
+    #            for k in cands if k in cn.REF_CHEBI2FORMULA.keys()]))
     #   pred_formulas[one_recom.id] = forms
 
 
@@ -264,8 +272,9 @@ class Recommender(object):
 
     Returns
     -------
-    species_tuple, reaction_tuple: 
+    (tuple, tuple): 
         Two tuples to create species/reaction annotation classes
+        (species_tuple, reaction_tuple)
     """
     if isinstance(sbml, str):
       reader = libsbml.SBMLReader()
@@ -291,8 +300,8 @@ class Recommender(object):
                                for k in reac_dict_raw_filt_rhea.keys()}
     reac_dict_rhea = dict()
     for one_id in reac_dict_format_rhea.keys():
-      one_itm = list(set([ref_rhea2bi[val] for val in reac_dict_format_rhea[one_id] \
-                 if val in ref_rhea2bi.keys()]))
+      one_itm = list(set([cn.REF_RHEA2BI[val] for val in reac_dict_format_rhea[one_id] \
+                 if val in cn.REF_RHEA2BI.keys()]))
       if len(one_itm) > 0:
         reac_dict_rhea[one_id] = one_itm
     # Annotation of KEGG (mapped to corresponding Rhea BI term) 
@@ -301,8 +310,8 @@ class Recommender(object):
     reac_dict_raw_filt_kegg = {k:reac_dict_raw_kegg[k] \
                                for k in reac_dict_raw_kegg.keys() \
                                if reac_dict_raw_kegg[k] is not None}
-    reac_dict_kegg = {k:[ref_kegg2rhea_bi[val] \
-                         for val in reac_dict_raw_filt_kegg[k] if val in ref_kegg2rhea_bi.keys()] \
+    reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
+                         for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
                       for k in reac_dict_raw_filt_kegg.keys()}
     reac_exist_annotation = reac_dict_rhea
     for one_id in reac_dict_kegg.keys():
