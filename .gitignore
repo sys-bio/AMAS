@@ -130,3 +130,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Related to Read the Docs
+.readthedocs.yml~
+.readthedocs.yaml~

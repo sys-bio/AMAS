@@ -37,3 +37,8 @@ html_theme = 'sphinx_rtd_theme'
 
 # -- Options for EPUB output
 epub_show_urls = 'footnote'
+
+# Additional specifications from 
+# https://github.com/dariober/ASCIIGenome/blob/master/docs/conf.py
+source_suffix = '.rst'
+master_doc = 'index'
