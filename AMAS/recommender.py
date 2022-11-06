@@ -326,6 +326,7 @@ class Recommender(object):
     return species_tuple, reaction_tuple
 
 
+
   def updateSpeciesAnnotation(self, update_dict):
     """
     Update annotation of species; 
