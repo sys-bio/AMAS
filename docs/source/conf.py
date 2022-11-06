@@ -2,14 +2,15 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'AMAS'
+copyright = '2022, Woosub Shin'
+author = 'Woosub Shin'
 
-release = '0.1'
-version = '0.1.0'
+release = '0.0.1'
 
 # -- General configuration
+
+sys.path.insert(0, os.path.abspath('../..'))
 
 extensions = [
     'sphinx.ext.duration',
