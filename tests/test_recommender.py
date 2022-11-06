@@ -52,7 +52,7 @@ class TestRecommender(unittest.TestCase):
     self.assertTrue(ONE_SPEC_CAND in two_res.candidates)
     self.assertTrue(ONE_SPEC_URL in two_res.urls)
     self.assertTrue((ONE_CHEBI, 1.0) in self.recom.species.candidates[SPECIES_SAM_NAME])
-    one_formula = cn.ref_chebi2formula[ONE_CHEBI]
+    one_formula = cn.REF_CHEBI2FORMULA[ONE_CHEBI]
     self.assertTrue(one_formula in self.recom.species.formula[SPECIES_SAM_NAME])    
 
   def testGetSpeciesListAnnotation(self):
@@ -68,7 +68,7 @@ class TestRecommender(unittest.TestCase):
     two_specs = self.recom.getSpeciesListAnnotation(pred_ids=[SPECIES_SAM, SPECIES_ORN],
                                                     update=True)
     self.assertTrue((ONE_CHEBI, 1.0) in self.recom.species.candidates[SPECIES_SAM])
-    one_formula = cn.ref_chebi2formula[ONE_CHEBI]
+    one_formula = cn.REF_CHEBI2FORMULA[ONE_CHEBI]
     self.assertTrue(one_formula in self.recom.species.formula[SPECIES_SAM])      
 
   def testGetReactionAnnotation(self):
@@ -79,7 +79,7 @@ class TestRecommender(unittest.TestCase):
     self.assertTrue(ONE_REAC_URL in one_res.urls)
 
   def testGetReactionListAnnotation(self):
-    reacs = self.recom.getReactionListAnnotation(pred_list=[REACTION_ODC, REACTION_SAMDC])
+    reacs = self.recom.getReactionListAnnotation(pred_ids=[REACTION_ODC, REACTION_SAMDC])
     one_res = reacs[0]
     self.assertEqual(one_res.id, REACTION_ODC)
     self.assertEqual(one_res.credibility, 1.0)

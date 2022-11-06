@@ -31,4 +31,8 @@ Recommendation = collections.namedtuple('Recommendation',
                                         ['id', 'credibility', 'candidates', 'urls'])
 
 with open(os.path.join(REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
-  ref_chebi2formula = compress_pickle.load(f)
+  REF_CHEBI2FORMULA = compress_pickle.load(f)
+with open(os.path.join(REF_DIR, 'kegg2rhea_bi_comp.lzma'), 'rb') as handle:
+  REF_KEGG2RHEA_BI = compress_pickle.load(handle)
+with open(os.path.join(REF_DIR, 'rhea_all2bi_comp.lzma'), 'rb') as f:
+  REF_RHEA2BI = compress_pickle.load(f)

@@ -1,4 +1,13 @@
-"""Annotation for Species."""
+# species_annotation.py
+"""
+<Annotation for Species>
+species_annotation creates and predicts
+annotation of libsbml species,
+mainly using editdistance method.
+(can be changed in future)
+"""
+
+
 
 from AMAS import constants as cn
 from AMAS import tools
@@ -12,18 +21,33 @@ import os
 import pickle
 
 
-# below might be in constants or main script
-# with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
-#   ref_shortened_chebi_to_formula = compress_pickle.load(f)
 with open(os.path.join(cn.REF_DIR, 'chebi_low_synonyms_comp.lzma'), 'rb') as f:
-  chebi_low_synonyms = compress_pickle.load(f)
-species_rf = pickle.load(open(os.path.join(cn.REF_DIR, 'species_randomforestcv.sav'), 'rb'))
+  CHEBI_LOW_SYNONYMS = compress_pickle.load(f)
+# A trained random forest model 
+SPECIES_RF = pickle.load(open(os.path.join(cn.REF_DIR, 'species_randomforestcv.sav'), 'rb'))
 
 
 class SpeciesAnnotation(object):
 
   def __init__(self, libsbml_fpath=None,
                inp_tuple=None):
+
+    """
+    Parameters
+    ----------
+    libsbml_fpath: str
+        File path of an SBMl (.xml) model
+
+    inp_tuple: tuple 
+        Tuple of model information,
+        first element (index 0) is information on 
+        species names,
+        second element (index 1) is existing 
+        ChEBI information.
+        ({species_id: species_display_name},
+         {species_id: ChEBI terms})
+    """
+
     # self.exist_annotation stores existing CHEBI annotations in the model
     # If none exists, set None
     if libsbml_fpath is not None:
@@ -36,14 +60,14 @@ class SpeciesAnnotation(object):
       exist_annotation_chebi = {val:exist_annotation_raw[val] for val in exist_annotation_raw.keys() \
                                if exist_annotation_raw[val] is not None}
       self.exist_annotation = exist_annotation_chebi
-      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(exist_annotation_chebi[k], cn.ref_chebi2formula) \
+      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(exist_annotation_chebi[k], cn.REF_CHEBI2FORMULA) \
                                        for k in exist_annotation_chebi.keys()}
     # inp_tuple: ({species_id:species_name}, {species_id: [CHEBI annotations]})
     elif inp_tuple is not None:
       self.model = None
       self.names = inp_tuple[0]
       self.exist_annotation = inp_tuple[1]
-      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(inp_tuple[1][k], cn.ref_chebi2formula) \
+      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(inp_tuple[1][k], cn.REF_CHEBI2FORMULA) \
                                        for k in inp_tuple[1].keys()}
     else:
       self.model = None
@@ -69,28 +93,28 @@ class SpeciesAnnotation(object):
 
     Returns
     -------
-    one_result: dict
+    dict
         {key: value(s)}
         'key' can be match_score, chebi, etc. 
     """
     one_result = dict()
     # For now, choose the terms that are included in the CHEBI-formula mapping reference
-    dist_dict_min = {one_k:np.min([editdistance.eval(inp_str.lower(), val) for val in chebi_low_synonyms[one_k]]) \
-                     for one_k in chebi_low_synonyms.keys() if one_k in cn.ref_chebi2formula.keys()}
+    dist_dict_min = {one_k:np.min([editdistance.eval(inp_str.lower(), val) for val in CHEBI_LOW_SYNONYMS[one_k]]) \
+                     for one_k in CHEBI_LOW_SYNONYMS.keys() if one_k in cn.REF_CHEBI2FORMULA.keys()}
     min_min_dist = np.min([dist_dict_min[val] for val in dist_dict_min.keys()])
     min_min_chebis = [one_k for one_k in dist_dict_min.keys() \
-                      if dist_dict_min[one_k]==min_min_dist and one_k in cn.ref_chebi2formula.keys()]
+                      if dist_dict_min[one_k]==min_min_dist and one_k in cn.REF_CHEBI2FORMULA.keys()]
     # Results are sorted based on match_score (average of 1 - (editdistance/len_synonyms)
     res_tuple = [(one_chebi,
                   np.round(np.max([1.0-editdistance.eval(inp_str.lower(), val)/len(val) \
-                                    for val in chebi_low_synonyms[one_chebi]]), 2)) \
+                                    for val in CHEBI_LOW_SYNONYMS[one_chebi]]), 2)) \
                  for one_chebi in min_min_chebis] 
     res_tuple.sort(key=operator.itemgetter(1), reverse=True)
     #  CHEBI part is added, because we want a sorted list after computing res_tuple
     one_result[cn.NAME_USED] = inp_str
     one_result[cn.CHEBI] = [val[0] for val in res_tuple]
     one_result[cn.MATCH_SCORE] = res_tuple
-    min_min_formula = list(set([cn.ref_chebi2formula[val] for val in min_min_chebis]))
+    min_min_formula = list(set([cn.REF_CHEBI2FORMULA[val] for val in min_min_chebis]))
     one_result[cn.FORMULA] = min_min_formula
     return one_result
 
@@ -117,7 +141,7 @@ class SpeciesAnnotation(object):
 
     Returns
     -------
-    result:  
+    dict  
         Should be {species_id: 
                       {'chebi':[CHEBI terms]},
                       {'score': match_score},
@@ -174,7 +198,7 @@ class SpeciesAnnotation(object):
 
     Returns
     -------
-    : float
+    float
     """
     accuracy = []
     if ref_annotation is None:
@@ -222,7 +246,7 @@ class SpeciesAnnotation(object):
 
     Returns
     -------
-    : float/dict{id: float}
+    float/dict{id: float}
         Depending on the 'mean' argument
     """
     recall = dict()
@@ -309,7 +333,7 @@ class SpeciesAnnotation(object):
   
     Returns
     -------
-    res_name: str
+    str
     """
     species_name = self.names[inp_id]
     if len(species_name) > 0:
@@ -321,7 +345,7 @@ class SpeciesAnnotation(object):
   def evaluatePredictedSpeciesAnnotation(self,
                                          pred_result=None,
                                          id_list=None,
-                                         fitted_model=species_rf):
+                                         fitted_model=SPECIES_RF):
     """
     Evaluate the quality of annotation;
     for each individual species.
@@ -338,7 +362,7 @@ class SpeciesAnnotation(object):
 
     Returns
     -------
-    res: dict {species_id: level-of-species-prediction-being-correct}
+    dict {species_id: level-of-species-prediction-being-correct}
         Information of whether confident or not
     """
     name_length = len(pred_result)
@@ -374,7 +398,7 @@ class SpeciesAnnotation(object):
     None
     """
     self.candidates.update({inp_recom.id: inp_recom.candidates})
-    formulas2update = list(set([cn.ref_chebi2formula[val[0]] for val in inp_recom.candidates]))
+    formulas2update = list(set([cn.REF_CHEBI2FORMULA[val[0]] for val in inp_recom.candidates]))
     self.formula.update({inp_recom.id: formulas2update})
     return None
 

@@ -27,7 +27,7 @@ DUMMY_RECOMMENDATION = cn.Recommendation('SAM',
                                          ['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414',
                                          'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A59789'])
 DUMMY_ID = 'SAM'
-# Dummy data for evaluation
+# Dummy data for calculating accuracy, recalll & precision
 DUMMY_REF = {'a': ['ABC', 'BCD'],
               'b': ['DEF']}
 DUMMY_PRED = {'a': ['ABC'],
@@ -109,7 +109,7 @@ class TestSpeciesAnnotation(unittest.TestCase):
     one_upd = self.spec_cl.updateSpeciesWithRecommendation(DUMMY_RECOMMENDATION)
     self.assertEqual(one_upd, None)
     self.assertTrue((ONE_CHEBI, 1.0) in self.spec_cl.candidates[DUMMY_ID])
-    one_formula = cn.ref_chebi2formula[ONE_CHEBI]
+    one_formula = cn.REF_CHEBI2FORMULA[ONE_CHEBI]
     self.assertTrue(one_formula in self.spec_cl.formula[DUMMY_ID])
 
 

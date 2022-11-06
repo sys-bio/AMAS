@@ -22,6 +22,12 @@ COMPONENTS = {'M_fdp_c', 'M_adp_c', 'M_atp_c', 'M_f6p_c', 'M_h_c'}
 ONE_CANDIDATE = 'RHEA:12423'
 ONE_CHEBI = 'CHEBI:30616'
 
+# Dummy data for calculating accuracy, recalll & precision
+DUMMY_REF = {'a': ['ABC', 'BCD'],
+              'b': ['DEF']}
+DUMMY_PRED = {'a': ['ABC'],
+             'b': ['AAA']}
+
 
 #############################
 # Tests
@@ -80,6 +86,28 @@ class TestReactionAnnotation(unittest.TestCase):
   def testGetAccuracy(self):
     pred = {R_PFK: ['RHEA:16112']}
     self.assertEqual(self.reac_cl.getAccuracy(pred_annotation=pred), 1.0)
+
+
+  def testGetRecall(self):
+    recall1 = self.spec_cl.getRecall(ref_annotation=DUMMY_REF,
+                                     pred_annotation=DUMMY_PRED,
+                                     mean=True)
+    self.assertEqual(recall1, 0.25)
+    recall2 = self.reac_cl.getRecall(pred_annotation=self.pred_reaction[cn.CANDIDATES])
+    self.assertEqual(recall2, 1.0)
+
+
+  def testGetPrecision(self):
+    precision1 = self.spec_cl.getPrecision(ref_annotation=DUMMY_REF,
+                                           pred_annotation=DUMMY_PRED,
+                                           mean=True)
+    self.assertEqual(precision1, 0.5)
+    precision2 = self.reac_cl.getPrecision(pred_annotation=self.pred_reaction[cn.CANDIDATES])
+    self.assertEqual(np.round(precision2, 2), 0.17)
+
+
+
+
 
 
 
