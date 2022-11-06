@@ -1,6 +1,0 @@
-# .readthedocs.yml
-
-build:
-  image: latest
-
-requirements_file: requirements.txt
