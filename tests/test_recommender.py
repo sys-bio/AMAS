@@ -100,13 +100,13 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(len(dummy_recom.reactions.exist_annotation), 9)
 
   def testGetSpeciesStatistics(self):
-    spec_stats = self.recom.getSpeciesStatistics()
+    recom2 = recommender.Recommender(libsbml_fpath=BIOMD_634_PATH)
+    spec_stats = recom2.getSpeciesStatistics()
     self.assertEqual(spec_stats[cn.RECALL], 1.0)
     self.assertEqual(spec_stats[cn.PRECISION], 0.67)
 
   def testGetReactionStatistics(self):
-    recom2 = recommender.Recommender(libsbml_fpath=BIOMD_634_PATH)
-    reac_stats = recom2.getSpeciesStatistics()
+    reac_stats = self.recom.getReactionStatistics()
     self.assertEqual(reac_stats[cn.RECALL], 0.67)
     self.assertEqual(reac_stats[cn.PRECISION], 0.41)
 
