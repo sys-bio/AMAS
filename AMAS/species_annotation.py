@@ -278,7 +278,7 @@ class SpeciesAnnotation(object):
                    mean=True):
     """
     A complementary term of 'recall'
-    recall is the fraction of correct
+    precision is the fraction of correct
     elements detected from all detected formulas. 
   
     Parameters

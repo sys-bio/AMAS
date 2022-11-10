@@ -21,6 +21,8 @@ MATCH_SCORE = "match_score"
 NAME_USED = "name_used"
 FORMULA = "formula"
 QUERY_DF = 'query_df'
+RECALL = 'recall'
+PRECISION = 'precision'
 
 # Default URLs for CHEBI/Rhea
 CHEBI_DEFAULT_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'

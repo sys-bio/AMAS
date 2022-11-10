@@ -1,5 +1,6 @@
 # tools.py
 
+import numpy as np
 import re
 
 
@@ -104,6 +105,86 @@ def getQualifierFromString(input_str, qualifier):
     return [val[1] for val in qualifier_list]
   else:
     return None
+
+
+def getPrecision(ref, pred, mean=True):
+  """
+  (A model element-agnostic
+  version of the method.)
+  A complementary term of 'recall',
+  precision is the fraction of correct
+  elements detected from all detected elements. 
+
+  Parameters
+  ----------
+  ref: dict
+      {id: [str-annotation, e,g., formula/Rhea]}
+  pred: dict
+      {id: [str-annotation, e,g., formula/Rhea]} 
+  mean: bool
+      If True, get model-level average
+      If False, get value of each ID
+
+  Returns
+  -------
+  : float/dict{id: float}
+      Depending on the 'mean' argument
+  """
+  ref_keys = set(ref.keys())
+  pred_keys = set(pred.keys())
+  precision = dict()
+  # select species that can be evaluated
+  species_to_test = ref_keys.intersection(pred_keys)
+  # go through each species
+  for one_k in species_to_test:
+    num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+    precision[one_k] = num_intersection / len(set(pred[one_k]))
+  if mean:
+    return np.mean([precision[val] for val in precision.keys()])
+  else:
+    return precision
+
+
+def getRecall(ref, pred, mean=True):
+  """
+  (A model element-agnostic
+  version of the method.)
+  A precise version of 'accuracy',
+  recall is the fraction of correct
+  elements detected.
+  Arguments are given as dictionaries. 
+
+  Parameters
+  ----------
+  ref: dict
+      {id: [str-annotation, e,g., formula/Rhea]}
+      Annotations from reference. Considered 'correct'
+  pred: dict
+      {id: [str-annotation, e,g., formula/Rhea]}
+      Annotations to be evaluated. 
+  mean: bool
+      If True, get the average across the keys.
+      If False, get value of each key.
+
+  Returns
+  -------
+  float/dict{id: float}
+      Depending on the 'mean' argument
+  """
+  ref_keys = set(ref.keys())
+  pred_keys = set(pred.keys())
+  # select species that can be evaluated
+  species_to_test = ref_keys.intersection(pred_keys)
+  recall = dict()
+  # go through each species
+  for one_k in species_to_test:
+    num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+    recall[one_k] = num_intersection / len(set(ref[one_k]))
+  if mean:
+    return np.mean([recall[val] for val in recall.keys()])
+  else:
+    return recall
+
 
 
 def transformCHEBIToFormula(inp_list, ref_to_formula_dict):

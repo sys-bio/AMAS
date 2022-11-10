@@ -14,6 +14,16 @@ with open(os.path.join(cn.REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') a
   ref_shortened_chebi_to_formula = compress_pickle.load(f)
 BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
 
+# dictionary to test getRecall and getPrecision
+DUMMY_ID = 'SAM'
+# Dummy data for calculating accuracy, recalll & precision
+DUMMY_REF = {'a': ['ABC', 'BCD'],
+              'b': ['DEF']}
+DUMMY_PRED = {'a': ['ABC'],
+             'b': ['AAA']}
+DUMMY_A = 'a'
+DUMMY_B = 'b'
+
 #############################
 # Tests
 #############################
@@ -64,6 +74,28 @@ class TestFunctions(unittest.TestCase):
     self.assertEqual(set(twoitm_res.keys()), {'a','b'})
     self.assertEqual(twoitm_res['b'], ['x', 'y'])
 
+  def testGetRecall(self):
+    recall1 = tools.getRecall(ref=DUMMY_REF,
+                              pred=DUMMY_PRED,
+                              mean=True)
+    self.assertEqual(recall1, 0.25)
+    recall2 = tools.getRecall(ref=DUMMY_REF,
+                              pred=DUMMY_PRED,
+                              mean=False)
+    self.assertEqual(recall2[DUMMY_A], 0.5)
+    self.assertEqual(recall2[DUMMY_B], 0.0)
+
+
+  def testGetPrecision(self):
+    precision1 = tools.getPrecision(ref=DUMMY_REF,
+                                    pred=DUMMY_PRED,
+                                    mean=True)
+    self.assertEqual(precision1, 0.5)
+    precision2 = tools.getPrecision(ref=DUMMY_REF,
+                                    pred=DUMMY_PRED,
+                                    mean=False)
+    self.assertEqual(precision2[DUMMY_A], 1.0)
+    self.assertEqual(precision2[DUMMY_B], 0.0)
 
 
 

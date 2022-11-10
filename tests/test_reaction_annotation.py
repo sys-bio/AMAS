@@ -89,7 +89,7 @@ class TestReactionAnnotation(unittest.TestCase):
 
 
   def testGetRecall(self):
-    recall1 = self.spec_cl.getRecall(ref_annotation=DUMMY_REF,
+    recall1 = self.reac_cl.getRecall(ref_annotation=DUMMY_REF,
                                      pred_annotation=DUMMY_PRED,
                                      mean=True)
     self.assertEqual(recall1, 0.25)
@@ -98,7 +98,7 @@ class TestReactionAnnotation(unittest.TestCase):
 
 
   def testGetPrecision(self):
-    precision1 = self.spec_cl.getPrecision(ref_annotation=DUMMY_REF,
+    precision1 = self.reac_cl.getPrecision(ref_annotation=DUMMY_REF,
                                            pred_annotation=DUMMY_PRED,
                                            mean=True)
     self.assertEqual(precision1, 0.5)
