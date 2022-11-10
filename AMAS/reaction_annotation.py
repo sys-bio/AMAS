@@ -224,13 +224,10 @@ class ReactionAnnotation(object):
       self.candidates = pred_cands
       self.match_score = pred_match_score
       self.query_df = query_df
-      # self.one_candidates = self.getBestOneCandidates(self.match_score)
-      # return pred_match_score
     #
     return {'candidates': pred_cands,
             'match_score': pred_match_score,
             'query_df': query_df}
-              # 'one_candidates': self.getBestOneCandidates(self.match_score)}
 
   # # Changed as match_score was changed to a tuple (rhea_term, match_score)
   # def getBestOneCandidates(self, inp_match_score=None):

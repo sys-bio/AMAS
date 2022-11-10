@@ -13,6 +13,7 @@ from AMAS import species_annotation as sa
 from AMAS import tools
 
 BIOMD_190_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000190.xml')
+BIOMD_634_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000634.xml')
 ONE_SPEC_CAND = ('CHEBI:15414', 1.0)
 ONE_SPEC_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414'
 TWO_SPEC_CAND = ('CHEBI:15729', 1.0)
@@ -97,5 +98,21 @@ class TestRecommender(unittest.TestCase):
     self.assertTrue(REACTION_ODC in dummy_recom.reactions.reaction_components.keys())
     self.assertEqual(len(dummy_recom.species.exist_annotation), 0)
     self.assertEqual(len(dummy_recom.reactions.exist_annotation), 9)
+
+  def testGetSpeciesStatistics(self):
+    spec_stats = self.recom.getSpeciesStatistics()
+    self.assertEqual(spec_stats[cn.RECALL], 1.0)
+    self.assertEqual(spec_stats[cn.PRECISION], 0.67)
+
+  def testGetReactionStatistics(self):
+    recom2 = recommender.Recommender(libsbml_fpath=BIOMD_634_PATH)
+    reac_stats = recom2.getSpeciesStatistics()
+    self.assertEqual(reac_stats[cn.RECALL], 0.67)
+    self.assertEqual(reac_stats[cn.PRECISION], 0.41)
+
+
+
+
+
 
 

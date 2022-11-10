@@ -17,6 +17,7 @@ from AMAS import species_annotation as sa
 from AMAS import reaction_annotation as ra
 
 
+
 class Recommender(object):
 
   def __init__(self,
@@ -324,6 +325,78 @@ class Recommender(object):
                        for val in model.getListOfReactions()}
     reaction_tuple = (reac_components, reac_exist_annotation)
     return species_tuple, reaction_tuple
+
+
+  def getSpeciesStatistics(self):
+    """
+    Get recall and precision 
+    of species in a model, for both species and
+    reactions.
+    This method works only if there exists
+    annotation in  model; otherwise
+    None will be returned. 
+    In the result, values will be 
+    returned after rounding to the two decimal places. 
+
+    Parameters
+    ----------
+    None 
+
+    Returns
+    -------
+    None/dict
+        Return None if there is nothing to evaluate
+        (i.e., if there is no existing model annotation)
+    """
+    # get dictionary of formulas if they exist
+    refs = {val:self.species.exist_annotation_formula[val] \
+            for val in self.species.exist_annotation_formula.keys() \
+            if self.species.exist_annotation_formula[val]}
+    specs2eval = list(refs.keys())
+    if len(specs2eval) == 0:
+      return None
+    specsdict2pred = {val:self.species.getNameToUse(val) for val in specs2eval}
+    preds = {val:self.species.predictAnnotationByEditDistance(specsdict2pred[val])[cn.FORMULA] \
+             for val in specsdict2pred}
+    recall = tools.getRecall(ref=refs, pred=preds, mean=True)
+    precision = tools.getPrecision(ref=refs, pred=preds, mean=True)
+    return {cn.RECALL: np.round(recall, 2), cn.PRECISION: np.round(precision, 2)}
+
+
+  def getReactionStatistics(self):
+    """
+    Get recall and precision 
+    of reactions in a model, for both species and
+    reactions.
+    This method works only if there exists
+    annotation in  model; otherwise
+    None will be returned. 
+    In the result, values will be 
+    returned after rounding to the two decimal places. 
+
+    Parameters
+    ----------
+    None 
+
+    Returns
+    -------
+    None/dict
+        Return None if there is nothing to evaluate
+        (i.e., if there is no existing model annotation)
+    """
+    # For reactions, component species should be
+    # predicted first. 
+    refs = self.reactions.exist_annotation
+    specs2pred = list(set(itertools.chain(*([self.reactions.reaction_components[val] for val in refs.keys()]))))
+    specsdict2pred = {val:self.species.getNameToUse(val) for val in specs2pred}
+    specs_predicted = {val:self.species.predictAnnotationByEditDistance(specsdict2pred[val])[cn.FORMULA] \
+                       for val in specs2pred}
+    preds = self.reactions.predictAnnotation(inp_spec_dict=specs_predicted,
+                                             inp_reac_list=refs.keys(),
+                                             update=True)[cn.CANDIDATES]
+    recall = tools.getRecall(ref=refs, pred=preds, mean=True)
+    precision = tools.getPrecision(ref=refs, pred=preds, mean=True)
+    return {cn.RECALL: np.round(recall, 2), cn.PRECISION: np.round(precision, 2)}
 
 
 
