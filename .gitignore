@@ -134,3 +134,4 @@ dmypy.json
 # Related to Read the Docs
 .readthedocs.yml~
 .readthedocs.yaml~
+*.rst~
