@@ -76,11 +76,10 @@ class SpeciesAnnotation(object):
       self.exist_annotation_formula = None
     # Below are predicted annotations in dictionary format
     # Once created, each will be {species_ID: float/str-list}
-    self.match_score = dict()
+    # self.match_score = dict()
     self.candidates = dict()
     self.formula = dict()
       
-  # FUTURE: check whether editdistance can be parallelized 
   def predictAnnotationByEditDistance(self, inp_str):
     """
     Predict annotation using the argument string 
@@ -119,207 +118,206 @@ class SpeciesAnnotation(object):
     return one_result
 
 
-  def predictAnnotationByName(self, inp_spec_list=None,
-                              specnames_dict=None,
-                              update=True):
-    """
-    Predict list of species annotations
-    using species names/IDs.
-    Rule is 1) use species name, 
-    2) if not provided, use species ID.
+  # def predictAnnotationByName(self, inp_spec_list=None,
+  #                             specnames_dict=None,
+  #                             update=True):
+  #   """
+  #   Predict list of species annotations
+  #   using species names/IDs.
+  #   Rule is 1) use species name, 
+  #   2) if not provided, use species ID.
 
-    Alternatively, user can directly predict annotations
-    without incurring libsbml model methods,
-    by using specnames_dict.
+  #   Alternatively, user can directly predict annotations
+  #   without incurring libsbml model methods,
+  #   by using specnames_dict.
   
-    Parameters
-    ----------
-    inp_spec_list: str-list (or iterable list of strings)
-        List of species IDs to extract names
-    specnames_dict: dict
-        {spec_id: spec_name(str)}
+  #   Parameters
+  #   ----------
+  #   inp_spec_list: str-list (or iterable list of strings)
+  #       List of species IDs to extract names
+  #   specnames_dict: dict
+  #       {spec_id: spec_name(str)}
 
-    Returns
-    -------
-    dict  
-        Should be {species_id: 
-                      {'chebi':[CHEBI terms]},
-                      {'score': match_score},
-                      {'formula': [chemical formulas in string]}
-                      {'formula2chebi': [CHEHBI terms]}
-                  }
-        match_score is expected to be between 0.0-1.0
-    """
-    if specnames_dict is None:
-      result = dict()
-      # If no list if given, predict all elements' annotations
-      if inp_spec_list is None:
-        spec_list = list(self.names)
-        # spec_list = [val.getId() for val in self.model.getListOfSpecies()]
-      else:
-        spec_list = inp_spec_list
-      for one_spec_id in spec_list:
-        one_spec_name = self.names[one_spec_id].lower()
-        # one_spec_name = self.model.getSpecies(one_spec_id).name.lower()
-        if len(one_spec_name) == 0:
-          one_spec_name = one_spec_id.lower()
-        result[one_spec_id] = self.predictAnnotationByEditDistance(inp_str=one_spec_name)
-    else:
-      result = {val:self.predictAnnotationByEditDistance(inp_str=specnames_dict[val]) \
-                for val in specnames_dict.keys()}      
-    # Might separate method or just leave it?
-    if update:
-      self.match_score.update({spec_id:result[spec_id][cn.MATCH_SCORE] for spec_id in result.keys()})
-      self.candidates.update({spec_id:result[spec_id][cn.CHEBI] for spec_id in result.keys()})
-      self.formula.update({spec_id:result[spec_id][cn.FORMULA] for spec_id in result.keys()})
-    return result
+  #   Returns
+  #   -------
+  #   dict  
+  #       Should be {species_id: 
+  #                     {'chebi':[CHEBI terms]},
+  #                     {'score': match_score},
+  #                     {'formula': [chemical formulas in string]}
+  #                     {'formula2chebi': [CHEHBI terms]}
+  #                 }
+  #       match_score is expected to be between 0.0-1.0
+  #   """
+  #   if specnames_dict is None:
+  #     result = dict()
+  #     # If no list if given, predict all elements' annotations
+  #     if inp_spec_list is None:
+  #       spec_list = list(self.names)
+  #       # spec_list = [val.getId() for val in self.model.getListOfSpecies()]
+  #     else:
+  #       spec_list = inp_spec_list
+  #     for one_spec_id in spec_list:
+  #       one_spec_name = self.names[one_spec_id].lower()
+  #       # one_spec_name = self.model.getSpecies(one_spec_id).name.lower()
+  #       if len(one_spec_name) == 0:
+  #         one_spec_name = one_spec_id.lower()
+  #       result[one_spec_id] = self.predictAnnotationByEditDistance(inp_str=one_spec_name)
+  #   else:
+  #     result = {val:self.predictAnnotationByEditDistance(inp_str=specnames_dict[val]) \
+  #               for val in specnames_dict.keys()}      
+  #   # Might separate method or just leave it?
+  #   if update:
+  #     self.match_score.update({spec_id:result[spec_id][cn.MATCH_SCORE] for spec_id in result.keys()})
+  #     self.candidates.update({spec_id:result[spec_id][cn.CHEBI] for spec_id in result.keys()})
+  #     self.formula.update({spec_id:result[spec_id][cn.FORMULA] for spec_id in result.keys()})
+  #   return result
 
 
-  def getAccuracy(self,
-                  ref_annotation=None,
-                  pred_annotation=None):
-    """
-    Compute accuracy of species annotation.
-    A list of annotations of 
-    a single species (identified by each ID) 
-    is considered accurate if it includes
-    the corresponding value of ref_annotation.
-    (More precisely, if there is at least one
-    intersection).
+  # def getAccuracy(self,
+  #                 ref_annotation=None,
+  #                 pred_annotation=None):
+  #   """
+  #   Compute accuracy of species annotation.
+  #   A list of annotations of 
+  #   a single species (identified by each ID) 
+  #   is considered accurate if it includes
+  #   the corresponding value of ref_annotation.
+  #   (More precisely, if there is at least one
+  #   intersection).
   
-    Parameters
-    ----------
-    ref_annotation: dict
-        {species_id: [str-annotation]}
-        if None, get self.exist_annotation_formula
-    pred_annotation: dict
-        {species_id: [str-annotation]}
-        if None, get self.candidates
+  #   Parameters
+  #   ----------
+  #   ref_annotation: dict
+  #       {species_id: [str-annotation]}
+  #       if None, get self.exist_annotation_formula
+  #   pred_annotation: dict
+  #       {species_id: [str-annotation]}
+  #       if None, get self.candidates
 
-    Returns
-    -------
-    float
-    """
-    accuracy = []
-    if ref_annotation is None:
-      ref = self.exist_annotation_formula
-    else:
-      ref = ref_annotation
-    if pred_annotation is None:
-      pred = self.formula
-    else:
-      pred = pred_annotation
-    ref_keys = set(ref.keys())
-    pred_keys = set(pred.keys())
-    # select species that can be evaluated
-    species_to_test = ref_keys.intersection(pred_keys)
-    for one_k in species_to_test:
-      if set(ref[one_k]).intersection(pred[one_k]):
-        accuracy.append(True)
-      else:
-        accuracy.append(False)
-    return np.mean(accuracy)
-
-
-  def getRecall(self,
-               ref_annotation=None,
-               pred_annotation=None,
-               mean=True):
-    """
-    More precise version of 'accuracy',
-    recall is the fraction of correct
-    elements detected. Currently,
-    it is calculated as the fraction of 
-    correct chemical formula detected
-
-    Parameters
-    ----------
-    ref_annotation: dict
-        {species_id: [str-annotation, i.e., formula]}
-        if None, get self.exist_annotation_formula
-    pred_annotation: dict
-        {species_id: [str-annotation, i.e., formula]}
-        if None, get self.candidates  
-    mean: bool
-        If True, get model-level average
-        If False, get value of each ID
-
-    Returns
-    -------
-    float/dict{id: float}
-        Depending on the 'mean' argument
-    """
-    recall = dict()
-    if ref_annotation is None:
-      ref = self.exist_annotation_formula
-    else:
-      ref = ref_annotation
-    if pred_annotation is None:
-      pred = self.formula
-    else:
-      pred = pred_annotation
-    ref_keys = set(ref.keys())
-    pred_keys = set(pred.keys())
-    # select species that can be evaluated
-    species_to_test = ref_keys.intersection(pred_keys)
-    # go through each species
-    for one_k in species_to_test:
-      num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
-      recall[one_k] = num_intersection / len(set(ref[one_k]))
-    if mean:
-      return np.mean([recall[val] for val in recall.keys()])
-    else:
-      return recall
+  #   Returns
+  #   -------
+  #   float
+  #   """
+  #   accuracy = []
+  #   if ref_annotation is None:
+  #     ref = self.exist_annotation_formula
+  #   else:
+  #     ref = ref_annotation
+  #   if pred_annotation is None:
+  #     pred = self.formula
+  #   else:
+  #     pred = pred_annotation
+  #   ref_keys = set(ref.keys())
+  #   pred_keys = set(pred.keys())
+  #   # select species that can be evaluated
+  #   species_to_test = ref_keys.intersection(pred_keys)
+  #   for one_k in species_to_test:
+  #     if set(ref[one_k]).intersection(pred[one_k]):
+  #       accuracy.append(True)
+  #     else:
+  #       accuracy.append(False)
+  #   return np.mean(accuracy)
 
 
-  def getPrecision(self,
-                   ref_annotation=None,
-                   pred_annotation=None,
-                   mean=True):
-    """
-    A complementary term of 'recall'
-    precision is the fraction of correct
-    elements detected from all detected formulas. 
+  # def getRecall(self,
+  #              ref_annotation=None,
+  #              pred_annotation=None,
+  #              mean=True):
+  #   """
+  #   More precise version of 'accuracy',
+  #   recall is the fraction of correct
+  #   elements detected. Currently,
+  #   it is calculated as the fraction of 
+  #   correct chemical formula detected
+
+  #   Parameters
+  #   ----------
+  #   ref_annotation: dict
+  #       {species_id: [str-annotation, i.e., formula]}
+  #       if None, get self.exist_annotation_formula
+  #   pred_annotation: dict
+  #       {species_id: [str-annotation, i.e., formula]}
+  #       if None, get self.candidates  
+  #   mean: bool
+  #       If True, get model-level average
+  #       If False, get value of each ID
+
+  #   Returns
+  #   -------
+  #   float/dict{id: float}
+  #       Depending on the 'mean' argument
+  #   """
+  #   recall = dict()
+  #   if ref_annotation is None:
+  #     ref = self.exist_annotation_formula
+  #   else:
+  #     ref = ref_annotation
+  #   if pred_annotation is None:
+  #     pred = self.formula
+  #   else:
+  #     pred = pred_annotation
+  #   ref_keys = set(ref.keys())
+  #   pred_keys = set(pred.keys())
+  #   # select species that can be evaluated
+  #   species_to_test = ref_keys.intersection(pred_keys)
+  #   # go through each species
+  #   for one_k in species_to_test:
+  #     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+  #     recall[one_k] = num_intersection / len(set(ref[one_k]))
+  #   if mean:
+  #     return np.mean([recall[val] for val in recall.keys()])
+  #   else:
+  #     return recall
+
+
+  # def getPrecision(self,
+  #                  ref_annotation=None,
+  #                  pred_annotation=None,
+  #                  mean=True):
+  #   """
+  #   A complementary term of 'recall'
+  #   precision is the fraction of correct
+  #   elements detected from all detected formulas. 
   
-    Parameters
-    ----------
-    ref_annotation: dict
-        {species_id: [str-annotation, i.e., formula]}
-        if None, get self.exist_annotation_formula
-    pred_annotation: dict
-        {species_id: [str-annotation, i.e., formula]}
-        if None, get self.candidates  
-    mean: bool
-        If True, get model-level average
-        If False, get value of each ID
+  #   Parameters
+  #   ----------
+  #   ref_annotation: dict
+  #       {species_id: [str-annotation, i.e., formula]}
+  #       if None, get self.exist_annotation_formula
+  #   pred_annotation: dict
+  #       {species_id: [str-annotation, i.e., formula]}
+  #       if None, get self.candidates  
+  #   mean: bool
+  #       If True, get model-level average
+  #       If False, get value of each ID
 
-    Returns
-    -------
-    : float/dict{id: float}
-        Depending on the 'mean' argument
-    """
-    precision = dict()
-    if ref_annotation is None:
-      ref = self.exist_annotation_formula
-    else:
-      ref = ref_annotation
-    if pred_annotation is None:
-      pred = self.formula
-    else:
-      pred = pred_annotation
-    ref_keys = set(ref.keys())
-    pred_keys = set(pred.keys())
-    # select species that can be evaluated
-    species_to_test = ref_keys.intersection(pred_keys)
-    # go through each species
-    for one_k in species_to_test:
-      num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
-      precision[one_k] = num_intersection / len(set(pred[one_k]))
-    if mean:
-      return np.mean([precision[val] for val in precision.keys()])
-    else:
-      return precision
-
+  #   Returns
+  #   -------
+  #   : float/dict{id: float}
+  #       Depending on the 'mean' argument
+  #   """
+  #   precision = dict()
+  #   if ref_annotation is None:
+  #     ref = self.exist_annotation_formula
+  #   else:
+  #     ref = ref_annotation
+  #   if pred_annotation is None:
+  #     pred = self.formula
+  #   else:
+  #     pred = pred_annotation
+  #   ref_keys = set(ref.keys())
+  #   pred_keys = set(pred.keys())
+  #   # select species that can be evaluated
+  #   species_to_test = ref_keys.intersection(pred_keys)
+  #   # go through each species
+  #   for one_k in species_to_test:
+  #     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+  #     precision[one_k] = num_intersection / len(set(pred[one_k]))
+  #   if mean:
+  #     return np.mean([precision[val] for val in precision.keys()])
+  #   else:
+  #     return precision
 
   def getNameToUse(self, inp_id):
     """
@@ -368,14 +366,6 @@ class SpeciesAnnotation(object):
     name_length = len(pred_result)
     num_candidates = len(pred_result[cn.CHEBI])
     match_score = np.mean([val[1] for val in pred_result[cn.MATCH_SCORE]])
-
-    # name_lengths = [len(self.getNameToUse(inp_id=val)) for val in id_list]
-    # nums_candidates = [len(self.candidates[val]) for val in id_list]
-    # # Only using average for now. May need to recollect information
-    # match_scores = [np.mean([val[1] for val in self.match_score[val]]) for val in id_list]
-    # data2prediction = list(zip(name_lengths, nums_candidates, match_scores))
-    # # Collect probability to be correct
-    # res = {val[0]:val[1] for val in list(zip(id_list, fitted_model.predict(data2prediction)))}
     return fitted_model.predict([[name_length, num_candidates, match_score]])[0]
 
 
@@ -391,7 +381,7 @@ class SpeciesAnnotation(object):
     Parameters
     ----------
     inp_recom: Recommendation
-       Result of recom.getSpeciesAnnotation
+       A namedtuple. Created by recom.getSpeciesAnnotation
   
     Returns
     -------

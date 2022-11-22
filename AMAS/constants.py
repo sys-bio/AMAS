@@ -38,3 +38,5 @@ with open(os.path.join(REF_DIR, 'kegg2rhea_bi_comp.lzma'), 'rb') as handle:
   REF_KEGG2RHEA_BI = compress_pickle.load(handle)
 with open(os.path.join(REF_DIR, 'rhea_all2bi_comp.lzma'), 'rb') as f:
   REF_RHEA2BI = compress_pickle.load(f)
+with open(os.path.join(REF_DIR, 'rhea2chebi_comp.lzma'), 'rb') as f:
+  REF_RHEA2CHEBI = compress_pickle.load(f)

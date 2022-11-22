@@ -55,7 +55,7 @@ class Recommender(object):
   def getSpeciesAnnotation(self,
                            pred_str=None,
                            pred_id=None,
-                           update=False):
+                           update=True):
     """
     Predict annotations of species using
     the provided string or ID.
@@ -99,7 +99,7 @@ class Recommender(object):
   def getSpeciesListAnnotation(self,
                                pred_strs=None,
                                pred_ids=None,
-                               update=False):
+                               update=True):
     """
     Get annotation of multiple species,
     given as a list (or an iterable object).
@@ -159,23 +159,13 @@ class Recommender(object):
     remaining_species = [val for val in specs2predict if val not in pred_formulas.keys()]
 
     if len(remaining_species) > 0:
-      spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species)
+      spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species,
+                                                   update=True)
       for one_recom in spec_results:
         chebis = [val[0] for val in one_recom.candidates]
         forms = list(set([cn.REF_CHEBI2FORMULA[k] \
                  for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
         pred_formulas[one_recom.id] = forms
-
-
-    # specs2predict = self.reactions.reaction_components[pred_id]
-    # spec_results = self.getSpeciesListAnnotation(pred_ids=specs2predict)
-    # # based on the function above; need to recreate it. 
-    # pred_formulas = dict()
-    # for one_recom in spec_results:
-    #   chebis = [val[0] for val in one_recom.candidates]
-    #   forms = list(set([cn.REF_CHEBI2FORMULA[k] \
-    #            for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
-    #   pred_formulas[one_recom.id] = forms
     pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
                                                      inp_reac_list=[pred_id],
                                                      update=update)
@@ -219,30 +209,13 @@ class Recommender(object):
     remaining_species = [val for val in specs_to_annotate if val not in pred_formulas.keys()]
 
     if len(remaining_species) > 0:
-      spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species)
+      spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species,
+                                                   update=True)
       for one_recom in spec_results:
         chebis = [val[0] for val in one_recom.candidates]
         forms = list(set([cn.REF_CHEBI2FORMULA[k] \
                  for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
         pred_formulas[one_recom.id] = forms
-
-
-
-
-
-    # # For now, just predict all species and continue? 
-    # spec_results = self.getSpeciesListAnnotation(pred_ids=specs_to_annotate)
-    # # pred_formulas = self.species.formula
-    # pred_formulas = dict()
-    # for one_recom in spec_results:
-    #   cands = [val[0] for val in one_recom.candidates]
-    #   forms = list(set([cn.REF_CHEBI2FORMULA[k] \
-    #            for k in cands if k in cn.REF_CHEBI2FORMULA.keys()]))
-    #   pred_formulas[one_recom.id] = forms
-
-
-
-
     # Use predicted species in formula
     pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
                                                      inp_reac_list=pred_ids,
@@ -397,7 +370,6 @@ class Recommender(object):
     recall = tools.getRecall(ref=refs, pred=preds, mean=True)
     precision = tools.getPrecision(ref=refs, pred=preds, mean=True)
     return {cn.RECALL: np.round(recall, 2), cn.PRECISION: np.round(precision, 2)}
-
 
 
   def updateSpeciesAnnotation(self, update_dict):
