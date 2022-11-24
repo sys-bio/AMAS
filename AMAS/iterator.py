@@ -41,8 +41,8 @@ class Iterator(object):
 
   def __init__(self,
                cur_spec_formula,
-               cur_reac_candidates,
-               reaction_cl):
+               reaction_cl,
+               reactions_to_update=None):
     """
     Ideally, arguments should be directly from
     the relevant species.formula and reactions.candidates.
@@ -55,18 +55,22 @@ class Iterator(object):
     cur_spec_formula: dict
         {species_id: [predicted-formulas]}
         Current (most recent) annotation of species
-    cur_reac_annottaion: dict
-        {reaction_id: [(predicted_rhea, match_score)]}
-        Current (most recent) annotation of reactions
     reaction_cl: AMAS.reaction_annotation.ReactionAnnotation
         reaction_annotation class instance with
         loaded SBML model information (reaction_components, etc.)
+    reaction_to_update: list-str
+        List of reactions to update; if None, use all reactions
+        from self.reactions.candidates
     """
     self.orig_spec_formula = cur_spec_formula
     # Storing reaction candidates separately, 
     # as it may be different than self.reactions.candidates
-    self.orig_reac_candidates = cur_reac_candidates
+    # self.orig_reac_candidates = cur_reac_candidates
     self.reactions = reaction_cl
+    if reactions_to_update:
+      self.r2upd = reactions_to_update
+    else:
+      self.r2upd = list(reaction_cl.candidates.keys())
 
 
   def getDictOfRheaComponentFormula(self, inp_rhea):
@@ -150,7 +154,7 @@ class Iterator(object):
     match_res_formula: dict
         {species_id: [formula-str]}
     """
-    one_rhea = self.orig_reac_candidates[reaction_id][0][0]
+    one_rhea = self.reactions.candidates[reaction_id][0][0]
     # match_res will look like {species_id: [CHEBI term]}
     # filter to have only keys and items of one reaction
     filt_spec_formula = {k:self.orig_spec_formula[k] \
@@ -187,9 +191,9 @@ class Iterator(object):
     """
     cur_spec_formulas.update(inp_spec2formula_dict)
     new_pred_res = self.reactions.predictAnnotation(inp_spec_dict = cur_spec_formulas,
-                                                    inp_reac_list = list(self.orig_reac_candidates.keys()))
+                                                    inp_reac_list = list(self.r2upd))
     old_pred_res = self.reactions.predictAnnotation(inp_spec_dict = self.orig_spec_formula,
-                                                    inp_reac_list = list(self.orig_reac_candidates.keys()))
+                                                    inp_reac_list = list(self.r2upd))
     # since candidates are already sorted, 
     # just check the match score (index '1') of the very first candidate tuple (index '0')
     new_pred_val = np.mean([new_pred_res[cn.MATCH_SCORE][k][0][1] \
@@ -207,6 +211,11 @@ class Iterator(object):
     and determine the final return products.
     Will be used by the recommender or the user. 
     """
+    for _ in MAX_ITER:
+      upd_spec_chebi = self.runOneMatchCycle()
+      if not upd_spec_chebi:
+        break
+    # Maybe run reaction once, and return final results :) 
     pass
 
   def runOneMatchCycle(self):
@@ -223,9 +232,9 @@ class Iterator(object):
         {species_id: [ChEBI terms]}
     """
     combine_upd_spec2chebi = dict()
-    # Use reactions existing in self.orig_reac_candidates
-    for one_reaction in self.orig_reac_candidates.keys():
-      one_rhea_tup = self.orig_reac_candidates[one_reaction]
+    # Use reactions existing in self.r2upd
+    for one_reaction in self.r2upd:
+      one_rhea_tup = self.reactions.candidates[one_reaction]
       one_rhea = one_rhea_tup[0][0]
       pred_spec_formulas = self.orig_spec_formula
       one_rhea2formula = self.getDictOfRheaComponentFormula(inp_rhea=one_rhea)
