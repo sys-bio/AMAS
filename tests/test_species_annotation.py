@@ -21,6 +21,8 @@ M_ATP_C = 'M_atp_c'
 M_AMP_C = 'M_amp_c'
 ONESET_SPECIES_IDS = [M_FDP_C, M_ATP_C]
 ONE_CHEBI = 'CHEBI:15414'
+ATP_CHEBI = 'CHEBI:30616'
+ATP_FORMULA = 'C10N5O13P3'
 DUMMY_RECOMMENDATION = cn.Recommendation('SAM',
                                          1.0,
                                          [('CHEBI:15414', 1.0), ('CHEBI:59789', 1.0)],
@@ -32,6 +34,7 @@ DUMMY_REF = {'a': ['ABC', 'BCD'],
               'b': ['DEF']}
 DUMMY_PRED = {'a': ['ABC'],
              'b': ['AAA']}
+DUMMY_DICT2UPDATE = {M_ATP_C: [ATP_CHEBI]}
 
 
 #############################
@@ -113,8 +116,11 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertTrue(one_formula in self.spec_cl.formula[DUMMY_ID])
 
 
-
-
+  def testUpdateSpeciesWithDict(self):
+    dummy_spec = sa.SpeciesAnnotation(libsbml_fpath = E_COLI_PATH)
+    dummy_spec.updateSpeciesWithDict(inp_dict=DUMMY_DICT2UPDATE)
+    self.assertEqual(dummy_spec.candidates[M_ATP_C], [(ATP_CHEBI, 1.0)])
+    self.assertEqual(dummy_spec.formula[M_ATP_C], [ATP_FORMULA])
 
 
 

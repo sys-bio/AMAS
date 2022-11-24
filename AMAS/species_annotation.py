@@ -8,7 +8,6 @@ mainly using editdistance method.
 """
 
 
-
 from AMAS import constants as cn
 from AMAS import tools
 
@@ -393,9 +392,27 @@ class SpeciesAnnotation(object):
     return None
 
 
-
-
-
+  def updateSpeciesWithDict(self, inp_dict):
+    """
+    A direct way of updating species annotations,
+    using ChEBI terms.
+    As match scores are given
+    when exact matches are found, 
+    match scores were given as 1.0. 
+  
+    Parameters
+    ----------
+    inp_dict: dict
+        {species_id: [chebi terms]}
+  
+    Returns
+    -------
+    None
+    """
+    info2upd_candidates = {k:[(val, 1.0) for val in inp_dict[k]] for k in inp_dict.keys()}
+    info2upd_formula = {k:[cn.REF_CHEBI2FORMULA[chebi] for chebi in inp_dict[k]] for k in inp_dict.keys()}
+    self.candidates.update(info2upd_candidates)
+    self.formula.update(info2upd_formula)
 
 
 

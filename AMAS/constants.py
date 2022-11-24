@@ -16,6 +16,7 @@ TEST_DIR = os.path.join(CUR_DIR, os.pardir, 'tests')
 CANDIDATES = 'candidates'
 CHEBI = "chebi"
 RHEA = "rhea"
+RHEA_HEADER = 'RHEA:'
 KEGG_REACTION = "kegg.reaction"
 MATCH_SCORE = "match_score"
 NAME_USED = "name_used"

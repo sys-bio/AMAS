@@ -34,8 +34,6 @@ class Recommender(object):
     mdoel_specs: tuple/list
         Iterable object of two tuples including model specifications
     """
-
-
     # First of all, collect model information from libsbml model
     # and send the informaton to create species/reaction annotations
     if libsbml_cl:
@@ -130,6 +128,7 @@ class Recommender(object):
 
   def getReactionAnnotation(self, pred_id,
                             use_exist_species_annotation=False,
+                            use_species_formula=None,
                             update=True):
     """
     Predict annotations of reactions using
@@ -143,6 +142,9 @@ class Recommender(object):
     # TODO:
     use_exist_speices_annotation: bool
         If True, use existing species annotation
+    # TODO: 
+    Try the use_species_formula, so if it is given,
+    use informatino from recom.species.formula
 
     Returns
     -------
@@ -270,7 +272,7 @@ class Recommender(object):
     reac_dict_raw_filt_rhea = {k:reac_dict_raw_rhea[k] \
                                for k in reac_dict_raw_rhea.keys() \
                                if reac_dict_raw_rhea[k] is not None}
-    reac_dict_format_rhea = {k:['RHEA:'+val for val in reac_dict_raw_filt_rhea[k]] \
+    reac_dict_format_rhea = {k:[cn.RHEA_HEADER+val for val in reac_dict_raw_filt_rhea[k]] \
                                for k in reac_dict_raw_filt_rhea.keys()}
     reac_dict_rhea = dict()
     for one_id in reac_dict_format_rhea.keys():

@@ -97,10 +97,7 @@ class ReactionAnnotation(object):
       self.exist_annotation = None
     # Attributes after prediction
     self.candidates = None
-    # self.match_score = None
-    self.sum_match_score = None
     self.query_df = None
-    # self.one_candidates = None
 
   # def getMatchScore(self, score_dict):
   #   """
@@ -172,7 +169,7 @@ class ReactionAnnotation(object):
 
     Returns
     -------
-    dict
+    : dict
         {'candidates': {reactionID: [candidates in RHEA]},
          'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
          'query_df': query_df}
