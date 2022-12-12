@@ -78,12 +78,14 @@ class ReactionAnnotation(object):
       reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
                            for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
                         for k in reac_dict_raw_filt_kegg.keys()}
+      reac_dict_filt_kegg = {k: reac_dict_kegg[k] for k in reac_dict_kegg.keys() \
+                                if reac_dict_kegg[k]}
       exist_annotation = reac_dict_rhea
-      for one_id in reac_dict_kegg.keys():
+      for one_id in reac_dict_filt_kegg.keys():
         if one_id in exist_annotation.keys():
-          exist_annotation[one_id] = list(set(exist_annotation[one_id] + reac_dict_kegg[one_id]))
+          exist_annotation[one_id] = list(set(exist_annotation[one_id] + reac_dict_filt_kegg[one_id]))
         else:
-          exist_annotation[one_id] = list(set(reac_dict_kegg[one_id]))
+          exist_annotation[one_id] = list(set(reac_dict_filt_kegg[one_id]))
       self.exist_annotation = exist_annotation
       self.reaction_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
                                   for val in self.model.getListOfReactions()}
