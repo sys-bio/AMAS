@@ -19,8 +19,6 @@ import pandas as pd
 import pickle
 
 
-with open(os.path.join(cn.REF_DIR, 'rhea2chebi_comp.lzma'), 'rb') as f:
-  REF_RHEA2CHEBI = compress_pickle.load(f)
 with open(os.path.join(cn.REF_DIR, 'dat_ref_mat_comp.lzma'), 'rb') as handle:
   REF_DAT = compress_pickle.load(handle)
 
@@ -58,35 +56,37 @@ class ReactionAnnotation(object):
       document = reader.readSBML(libsbml_fpath)
       self.model = document.getModel()
       # Annotation of Rhea
-      reac_dict_raw_rhea = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.RHEA) \
-                           for r in self.model.getListOfReactions()}
-      reac_dict_raw_filt_rhea = {k:reac_dict_raw_rhea[k] \
-                                 for k in reac_dict_raw_rhea.keys() \
-                                 if reac_dict_raw_rhea[k] is not None}
-      reac_dict_format_rhea = {k:['RHEA:'+val for val in reac_dict_raw_filt_rhea[k]] \
-                                 for k in reac_dict_raw_filt_rhea.keys()}
-      reac_dict_rhea = dict()
-      for one_id in reac_dict_format_rhea.keys():
-        one_itm = list(set([cn.REF_RHEA2BI[val] for val in reac_dict_format_rhea[one_id] \
-                   if val in cn.REF_RHEA2BI.keys()]))
-        if len(one_itm) > 0:
-          reac_dict_rhea[one_id] = one_itm
-      # Annotation of KEGG (mapped to corresponding Rhea BI term) 
-      reac_dict_raw_kegg = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.KEGG_REACTION) \
-                           for r in self.model.getListOfReactions()}
-      reac_dict_raw_filt_kegg = {k:reac_dict_raw_kegg[k] \
-                                 for k in reac_dict_raw_kegg.keys() \
-                                 if reac_dict_raw_kegg[k] is not None}
-      reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
-                           for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
-                        for k in reac_dict_raw_filt_kegg.keys()}
-      exist_annotation = reac_dict_rhea
-      for one_id in reac_dict_kegg.keys():
-        if one_id in exist_annotation.keys():
-          exist_annotation[one_id] = list(set(exist_annotation[one_id] + reac_dict_kegg[one_id]))
-        else:
-          exist_annotation[one_id] = list(set(reac_dict_kegg[one_id]))
-      self.exist_annotation = exist_annotation
+      # reac_dict_raw_rhea = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.RHEA) \
+      #                      for r in self.model.getListOfReactions()}
+      # reac_dict_raw_filt_rhea = {k:reac_dict_raw_rhea[k] \
+      #                            for k in reac_dict_raw_rhea.keys() \
+      #                            if reac_dict_raw_rhea[k] is not None}
+      # reac_dict_format_rhea = {k:['RHEA:'+val for val in reac_dict_raw_filt_rhea[k]] \
+      #                            for k in reac_dict_raw_filt_rhea.keys()}
+      # reac_dict_rhea = dict()
+      # for one_id in reac_dict_format_rhea.keys():
+      #   one_itm = list(set([cn.REF_RHEA2BI[val] for val in reac_dict_format_rhea[one_id] \
+      #              if val in cn.REF_RHEA2BI.keys()]))
+      #   if len(one_itm) > 0:
+      #     reac_dict_rhea[one_id] = one_itm
+      # # Annotation of KEGG (mapped to corresponding Rhea BI term) 
+      # reac_dict_raw_kegg = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.KEGG_REACTION) \
+      #                      for r in self.model.getListOfReactions()}
+      # reac_dict_raw_filt_kegg = {k:reac_dict_raw_kegg[k] \
+      #                            for k in reac_dict_raw_kegg.keys() \
+      #                            if reac_dict_raw_kegg[k] is not None}
+      # reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
+      #                      for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
+      #                   for k in reac_dict_raw_filt_kegg.keys()}
+      # reac_dict_filt_kegg = {k: reac_dict_kegg[k] for k in reac_dict_kegg.keys() \
+      #                           if reac_dict_kegg[k]}
+      # exist_annotation = reac_dict_rhea
+      # for one_id in reac_dict_filt_kegg.keys():
+      #   if one_id in exist_annotation.keys():
+      #     exist_annotation[one_id] = list(set(exist_annotation[one_id] + reac_dict_filt_kegg[one_id]))
+      #   else:
+      #     exist_annotation[one_id] = list(set(reac_dict_filt_kegg[one_id]))
+      self.exist_annotation = tools.extractExistingReactionAnnotation(inp_model=self.model)
       self.reaction_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
                                   for val in self.model.getListOfReactions()}
     elif inp_tuple is not None:
@@ -99,10 +99,7 @@ class ReactionAnnotation(object):
       self.exist_annotation = None
     # Attributes after prediction
     self.candidates = None
-    self.match_score = None
-    self.sum_match_score = None
     self.query_df = None
-    # self.one_candidates = None
 
   # def getMatchScore(self, score_dict):
   #   """
@@ -174,7 +171,7 @@ class ReactionAnnotation(object):
 
     Returns
     -------
-    dict
+    : dict
         {'candidates': {reactionID: [candidates in RHEA]},
          'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
          'query_df': query_df}
@@ -221,8 +218,8 @@ class ReactionAnnotation(object):
       match_score_per_cand.sort(key=operator.itemgetter(1), reverse=True)
       pred_match_score[one_rid] = match_score_per_cand
     if update:
-      self.candidates = pred_cands
-      self.match_score = pred_match_score
+      self.candidates = pred_match_score
+      # self.match_score = pred_match_score
       self.query_df = query_df
     #
     return {'candidates': pred_cands,
@@ -329,154 +326,153 @@ class ReactionAnnotation(object):
   #   else:
   #     None
 
-  def getAccuracy(self,
-                  ref_annotation=None,
-                  pred_annotation=None):
-    """
-    Compute accuracy of reaction annotation.
-    A list of annotations of 
-    a single reaction (identified by each ID) 
-    is considered accurate if it includes
-    the corresponding value of ref_annotation.
-    (More precisely, if there is at least one
-    intersection).
-    Once prediction is run, self.candidates
-    can be used for pred_annotation. 
+  # def getAccuracy(self,
+  #                 ref_annotation=None,
+  #                 pred_annotation=None):
+  #   """
+  #   Compute accuracy of reaction annotation.
+  #   A list of annotations of 
+  #   a single reaction (identified by each ID) 
+  #   is considered accurate if it includes
+  #   the corresponding value of ref_annotation.
+  #   (More precisely, if there is at least one
+  #   intersection).
+  #   Once prediction is run, self.candidates
+  #   can be used for pred_annotation. 
   
-    Parameters
-    ----------
-    ref_annotation: dict
-        {reaction_id: [str-annotation]}
-        if None, get self.exist_annotation
-    pred_annotation: dict
-        {reaction_id: [str-annotation]}
-        if None, get self.candidates
+  #   Parameters
+  #   ----------
+  #   ref_annotation: dict
+  #       {reaction_id: [str-annotation]}
+  #       if None, get self.exist_annotation
+  #   pred_annotation: dict
+  #       {reaction_id: [str-annotation]}
+  #       if None, get self.candidates
 
 
-    Returns
-    -------
-    float
-    """
-    accuracy = []
-    if ref_annotation is None:
-      ref = self.exist_annotation
-    else:
-      ref = ref_annotation
-    if pred_annotation is None:
-      pred = self.candidates
-    else:
-      pred = pred_annotation
-    ref_keys = set(ref.keys())
-    pred_keys = set(pred.keys())
-    reactions_to_test = ref_keys.intersection(pred_keys)
-    for one_k in reactions_to_test:
-      if set(ref[one_k]).intersection(pred[one_k]):
-        accuracy.append(True)
-      else:
-        accuracy.append(False)
-    return np.mean(accuracy)
+  #   Returns
+  #   -------
+  #   float
+  #   """
+  #   accuracy = []
+  #   if ref_annotation is None:
+  #     ref = self.exist_annotation
+  #   else:
+  #     ref = ref_annotation
+  #   if pred_annotation is None:
+  #     pred = self.candidates
+  #   else:
+  #     pred = pred_annotation
+  #   ref_keys = set(ref.keys())
+  #   pred_keys = set(pred.keys())
+  #   reactions_to_test = ref_keys.intersection(pred_keys)
+  #   for one_k in reactions_to_test:
+  #     if set(ref[one_k]).intersection(pred[one_k]):
+  #       accuracy.append(True)
+  #     else:
+  #       accuracy.append(False)
+  #   return np.mean(accuracy)
 
-  def getRecall(self,
-                ref_annotation=None,
-                pred_annotation=None,
-                mean=True):
-    """
-    Compute recall of predicted reactionm
-    annotations by comparing them with 
-    reference. 
-    More straightforward than species
-    as it doens't have to convert to formulas.
+  # def getRecall(self,
+  #               ref_annotation=None,
+  #               pred_annotation=None,
+  #               mean=True):
+  #   """
+  #   Compute recall of predicted reactionm
+  #   annotations by comparing them with 
+  #   reference. 
+  #   More straightforward than species
+  #   as it doens't have to convert to formulas.
 
-    Parameters
-    ----------
-    ref_annotation: dict
-        {reaction_id: [str-annotation, i.e., Rhea]}
-        if None, get self.exist_annotation_formula
-    pred_annotation: dict
-        {reaction_id: [str-annotation, i.e., Rhea]}
-        if None, get self.candidates  
-    mean: bool
-        If True, get model-level average
-        If False, get value of each ID
+  #   Parameters
+  #   ----------
+  #   ref_annotation: dict
+  #       {reaction_id: [str-annotation, i.e., Rhea]}
+  #       if None, get self.exist_annotation_formula
+  #   pred_annotation: dict
+  #       {reaction_id: [str-annotation, i.e., Rhea]}
+  #       if None, get self.candidates  
+  #   mean: bool
+  #       If True, get model-level average
+  #       If False, get value of each ID
 
-    Returns
-    -------
-  float/dict {id: float}
-        Depending on the 'mean' argument
-    """
-    recall = dict()
-    if ref_annotation is None:
-      ref = self.exist_annotation
-    else:
-      ref = ref_annotation
-    if pred_annotation is None:
-      pred = self.candidaates
-    else:
-      pred = pred_annotation
-    ref_keys = set(ref.keys())
-    pred_keys = set(pred.keys())
-    # select species that can be evaluated
-    species_to_test = ref_keys.intersection(pred_keys)
-    # go through each species
-    for one_k in species_to_test:
-      num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
-      recall[one_k] = num_intersection / len(set(ref[one_k]))
-    if mean:
-      return np.mean([recall[val] for val in recall.keys()])
-    else:
-      return recall
+  #   Returns
+  #   -------
+  # float/dict {id: float}
+  #       Depending on the 'mean' argument
+  #   """
+  #   recall = dict()
+  #   if ref_annotation is None:
+  #     ref = self.exist_annotation
+  #   else:
+  #     ref = ref_annotation
+  #   if pred_annotation is None:
+  #     pred = self.candidaates
+  #   else:
+  #     pred = pred_annotation
+  #   ref_keys = set(ref.keys())
+  #   pred_keys = set(pred.keys())
+  #   # select species that can be evaluated
+  #   species_to_test = ref_keys.intersection(pred_keys)
+  #   # go through each species
+  #   for one_k in species_to_test:
+  #     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+  #     recall[one_k] = num_intersection / len(set(ref[one_k]))
+  #   if mean:
+  #     return np.mean([recall[val] for val in recall.keys()])
+  #   else:
+  #     return recall
 
 
-  def getPrecision(self,
-                   ref_annotation=None,
-                   pred_annotation=None,
-                   mean=True):
-    """
-    Compute precision of predicted reactionm
-    annotations by comparing them with 
-    reference. 
-    More straightforward than species
-    as it doens't have to convert to formulas.
+  # def getPrecision(self,
+  #                  ref_annotation=None,
+  #                  pred_annotation=None,
+  #                  mean=True):
+  #   """
+  #   Compute precision of predicted reactionm
+  #   annotations by comparing them with 
+  #   reference. 
+  #   More straightforward than species
+  #   as it doens't have to convert to formulas.
 
-    Parameters
-    ----------
-    ref_annotation: dict
-        {reaction_id: [str-annotation, i.e., Rhea]}
-        if None, get self.exist_annotation_formula
-    pred_annotation: dict
-        {reaction_id: [str-annotation, i.e., Rhea]}
-        if None, get self.candidates  
-    mean: bool
-        If True, get model-level average
-        If False, get value of each ID
+  #   Parameters
+  #   ----------
+  #   ref_annotation: dict
+  #       {reaction_id: [str-annotation, i.e., Rhea]}
+  #       if None, get self.exist_annotation_formula
+  #   pred_annotation: dict
+  #       {reaction_id: [str-annotation, i.e., Rhea]}
+  #       if None, get self.candidates  
+  #   mean: bool
+  #       If True, get model-level average
+  #       If False, get value of each ID
 
-    Returns
-    -------
-    float/dict {id: float}
-        Depending on the 'mean' argument
-    """
-    precision = dict()
-    if ref_annotation is None:
-      ref = self.exist_annotation
-    else:
-      ref = ref_annotation
-    if pred_annotation is None:
-      pred = self.candidates
-    else:
-      pred = pred_annotation
-    ref_keys = set(ref.keys())
-    pred_keys = set(pred.keys())
-    # select species that can be evaluated
-    species_to_test = ref_keys.intersection(pred_keys)
-    # go through each species
-    for one_k in species_to_test:
-      num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
-      precision[one_k] = num_intersection / len(set(pred[one_k]))
-    if mean:
-      return np.mean([precision[val] for val in precision.keys()])
-    else:
-      return precision
-
+  #   Returns
+  #   -------
+  #   float/dict {id: float}
+  #       Depending on the 'mean' argument
+  #   """
+  #   precision = dict()
+  #   if ref_annotation is None:
+  #     ref = self.exist_annotation
+  #   else:
+  #     ref = ref_annotation
+  #   if pred_annotation is None:
+  #     pred = self.candidates
+  #   else:
+  #     pred = pred_annotation
+  #   ref_keys = set(ref.keys())
+  #   pred_keys = set(pred.keys())
+  #   # select species that can be evaluated
+  #   species_to_test = ref_keys.intersection(pred_keys)
+  #   # go through each species
+  #   for one_k in species_to_test:
+  #     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
+  #     precision[one_k] = num_intersection / len(set(pred[one_k]))
+  #   if mean:
+  #     return np.mean([precision[val] for val in precision.keys()])
+  #   else:
+  #     return precision
 
 
   # Develop a method to evaluate results using fitted model

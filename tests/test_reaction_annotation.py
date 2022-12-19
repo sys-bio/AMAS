@@ -37,8 +37,10 @@ class TestReactionAnnotation(unittest.TestCase):
   def setUp(self):
     self.spec_cl = sa.SpeciesAnnotation(libsbml_fpath = E_COLI_PATH)
     self.reac_cl = ra.ReactionAnnotation(libsbml_fpath = E_COLI_PATH)
-    pred_species = self.spec_cl.predictAnnotationByName(inp_spec_list=COMPONENTS)
-    self.pred_reaction = self.reac_cl.predictAnnotation(inp_spec_dict=self.spec_cl.formula,
+    self.pred_species = {val: self.spec_cl.predictAnnotationByEditDistance(inp_str=self.spec_cl.names[val]) \
+                         for val in COMPONENTS}
+    self.spec_formula_dict = {val: self.pred_species[val][cn.FORMULA] for val in COMPONENTS}  
+    self.pred_reaction = self.reac_cl.predictAnnotation(inp_spec_dict=self.spec_formula_dict,
                                                         inp_reac_list=[R_PFK],
                                                         update=True)
   ### Was used for iteration algorithm
@@ -83,27 +85,27 @@ class TestReactionAnnotation(unittest.TestCase):
   #                                                        inp_rhea=ONE_CANDIDATE)
   #   self.assertEqual(chebi2update[ATP], [ONE_CHEBI])
 
-  def testGetAccuracy(self):
-    pred = {R_PFK: ['RHEA:16112']}
-    self.assertEqual(self.reac_cl.getAccuracy(pred_annotation=pred), 1.0)
+  # def testGetAccuracy(self):
+  #   pred = {R_PFK: ['RHEA:16112']}
+  #   self.assertEqual(self.reac_cl.getAccuracy(pred_annotation=pred), 1.0)
 
 
-  def testGetRecall(self):
-    recall1 = self.reac_cl.getRecall(ref_annotation=DUMMY_REF,
-                                     pred_annotation=DUMMY_PRED,
-                                     mean=True)
-    self.assertEqual(recall1, 0.25)
-    recall2 = self.reac_cl.getRecall(pred_annotation=self.pred_reaction[cn.CANDIDATES])
-    self.assertEqual(recall2, 1.0)
+  # def testGetRecall(self):
+  #   recall1 = self.reac_cl.getRecall(ref_annotation=DUMMY_REF,
+  #                                    pred_annotation=DUMMY_PRED,
+  #                                    mean=True)
+  #   self.assertEqual(recall1, 0.25)
+  #   recall2 = self.reac_cl.getRecall(pred_annotation=self.pred_reaction[cn.CANDIDATES])
+  #   self.assertEqual(recall2, 1.0)
 
 
-  def testGetPrecision(self):
-    precision1 = self.reac_cl.getPrecision(ref_annotation=DUMMY_REF,
-                                           pred_annotation=DUMMY_PRED,
-                                           mean=True)
-    self.assertEqual(precision1, 0.5)
-    precision2 = self.reac_cl.getPrecision(pred_annotation=self.pred_reaction[cn.CANDIDATES])
-    self.assertEqual(np.round(precision2, 2), 0.17)
+  # def testGetPrecision(self):
+  #   precision1 = self.reac_cl.getPrecision(ref_annotation=DUMMY_REF,
+  #                                          pred_annotation=DUMMY_PRED,
+  #                                          mean=True)
+  #   self.assertEqual(precision1, 0.5)
+  #   precision2 = self.reac_cl.getPrecision(pred_annotation=self.pred_reaction[cn.CANDIDATES])
+  #   self.assertEqual(np.round(precision2, 2), 0.17)
 
 
 

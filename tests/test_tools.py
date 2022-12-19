@@ -24,6 +24,11 @@ DUMMY_PRED = {'a': ['ABC'],
 DUMMY_A = 'a'
 DUMMY_B = 'b'
 
+ATP = 'ATP'
+ATP_CHEBI = ['CHEBI:15422']
+REACTION_CREATINEKINASE = 'CreatineKinase'
+CREATINEKINASE_ANNOTATION = ['RHEA:17160']
+
 #############################
 # Tests
 #############################
@@ -33,14 +38,26 @@ class TestFunctions(unittest.TestCase):
     reader = libsbml.SBMLReader()
     document = reader.readSBML(BIOMD_248_PATH)
     self.model = document.getModel()
-    self.annotation = self.model.getReaction('CreatineKinase').getAnnotationString()
-  
+    self.annotation = self.model.getReaction(REACTION_CREATINEKINASE).getAnnotationString()
+
+  def testExtractExistingSpeciesAnnotation(self):
+    spec_annotation = tools.extractExistingSpeciesAnnotation(inp_model=self.model)
+    self.assertTrue(spec_annotation[ATP], ATP_CHEBI)
+
+  def testExtractExistingReactionAnnotation(self):
+    one_dict_rhea = tools.extractExistingReactionAnnotation(inp_model=self.model)
+    self.assertEqual(one_dict_rhea[REACTION_CREATINEKINASE], CREATINEKINASE_ANNOTATION)
+
+  def textExtractRheaFromAnnotationString(self):
+    one_str = model.getReaction(REACTION_CREATINEKINASE).getAnnotationString()
+    one_list_rhea = tools.extractExistingRheaFromAnnotationString(inp_str=one_str)
+    self.assertEqual(one_list_rhea, CREATINEKINASE_ANNOTATION)
+
   def testGetOntologyFromString(self):
     filt_annotation = tools.getOntologyFromString(string_annotation=self.annotation)
-    self.assertTrue(('ec-code', '2.7.3.2') in filt_annotation)
-    self.assertTrue(('kegg.reaction', 'R01881') in filt_annotation)
-    self.assertTrue(('go', 'GO:0004111') in filt_annotation)
-
+    self.assertTrue((cn.EC, '2.7.3.2') in filt_annotation)
+    self.assertTrue((cn.KEGG_REACTION, 'R01881') in filt_annotation)
+    self.assertTrue((cn.GO, 'GO:0004111') in filt_annotation)
 
   def testGetQualifierFromString(self):
     ec_annotation = tools.getQualifierFromString(input_str=self.annotation,
