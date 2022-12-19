@@ -375,9 +375,11 @@ class Recommender(object):
     specs2eval = list(refs.keys())
     if len(specs2eval) == 0:
       return None
-    specsdict2pred = {val:self.species.getNameToUse(val) for val in specs2eval}
-    preds = {val:self.species.predictAnnotationByEditDistance(specsdict2pred[val])[cn.FORMULA] \
-             for val in specsdict2pred}
+    preds_comb = self.species.predictAnnotationByCosineSimilarity(inp_ids=specs2eval)
+    preds = {val:preds_comb[val][cn.FORMULA] for val in preds_comb.keys()}
+    # specsdict2pred = {val:self.species.getNameToUse(val) for val in specs2eval}
+    # preds = {val:self.species.predictAnnotationByCosineSimilarity(specsdict2pred[val])[cn.FORMULA] \
+    #          for val in specsdict2pred}
     recall = tools.getRecall(ref=refs, pred=preds, mean=True)
     precision = tools.getPrecision(ref=refs, pred=preds, mean=True)
     return {cn.RECALL: np.round(recall, 2), cn.PRECISION: np.round(precision, 2)}
@@ -407,10 +409,14 @@ class Recommender(object):
     # For reactions, component species should be
     # predicted first. 
     refs = self.reactions.exist_annotation
+    if len(refs) == 0:
+      return None
     specs2pred = list(set(itertools.chain(*([self.reactions.reaction_components[val] for val in refs.keys()]))))
-    specsdict2pred = {val:self.species.getNameToUse(val) for val in specs2pred}
-    specs_predicted = {val:self.species.predictAnnotationByEditDistance(specsdict2pred[val])[cn.FORMULA] \
-                       for val in specs2pred}
+    spec_preds_comb = self.species.predictAnnotationByCosineSimilarity(inp_ids=specs2pred)
+    specs_predicted = {val:spec_preds_comb[val][cn.FORMULA] for val in spec_preds_comb.keys()}
+    # specsdict2pred = {val:self.species.getNameToUse(val) for val in specs2pred}
+    # specs_predicted = {val:self.species.predictAnnotationByEditDistance(specsdict2pred[val])[cn.FORMULA] \
+    #                    for val in specs2pred}
     preds = self.reactions.predictAnnotation(inp_spec_dict=specs_predicted,
                                              inp_reac_list=refs.keys(),
                                              update=True)[cn.CANDIDATES]

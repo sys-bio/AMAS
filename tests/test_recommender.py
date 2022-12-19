@@ -2,6 +2,7 @@
 # unittest for AMAS.recommender
 
 import libsbml
+import numpy as np
 import os
 import sys
 import unittest
@@ -106,7 +107,7 @@ class TestRecommender(unittest.TestCase):
     recom2 = recommender.Recommender(libsbml_fpath=BIOMD_634_PATH)
     spec_stats = recom2.getSpeciesStatistics()
     self.assertEqual(spec_stats[cn.RECALL], 1.0)
-    self.assertEqual(spec_stats[cn.PRECISION], 0.67)
+    self.assertEqual(spec_stats[cn.PRECISION], 0.12)
 
   def testGetReactionStatistics(self):
     reac_stats = self.recom.getReactionStatistics()
