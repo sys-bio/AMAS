@@ -11,17 +11,25 @@ mainly using editdistance method.
 from AMAS import constants as cn
 from AMAS import tools
 
+import collections
 import compress_pickle
 import editdistance
+import itertools
 import libsbml
 import numpy as np
 import operator
 import os
+import pandas as pd
 import pickle
+import re
 
 
 with open(os.path.join(cn.REF_DIR, 'chebi_low_synonyms_comp.lzma'), 'rb') as f:
   CHEBI_LOW_SYNONYMS = compress_pickle.load(f)
+CHARCOUNT_COMB_DF = compress_pickle.load(os.path.join(cn.REF_DIR, 'charcount_df_scaled.lzma'),
+                                         compression="lzma")
+CHARCOUNT_DF = CHARCOUNT_COMB_DF.iloc[:, :-2]
+CHEBI_DF = CHARCOUNT_COMB_DF.iloc[:, -2:]
 # A trained random forest model 
 SPECIES_RF = pickle.load(open(os.path.join(cn.REF_DIR, 'species_randomforestcv.sav'), 'rb'))
 
@@ -54,13 +62,13 @@ class SpeciesAnnotation(object):
       document = reader.readSBML(libsbml_fpath)
       self.model = document.getModel()
       self.names = {val.getId():val.name for val in self.model.getListOfSpecies()}
-      exist_annotation_raw = {val.getId():tools.getQualifierFromString(val.getAnnotationString(), cn.CHEBI) \
-                        for val in self.model.getListOfSpecies()}
-      exist_annotation_chebi = {val:exist_annotation_raw[val] for val in exist_annotation_raw.keys() \
-                               if exist_annotation_raw[val] is not None}
-      self.exist_annotation = exist_annotation_chebi
-      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(exist_annotation_chebi[k], cn.REF_CHEBI2FORMULA) \
-                                       for k in exist_annotation_chebi.keys()}
+      # exist_annotation_raw = {val.getId():tools.getQualifierFromString(val.getAnnotationString(), cn.CHEBI) \
+      #                   for val in self.model.getListOfSpecies()}
+      # exist_annotation_chebi = {val:exist_annotation_raw[val] for val in exist_annotation_raw.keys() \
+      #                          if exist_annotation_raw[val] is not None}
+      self.exist_annotation = tools.extractExistingSpeciesAnnotation(self.model)
+      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(self.exist_annotation[k], cn.REF_CHEBI2FORMULA) \
+                                       for k in self.exist_annotation.keys()}
     # inp_tuple: ({species_id:species_name}, {species_id: [CHEBI annotations]})
     elif inp_tuple is not None:
       self.model = None
@@ -75,7 +83,6 @@ class SpeciesAnnotation(object):
       self.exist_annotation_formula = None
     # Below are predicted annotations in dictionary format
     # Once created, each will be {species_ID: float/str-list}
-    # self.match_score = dict()
     self.candidates = dict()
     self.formula = dict()
       
@@ -92,8 +99,10 @@ class SpeciesAnnotation(object):
     Returns
     -------
     dict
-        {key: value(s)}
-        'key' can be match_score, chebi, etc. 
+        {'name_used': str,
+         'chebi': [list-ChEBI],
+         'match_score': [(ChEBI, float)],
+         'formula': [list-formula]} 
     """
     one_result = dict()
     # For now, choose the terms that are included in the CHEBI-formula mapping reference
@@ -116,207 +125,129 @@ class SpeciesAnnotation(object):
     one_result[cn.FORMULA] = min_min_formula
     return one_result
 
-
-  # def predictAnnotationByName(self, inp_spec_list=None,
-  #                             specnames_dict=None,
-  #                             update=True):
-  #   """
-  #   Predict list of species annotations
-  #   using species names/IDs.
-  #   Rule is 1) use species name, 
-  #   2) if not provided, use species ID.
-
-  #   Alternatively, user can directly predict annotations
-  #   without incurring libsbml model methods,
-  #   by using specnames_dict.
+  # Methods to use Cosine Similarity
+  def getCountOfIndividualCharacters(self, inp_str):
+    """
+    Get a list of characters
+    between a-z and 0-9. 
   
-  #   Parameters
-  #   ----------
-  #   inp_spec_list: str-list (or iterable list of strings)
-  #       List of species IDs to extract names
-  #   specnames_dict: dict
-  #       {spec_id: spec_name(str)}
-
-  #   Returns
-  #   -------
-  #   dict  
-  #       Should be {species_id: 
-  #                     {'chebi':[CHEBI terms]},
-  #                     {'score': match_score},
-  #                     {'formula': [chemical formulas in string]}
-  #                     {'formula2chebi': [CHEHBI terms]}
-  #                 }
-  #       match_score is expected to be between 0.0-1.0
-  #   """
-  #   if specnames_dict is None:
-  #     result = dict()
-  #     # If no list if given, predict all elements' annotations
-  #     if inp_spec_list is None:
-  #       spec_list = list(self.names)
-  #       # spec_list = [val.getId() for val in self.model.getListOfSpecies()]
-  #     else:
-  #       spec_list = inp_spec_list
-  #     for one_spec_id in spec_list:
-  #       one_spec_name = self.names[one_spec_id].lower()
-  #       # one_spec_name = self.model.getSpecies(one_spec_id).name.lower()
-  #       if len(one_spec_name) == 0:
-  #         one_spec_name = one_spec_id.lower()
-  #       result[one_spec_id] = self.predictAnnotationByEditDistance(inp_str=one_spec_name)
-  #   else:
-  #     result = {val:self.predictAnnotationByEditDistance(inp_str=specnames_dict[val]) \
-  #               for val in specnames_dict.keys()}      
-  #   # Might separate method or just leave it?
-  #   if update:
-  #     self.match_score.update({spec_id:result[spec_id][cn.MATCH_SCORE] for spec_id in result.keys()})
-  #     self.candidates.update({spec_id:result[spec_id][cn.CHEBI] for spec_id in result.keys()})
-  #     self.formula.update({spec_id:result[spec_id][cn.FORMULA] for spec_id in result.keys()})
-  #   return result
-
-
-  # def getAccuracy(self,
-  #                 ref_annotation=None,
-  #                 pred_annotation=None):
-  #   """
-  #   Compute accuracy of species annotation.
-  #   A list of annotations of 
-  #   a single species (identified by each ID) 
-  #   is considered accurate if it includes
-  #   the corresponding value of ref_annotation.
-  #   (More precisely, if there is at least one
-  #   intersection).
+    Parameters
+    ----------
+    inp_str: str
   
-  #   Parameters
-  #   ----------
-  #   ref_annotation: dict
-  #       {species_id: [str-annotation]}
-  #       if None, get self.exist_annotation_formula
-  #   pred_annotation: dict
-  #       {species_id: [str-annotation]}
-  #       if None, get self.candidates
+    Returns
+    -------
+    : list
+    """
+    return collections.Counter(itertools.chain(*re.findall('[a-z0-9]+', inp_str.lower())))
 
-  #   Returns
-  #   -------
-  #   float
-  #   """
-  #   accuracy = []
-  #   if ref_annotation is None:
-  #     ref = self.exist_annotation_formula
-  #   else:
-  #     ref = ref_annotation
-  #   if pred_annotation is None:
-  #     pred = self.formula
-  #   else:
-  #     pred = pred_annotation
-  #   ref_keys = set(ref.keys())
-  #   pred_keys = set(pred.keys())
-  #   # select species that can be evaluated
-  #   species_to_test = ref_keys.intersection(pred_keys)
-  #   for one_k in species_to_test:
-  #     if set(ref[one_k]).intersection(pred[one_k]):
-  #       accuracy.append(True)
-  #     else:
-  #       accuracy.append(False)
-  #   return np.mean(accuracy)
-
-
-  # def getRecall(self,
-  #              ref_annotation=None,
-  #              pred_annotation=None,
-  #              mean=True):
-  #   """
-  #   More precise version of 'accuracy',
-  #   recall is the fraction of correct
-  #   elements detected. Currently,
-  #   it is calculated as the fraction of 
-  #   correct chemical formula detected
-
-  #   Parameters
-  #   ----------
-  #   ref_annotation: dict
-  #       {species_id: [str-annotation, i.e., formula]}
-  #       if None, get self.exist_annotation_formula
-  #   pred_annotation: dict
-  #       {species_id: [str-annotation, i.e., formula]}
-  #       if None, get self.candidates  
-  #   mean: bool
-  #       If True, get model-level average
-  #       If False, get value of each ID
-
-  #   Returns
-  #   -------
-  #   float/dict{id: float}
-  #       Depending on the 'mean' argument
-  #   """
-  #   recall = dict()
-  #   if ref_annotation is None:
-  #     ref = self.exist_annotation_formula
-  #   else:
-  #     ref = ref_annotation
-  #   if pred_annotation is None:
-  #     pred = self.formula
-  #   else:
-  #     pred = pred_annotation
-  #   ref_keys = set(ref.keys())
-  #   pred_keys = set(pred.keys())
-  #   # select species that can be evaluated
-  #   species_to_test = ref_keys.intersection(pred_keys)
-  #   # go through each species
-  #   for one_k in species_to_test:
-  #     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
-  #     recall[one_k] = num_intersection / len(set(ref[one_k]))
-  #   if mean:
-  #     return np.mean([recall[val] for val in recall.keys()])
-  #   else:
-  #     return recall
-
-
-  # def getPrecision(self,
-  #                  ref_annotation=None,
-  #                  pred_annotation=None,
-  #                  mean=True):
-  #   """
-  #   A complementary term of 'recall'
-  #   precision is the fraction of correct
-  #   elements detected from all detected formulas. 
+  def prepareCounterQuery(self,
+                          specs,
+                          ref_cols,
+                          use_id=True):
+    """
+    Prepare a query vector, which will be used  
+    as a vector for predictor variables.
+    Input will be a list of
+    IDs using which names_used will be determined. 
+    In addition, querys will also be scaled
+    by the length of each vector. 
   
-  #   Parameters
-  #   ----------
-  #   ref_annotation: dict
-  #       {species_id: [str-annotation, i.e., formula]}
-  #       if None, get self.exist_annotation_formula
-  #   pred_annotation: dict
-  #       {species_id: [str-annotation, i.e., formula]}
-  #       if None, get self.candidates  
-  #   mean: bool
-  #       If True, get model-level average
-  #       If False, get value of each ID
+    There is 'use_id' option, so
+    if False, directly use the string
+    instead of searching for used_name. 
+  
+    Parameters
+    ----------
+    list-str: specs
+        IDs of species
+    ref_cols: list-str
+        Column names to use
+    use_id: bool
+        If False, directly use the string
+        If True, use getNameToUse
+      
+    Returns
+    -------
+    : pandas.DataFrame
+    : dict
+    """
+    name_used = dict()
+    query_mat = pd.DataFrame(0, index=ref_cols, columns=specs)
+    for one_spec in specs:
+      if use_id:
+        name2use = self.getNameToUse(one_spec)
+        # characters are lowered in getCountOfIndividualCharacters()
+        char_counts = self.getCountOfIndividualCharacters(name2use)
+        name_used[one_spec] = name2use
+      else:
+        name2use = one_spec
+        # characters are lowered in getCountOfIndividualCharacters()
+        char_counts = self.getCountOfIndividualCharacters(name2use)
+        name_used[one_spec] = name2use
+      for one_char in char_counts:
+        query_mat.loc[one_char, one_spec] = char_counts[one_char] 
+    # Now, scale it using the vector distance
+    div_row = query_mat.apply(lambda col : np.sqrt(np.sum([val**2 for val in col])), axis = 0)
+    norm_query = query_mat.divide(div_row, axis=1)
+    return norm_query, name_used
 
-  #   Returns
-  #   -------
-  #   : float/dict{id: float}
-  #       Depending on the 'mean' argument
-  #   """
-  #   precision = dict()
-  #   if ref_annotation is None:
-  #     ref = self.exist_annotation_formula
-  #   else:
-  #     ref = ref_annotation
-  #   if pred_annotation is None:
-  #     pred = self.formula
-  #   else:
-  #     pred = pred_annotation
-  #   ref_keys = set(ref.keys())
-  #   pred_keys = set(pred.keys())
-  #   # select species that can be evaluated
-  #   species_to_test = ref_keys.intersection(pred_keys)
-  #   # go through each species
-  #   for one_k in species_to_test:
-  #     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
-  #     precision[one_k] = num_intersection / len(set(pred[one_k]))
-  #   if mean:
-  #     return np.mean([precision[val] for val in precision.keys()])
-  #   else:
-  #     return precision
+
+  def predictAnnotationByCosineSimilarity(self,
+                                          inp_strs=None,
+                                          inp_ids=None,
+                                          ref_df=CHARCOUNT_DF,
+                                          chebi_df=CHEBI_DF):
+    """
+    Predict annotation by taking cosine distance 
+    of character count vectors.
+  
+    Parameters
+    ----------
+    inp_strs: list-str
+        Strings that will directly used
+        for prediction
+    inp_ids: list-str
+        IDs with which name2use will be
+        determined
+    ref_df: DataFrame
+        Reference database
+    chebi_df: DataFrame
+        ChEBI information sharing the index with ref_df    
+
+    Returnsa
+    -------
+    : dict/None
+        {'name_used': str,
+         'chebi': [list-ChEBI],
+         'match_score': [(ChEBI, float)],
+         'formula': [list-formula]} 
+      if no name/ID is given, return None
+    """
+    if inp_ids:
+      one_query, name_used = self.prepareCounterQuery(specs=inp_ids,
+                                                 ref_cols=ref_df.columns,
+                                                 use_id=True)
+    elif inp_strs:
+      one_query, name_used = self.prepareCounterQuery(specs=inp_strs,
+                                                 ref_cols=ref_df.columns,
+                                                 use_id=False)  
+    else:
+      return None
+    multi_mat = ref_df.dot(one_query)
+    max_val = multi_mat.max()
+    result = dict()
+    for one_spec in one_query.columns:
+      one_res = dict()
+      one_res[cn.NAME_USED] = name_used[one_spec]
+      cand_index = multi_mat[abs(multi_mat[one_spec]-max_val[one_spec])<cn.TOLERANCE].index
+      one_res[cn.CHEBI] = list(set(chebi_df.loc[cand_index, cn.CHEBI]))
+      one_res[cn.MATCH_SCORE] = [(val, np.round(max_val[one_spec], 2)) \
+                                 for val in one_res[cn.CHEBI]]
+      one_res[cn.FORMULA] = list(set([cn.REF_CHEBI2FORMULA[val] for val in one_res[cn.CHEBI] \
+                                      if val in cn.REF_CHEBI2FORMULA.keys()])) 
+      result[one_spec] = one_res
+    return result
 
   def getNameToUse(self, inp_id):
     """
@@ -387,10 +318,11 @@ class SpeciesAnnotation(object):
     None
     """
     self.candidates.update({inp_recom.id: inp_recom.candidates})
-    formulas2update = list(set([cn.REF_CHEBI2FORMULA[val[0]] for val in inp_recom.candidates]))
+    formulas2update = list(set([cn.REF_CHEBI2FORMULA[val[0]] \
+                                for val in inp_recom.candidates \
+                                if val[0] in cn.REF_CHEBI2FORMULA.keys()]))
     self.formula.update({inp_recom.id: formulas2update})
     return None
-
 
   def updateSpeciesWithDict(self, inp_dict):
     """

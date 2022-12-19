@@ -3,6 +3,7 @@
 
 
 import libsbml
+import numpy as np
 import os
 import sys
 import unittest
@@ -19,6 +20,9 @@ BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
 M_FDP_C = 'M_fdp_c'
 M_ATP_C = 'M_atp_c'
 M_AMP_C = 'M_amp_c'
+M_GLUCOSE = 'M_glc__D_e'
+D_GLUCOSE = 'D-Glucose'
+
 ONESET_SPECIES_IDS = [M_FDP_C, M_ATP_C]
 ONE_CHEBI = 'CHEBI:15414'
 ATP_CHEBI = 'CHEBI:30616'
@@ -54,46 +58,23 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertTrue('CHEBI:49299' in one_pred_spec[cn.CHEBI])
     self.assertEqual(one_pred_spec[cn.FORMULA],  ['C6O12P2'])
 
-  # def testPredictAnnotationByName(self):
-  #   one_pred_spec = self.spec_cl.predictAnnotationByName(inp_spec_list=[M_FDP_C])
-  #   self.assertTrue(('CHEBI:16905', 1.0) in one_pred_spec[M_FDP_C][cn.MATCH_SCORE])
-  #   self.assertTrue(('CHEBI:49299', 1.0) in one_pred_spec[M_FDP_C][cn.MATCH_SCORE])
-  #   self.assertTrue('CHEBI:16905' in one_pred_spec[M_FDP_C][cn.CHEBI])
-  #   self.assertTrue('CHEBI:49299' in one_pred_spec[M_FDP_C][cn.CHEBI])
-  #   self.assertEqual(one_pred_spec[M_FDP_C][cn.FORMULA],  ['C6O12P2'])
 
-  # def testGetAccuracy(self):
-  #   accuracy1 = self.spec_cl.getAccuracy(ref_annotation=DUMMY_REF,
-  #                                        pred_annotation=DUMMY_PRED)
-  #   self.assertEqual(accuracy1, 0.5)
-  #   one_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=self.spec_cl.names[M_FDP_C])
-  #   accuracy2 = self.spec_cl.getAccuracy()
-  #   self.assertEqual(accuracy2, 1.0)
+  def testGetCountOfIndividualCharacters(self):
+    one_res = self.spec_cl.getCountOfIndividualCharacters(DUMMY_ID)
+    self.assertEqual(one_res['s'], 1)
+    self.assertEqual(one_res['a'], 1)
+    self.assertEqual(one_res['m'], 1)
+
+  def testPrepareCounterQuery(self):
+    one_query, one_name = self.spec_cl.prepareCounterQuery([M_GLUCOSE],
+                                                           sa.CHARCOUNT_DF.columns)
+    self.assertEqual(one_name[M_GLUCOSE], D_GLUCOSE)
+    one_val = np.round(one_query.loc['g', M_GLUCOSE], 2)
+    self.assertEqual(one_val, 0.35)
 
 
-  # def testGetRecall(self):
-  #   recall1 = self.spec_cl.getRecall(ref_annotation=DUMMY_REF,
-  #                                    pred_annotation=DUMMY_PRED,
-  #                                    mean=True)
-  #   self.assertEqual(recall1, 0.25)
-  #   one_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=self.spec_cl.names[M_AMP_C])
-  #   one_res_formula = {M_AMP_C: one_pred_spec[cn.FORMULA]}
-  #   recall2 = self.spec_cl.getRecall(pred_annotation=one_res_formula,
-  #                                    mean=True)
-  #   self.assertEqual(recall2, 1.0)
-
-
-  # def testGetPrecision(self):
-  #   precision1 = self.spec_cl.getPrecision(ref_annotation=DUMMY_REF,
-  #                                          pred_annotation=DUMMY_PRED,
-  #                                          mean=True)
-    # self.assertEqual(precision1, 0.5)
-    # one_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=self.spec_cl.names[M_AMP_C])
-    # one_res_formula = {M_AMP_C: one_pred_spec[cn.FORMULA]}
-    # precision2 = self.spec_cl.getPrecision(pred_annotation=one_res_formula,
-    #                                        mean=True)
-    # self.assertEqual(precision2, 0.1)
-
+  def testPredictAnnotationByCosineSimilarity(self):
+    pass
 
   def testGetNameToUse(self):
     self.assertEqual(self.spec_cl.getNameToUse('M_glc__D_e'), 'D-Glucose')

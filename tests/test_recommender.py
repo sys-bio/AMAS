@@ -39,15 +39,18 @@ class TestRecommender(unittest.TestCase):
     self.recom = recommender.Recommender(libsbml_fpath=BIOMD_190_PATH)
 
   def testGetSpeciesAnnotation(self):
-    one_res = self.recom.getSpeciesAnnotation(pred_id=SPECIES_SAM, update=False)
-    # one_res = species_annotation
+    one_res = self.recom.getSpeciesAnnotation(pred_id=SPECIES_SAM,
+                                              update=False,
+                                              method='edist')
     self.assertEqual(one_res.id, SPECIES_SAM)
     self.assertEqual(one_res.credibility, 1.0)
     self.assertTrue(ONE_SPEC_CAND in one_res.candidates)
     self.assertTrue(ONE_SPEC_URL in one_res.urls)
     self.assertEqual(self.recom.species.candidates, {})
     self.assertEqual(self.recom.species.formula, {})
-    two_res = self.recom.getSpeciesAnnotation(pred_str=SPECIES_SAM_NAME, update=True)
+    two_res = self.recom.getSpeciesAnnotation(pred_str=SPECIES_SAM_NAME,
+                                              update=True,
+                                              method='cdist')
     self.assertEqual(two_res.id, SPECIES_SAM_NAME)
     self.assertEqual(two_res.credibility, 1.0)
     self.assertTrue(ONE_SPEC_CAND in two_res.candidates)
@@ -58,7 +61,7 @@ class TestRecommender(unittest.TestCase):
 
   def testGetSpeciesListAnnotation(self):
     specs = self.recom.getSpeciesListAnnotation(pred_ids=[SPECIES_SAM, SPECIES_ORN],
-                                                update=False)
+                                                update=False, method='edist')
     one_res = specs[1]
     self.assertEqual(one_res.id, SPECIES_ORN)
     self.assertEqual(one_res.credibility, 1.0)
@@ -67,7 +70,7 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(self.recom.species.candidates, {})
     self.assertEqual(self.recom.species.formula, {})
     two_specs = self.recom.getSpeciesListAnnotation(pred_ids=[SPECIES_SAM, SPECIES_ORN],
-                                                    update=True)
+                                                    update=True, method='cdist')
     self.assertTrue((ONE_CHEBI, 1.0) in self.recom.species.candidates[SPECIES_SAM])
     one_formula = cn.REF_CHEBI2FORMULA[ONE_CHEBI]
     self.assertTrue(one_formula in self.recom.species.formula[SPECIES_SAM])      
@@ -107,8 +110,8 @@ class TestRecommender(unittest.TestCase):
 
   def testGetReactionStatistics(self):
     reac_stats = self.recom.getReactionStatistics()
-    self.assertEqual(reac_stats[cn.RECALL], 0.67)
-    self.assertEqual(reac_stats[cn.PRECISION], 0.41)
+    self.assertEqual(reac_stats[cn.RECALL], 0.75)
+    self.assertEqual(reac_stats[cn.PRECISION], 0.63)
 
 
 

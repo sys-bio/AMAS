@@ -56,37 +56,37 @@ class ReactionAnnotation(object):
       document = reader.readSBML(libsbml_fpath)
       self.model = document.getModel()
       # Annotation of Rhea
-      reac_dict_raw_rhea = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.RHEA) \
-                           for r in self.model.getListOfReactions()}
-      reac_dict_raw_filt_rhea = {k:reac_dict_raw_rhea[k] \
-                                 for k in reac_dict_raw_rhea.keys() \
-                                 if reac_dict_raw_rhea[k] is not None}
-      reac_dict_format_rhea = {k:['RHEA:'+val for val in reac_dict_raw_filt_rhea[k]] \
-                                 for k in reac_dict_raw_filt_rhea.keys()}
-      reac_dict_rhea = dict()
-      for one_id in reac_dict_format_rhea.keys():
-        one_itm = list(set([cn.REF_RHEA2BI[val] for val in reac_dict_format_rhea[one_id] \
-                   if val in cn.REF_RHEA2BI.keys()]))
-        if len(one_itm) > 0:
-          reac_dict_rhea[one_id] = one_itm
-      # Annotation of KEGG (mapped to corresponding Rhea BI term) 
-      reac_dict_raw_kegg = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.KEGG_REACTION) \
-                           for r in self.model.getListOfReactions()}
-      reac_dict_raw_filt_kegg = {k:reac_dict_raw_kegg[k] \
-                                 for k in reac_dict_raw_kegg.keys() \
-                                 if reac_dict_raw_kegg[k] is not None}
-      reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
-                           for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
-                        for k in reac_dict_raw_filt_kegg.keys()}
-      reac_dict_filt_kegg = {k: reac_dict_kegg[k] for k in reac_dict_kegg.keys() \
-                                if reac_dict_kegg[k]}
-      exist_annotation = reac_dict_rhea
-      for one_id in reac_dict_filt_kegg.keys():
-        if one_id in exist_annotation.keys():
-          exist_annotation[one_id] = list(set(exist_annotation[one_id] + reac_dict_filt_kegg[one_id]))
-        else:
-          exist_annotation[one_id] = list(set(reac_dict_filt_kegg[one_id]))
-      self.exist_annotation = exist_annotation
+      # reac_dict_raw_rhea = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.RHEA) \
+      #                      for r in self.model.getListOfReactions()}
+      # reac_dict_raw_filt_rhea = {k:reac_dict_raw_rhea[k] \
+      #                            for k in reac_dict_raw_rhea.keys() \
+      #                            if reac_dict_raw_rhea[k] is not None}
+      # reac_dict_format_rhea = {k:['RHEA:'+val for val in reac_dict_raw_filt_rhea[k]] \
+      #                            for k in reac_dict_raw_filt_rhea.keys()}
+      # reac_dict_rhea = dict()
+      # for one_id in reac_dict_format_rhea.keys():
+      #   one_itm = list(set([cn.REF_RHEA2BI[val] for val in reac_dict_format_rhea[one_id] \
+      #              if val in cn.REF_RHEA2BI.keys()]))
+      #   if len(one_itm) > 0:
+      #     reac_dict_rhea[one_id] = one_itm
+      # # Annotation of KEGG (mapped to corresponding Rhea BI term) 
+      # reac_dict_raw_kegg = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.KEGG_REACTION) \
+      #                      for r in self.model.getListOfReactions()}
+      # reac_dict_raw_filt_kegg = {k:reac_dict_raw_kegg[k] \
+      #                            for k in reac_dict_raw_kegg.keys() \
+      #                            if reac_dict_raw_kegg[k] is not None}
+      # reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
+      #                      for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
+      #                   for k in reac_dict_raw_filt_kegg.keys()}
+      # reac_dict_filt_kegg = {k: reac_dict_kegg[k] for k in reac_dict_kegg.keys() \
+      #                           if reac_dict_kegg[k]}
+      # exist_annotation = reac_dict_rhea
+      # for one_id in reac_dict_filt_kegg.keys():
+      #   if one_id in exist_annotation.keys():
+      #     exist_annotation[one_id] = list(set(exist_annotation[one_id] + reac_dict_filt_kegg[one_id]))
+      #   else:
+      #     exist_annotation[one_id] = list(set(reac_dict_filt_kegg[one_id]))
+      self.exist_annotation = tools.extractExistingReactionAnnotation(inp_model=self.model)
       self.reaction_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
                                   for val in self.model.getListOfReactions()}
     elif inp_tuple is not None:

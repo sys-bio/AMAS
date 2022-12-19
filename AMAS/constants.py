@@ -14,7 +14,10 @@ TEST_DIR = os.path.join(CUR_DIR, os.pardir, 'tests')
 
 # Strings used in the modules
 CANDIDATES = 'candidates'
-CHEBI = "chebi"
+CHEBI = 'chebi'
+EC = 'ec-code'
+EC_HEADER = 'EC:'
+GO = 'go'
 RHEA = "rhea"
 RHEA_HEADER = 'RHEA:'
 KEGG_REACTION = "kegg.reaction"
@@ -24,6 +27,9 @@ FORMULA = "formula"
 QUERY_DF = 'query_df'
 RECALL = 'recall'
 PRECISION = 'precision'
+
+# Tolerance to determine identical numerical values
+TOLERANCE = 0.00001
 
 # Default URLs for CHEBI/Rhea
 CHEBI_DEFAULT_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'
@@ -35,6 +41,8 @@ Recommendation = collections.namedtuple('Recommendation',
 
 with open(os.path.join(REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
   REF_CHEBI2FORMULA = compress_pickle.load(f)
+with open(os.path.join(REF_DIR, 'ec2rhea_bi.lzma'), 'rb') as handle:
+  REF_EC2RHEA_BI = compress_pickle.load(handle)
 with open(os.path.join(REF_DIR, 'kegg2rhea_bi_comp.lzma'), 'rb') as handle:
   REF_KEGG2RHEA_BI = compress_pickle.load(handle)
 with open(os.path.join(REF_DIR, 'rhea_all2bi_comp.lzma'), 'rb') as f:

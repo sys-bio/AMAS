@@ -1,48 +1,77 @@
 # tools.py
 
+from AMAS import constants as cn
+
+import itertools
 import numpy as np
 import re
 
 
-# def getOntologyFromString(string_annotation):
-#   """
-#   Parse string and return string annotation,
-#   marked as <bqbiol:is> or <bqbiol:isVersionOf>.
-#   If neither exists, return None.
+def extractExistingSpeciesAnnotation(inp_model, qualifier=cn.CHEBI):
+  """
+  Get existing annotation of species
+  that contains ChEBI terms
+  """
+  exist_raw = {val.getId():getQualifierFromString(val.getAnnotationString(), qualifier) \
+               for val in inp_model.getListOfSpecies()}
+  exist_filt = {val:exist_raw[val] for val in exist_raw.keys() \
+                if exist_raw[val]}
+  return exist_filt
 
-#   Parameters
-#   ----------
-#   str: string_annotation
+def extractExistingReactionAnnotation(inp_model):
+  """
+  Get existing annotation of reactions in Rhea
+  in Bi-directional format (RHEA:10003, etc.)
+  This will extract annotations from three
+  knowledge resources:
+  1. Rhea (mapped to BI-format)
+  2. KEGG (kegg.reaction mapped to Rhea-BI)
+  3. EC-Number (or ec-code, mapped to list of Rhea-BIs)
+  
+  Once they are mapped to a list of Rhea terms,
+  a list of unique Rhea-Bi terms will be filtered
+  and be assigned to exist_annotation of the 
+  reaction_annotation class instance.
+  
+  Parameters
+  ----------
+  inp_model: libsbml.Model
+  
+  Returns
+  -------
+  dict
+  """
+  exist_raw = {val.getId():extractRheaFromAnnotationString(val.getAnnotationString()) \
+               for val in inp_model.getListOfReactions()}
+  exist_filt = {val:exist_raw[val] for val in exist_raw.keys() \
+                if exist_raw[val]}
+  return exist_filt
 
-#   Returns
-#   -------
-#   list-tuple (ontology type, ontology id)
-#        Return [] if none is provided
-#   """
-#   # first, extracts strings tagged as bqbiol:is or bqbiol:isVersionOf.
-#   is_str = ''
-#   isVersionOf_str = ''
-#   is_str_match = re.findall('<bqbiol:is[^a-zA-Z].*?<\/bqbiol:is>',
-#                             string_annotation,
-#                             flags=re.DOTALL)
-#   if len(is_str_match)>0:
-#     is_str_match_filt = [s.replace("      ", "") for s in is_str_match]
-#     is_str = '\n'.join(is_str_match_filt)  
-#   #
-#   is_VersionOf_str_match = re.findall('<bqbiol:isVersionOf[^a-zA-Z].*?<\/bqbiol:isVersionOf>',
-#                                       string_annotation,
-#                                       flags=re.DOTALL)  
-#   #
-#   if len(is_VersionOf_str_match) > 0:
-#     is_VersionOf_str_match_filt = [s.replace("      ", "") for s in is_VersionOf_str_match]
-#     isVersionOf_str = '\n'.join(is_VersionOf_str_match_filt) 
-#   #
-#   combined_str = is_str + isVersionOf_str
-#   if combined_str == '':
-#     return []
-#   identifiers_list = re.findall('identifiers\.org/.*/', combined_str)
-#   return [(r.split('/')[1],r.split('/')[2].replace('\"', '')) \
-#           for r in identifiers_list]
+def extractRheaFromAnnotationString(inp_str):
+  """
+  Extract Rhea from existing annotation string,
+  by directly extracting Rhea,
+  and converting from KEGGG and EC-Code. 
+  
+  Parameters
+  ----------
+  inp_str: str
+  
+  Returns
+  -------
+  list-str
+  """
+  exist_rheas = [cn.RHEA_HEADER+val for val in getQualifierFromString(inp_str, cn.RHEA)]
+  map_rhea_bis = [cn.REF_RHEA2BI[val] for val in exist_rheas if val in cn.REF_RHEA2BI.keys()]
+
+  exist_keggs = [val for val in getQualifierFromString(inp_str, cn.KEGG_REACTION)]
+  map_kegg2rhea = [cn.REF_KEGG2RHEA_BI[val] for val in exist_keggs if val in cn.REF_KEGG2RHEA_BI.keys()]
+
+  exist_ecs = [cn.EC_HEADER+val for val in getQualifierFromString(inp_str, cn.EC)]
+  map_ec2rhea = list(itertools.chain(*[cn.REF_EC2RHEA_BI[val] \
+                                      for val in exist_ecs if val in cn.REF_EC2RHEA_BI.keys()]))
+
+  return list(set(map_rhea_bis + map_kegg2rhea + map_ec2rhea))
 
 
 def getOntologyFromString(string_annotation,
@@ -96,7 +125,7 @@ def getQualifierFromString(input_str, qualifier):
   Returns
   -------
   str (ontology Id)
-      Return None if none is provided
+      Returns an empty list if none is provided
   """
   ontologies = getOntologyFromString(input_str)
   # To make sure it works, make it lower
@@ -104,7 +133,7 @@ def getQualifierFromString(input_str, qualifier):
   if qualifier_list:
     return [val[1] for val in qualifier_list]
   else:
-    return None
+    return []
 
 
 def getPrecision(ref, pred, mean=True):
@@ -184,7 +213,6 @@ def getRecall(ref, pred, mean=True):
     return np.mean([recall[val] for val in recall.keys()])
   else:
     return recall
-
 
 
 def transformCHEBIToFormula(inp_list, ref_to_formula_dict):

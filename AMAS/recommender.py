@@ -53,7 +53,8 @@ class Recommender(object):
   def getSpeciesAnnotation(self,
                            pred_str=None,
                            pred_id=None,
-                           update=True):
+                           update=True,
+                           method='cdist'):
     """
     Predict annotations of species using
     the provided string or ID.
@@ -71,25 +72,39 @@ class Recommender(object):
         If true, update existing species annotations
         (i.e., replace or create new entries)
         in self.species.candidates and self.species.formula
+    methood: str
+        One of ['cdist', 'edist']
+        'cdist' represents Cosine Similarity
+        'edist' represents Edit Distance.
+        Default method id 'cdist'
 
     Returns
     -------
     Recommendation (namedtuple)
 
     """
-    if pred_str:
-      name_to_use = pred_str
-      given_id = pred_str
-    elif pred_id:
-      name_to_use = self.species.getNameToUse(inp_id=pred_id)
-      given_id = pred_id
-    pred_res = self.species.predictAnnotationByEditDistance(name_to_use)  
+    if method == 'edist':
+      if pred_str:
+        name_to_use = pred_str
+        given_id = pred_str
+      elif pred_id:
+        name_to_use = self.species.getNameToUse(inp_id=pred_id)
+        given_id = pred_id
+      pred_res = self.species.predictAnnotationByEditDistance(name_to_use)  
+    elif method == 'cdist':
+      if pred_str: 
+        given_id = pred_str
+        pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=[pred_str])[pred_str]
+      elif pred_id:
+        given_id = pred_id
+        pred_res = self.species.predictAnnotationByCosineSimilarity(inp_ids=[pred_id])[pred_id]
+    #
     pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res)
     urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[cn.CHEBI]]
     result = cn.Recommendation(given_id,
-                              np.round(pred_score, 2),
-                              pred_res[cn.MATCH_SCORE],
-                              urls)
+                               np.round(pred_score, 2),
+                               pred_res[cn.MATCH_SCORE],
+                               urls)
     if update:
       _ = self.species.updateSpeciesWithRecommendation(result)
     return result
@@ -97,7 +112,8 @@ class Recommender(object):
   def getSpeciesListAnnotation(self,
                                pred_strs=None,
                                pred_ids=None,
-                               update=True):
+                               update=True,
+                               method='cdist'):
     """
     Get annotation of multiple species,
     given as a list (or an iterable object).
@@ -113,18 +129,42 @@ class Recommender(object):
          (model info should have been already loaded)
     update: bool
         :If true, update the current annotations
-         (i.e., 
+        (i.e., replace or create new entries)
+        in self.species.candidates and self.species.formula
+    methood: str
+        One of ['cdist', 'edist']
+        'cdist' represents Cosine Similarity
+        'edist' represents Edit Distance.
+        Default method id 'cdist'
 
     Returns
     -------
     list-Recommendation (list-namedtuple)
     """
-    if pred_strs:
-      return [self.getSpeciesAnnotation(pred_str=val, update=update) \
-              for val in pred_strs]
-    elif pred_ids:
-      return [self.getSpeciesAnnotation(pred_id=val, update=update) \
-              for val in pred_ids]
+    if method == 'edist':
+      if pred_strs:
+        return [self.getSpeciesAnnotation(pred_str=val, update=update, method='edist') \
+                for val in pred_strs]
+      elif pred_ids:
+        return [self.getSpeciesAnnotation(pred_id=val, update=update, method='edist') \
+                for val in pred_ids]
+    elif method == 'cdist':
+      if pred_strs: 
+        pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=pred_strs)
+      elif pred_ids: 
+        pred_res = self.species.predictAnnotationByCosineSimilarity(inp_ids=pred_ids)
+      res_recom = []
+      for one_k in pred_res.keys():
+        pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res[one_k])
+        urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[one_k][cn.CHEBI]]
+        result = cn.Recommendation(one_k,
+                                   np.round(pred_score, 2),
+                                   pred_res[one_k][cn.MATCH_SCORE],
+                                   urls)
+        res_recom.append(result)
+        if update:
+          _ = self.species.updateSpeciesWithRecommendation(result)
+      return res_recom
 
   def getReactionAnnotation(self, pred_id,
                             use_exist_species_annotation=False,
@@ -144,7 +184,7 @@ class Recommender(object):
         If True, use existing species annotation
     # TODO: 
     Try the use_species_formula, so if it is given,
-    use informatino from recom.species.formula
+    use information from recom.species.formula
 
     Returns
     -------
@@ -259,44 +299,47 @@ class Recommender(object):
       document = sbml
     model = document.getModel()
     # Create species_annotation instance
-    exist_spec_annotation_raw = {val.getId():tools.getQualifierFromString(val.getAnnotationString(), cn.CHEBI) \
-                                 for val in model.getListOfSpecies()}
-    exist_spec_annotation_filt = {val:exist_spec_annotation_raw[val] for val in exist_spec_annotation_raw.keys() \
-                                  if exist_spec_annotation_raw[val] is not None}
+    # exist_spec_annotation_raw = {val.getId():tools.getQualifierFromString(val.getAnnotationString(), cn.CHEBI) \
+    #                              for val in model.getListOfSpecies()}
+    # exist_spec_annotation_filt = {val:exist_spec_annotation_raw[val] for val in exist_spec_annotation_raw.keys() \
+    #                               if exist_spec_annotation_raw[val] is not None}
+    exist_spec_annotation = tools.extractExistingSpeciesAnnotation(model)
     species_names = {val.getId():val.name for val in model.getListOfSpecies()}
-    species_tuple = (species_names, exist_spec_annotation_filt)
+    species_tuple = (species_names, exist_spec_annotation)
     # Create reaction_annotation instance
     # Annotation of Rhea
-    reac_dict_raw_rhea = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.RHEA) \
-                         for r in model.getListOfReactions()}
-    reac_dict_raw_filt_rhea = {k:reac_dict_raw_rhea[k] \
-                               for k in reac_dict_raw_rhea.keys() \
-                               if reac_dict_raw_rhea[k] is not None}
-    reac_dict_format_rhea = {k:[cn.RHEA_HEADER+val for val in reac_dict_raw_filt_rhea[k]] \
-                               for k in reac_dict_raw_filt_rhea.keys()}
-    reac_dict_rhea = dict()
-    for one_id in reac_dict_format_rhea.keys():
-      one_itm = list(set([cn.REF_RHEA2BI[val] for val in reac_dict_format_rhea[one_id] \
-                 if val in cn.REF_RHEA2BI.keys()]))
-      if len(one_itm) > 0:
-        reac_dict_rhea[one_id] = one_itm
-    # Annotation of KEGG (mapped to corresponding Rhea BI term) 
-    reac_dict_raw_kegg = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.KEGG_REACTION) \
-                         for r in model.getListOfReactions()}
-    reac_dict_raw_filt_kegg = {k:reac_dict_raw_kegg[k] \
-                               for k in reac_dict_raw_kegg.keys() \
-                               if reac_dict_raw_kegg[k] is not None}
-    reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
-                         for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
-                      for k in reac_dict_raw_filt_kegg.keys()}
-    reac_dict_filt_kegg = {k: reac_dict_kegg[k] for k in reac_dict_kegg.keys() \
-                              if reac_dict_kegg[k]}
-    reac_exist_annotation = reac_dict_rhea
-    for one_id in reac_dict_filt_kegg.keys():
-      if one_id in reac_exist_annotation.keys():
-        reac_exist_annotation[one_id] = list(set(reac_exist_annotation[one_id] + reac_dict_filt_kegg[one_id]))
-      else:
-        reac_exist_annotation[one_id] = list(set(reac_dict_filt_kegg[one_id]))
+    # reac_dict_raw_rhea = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.RHEA) \
+    #                      for r in model.getListOfReactions()}
+    # reac_dict_raw_filt_rhea = {k:reac_dict_raw_rhea[k] \
+    #                            for k in reac_dict_raw_rhea.keys() \
+    #                            if reac_dict_raw_rhea[k] is not None}
+    # reac_dict_format_rhea = {k:[cn.RHEA_HEADER+val for val in reac_dict_raw_filt_rhea[k]] \
+    #                            for k in reac_dict_raw_filt_rhea.keys()}
+    # reac_dict_rhea = dict()
+    # for one_id in reac_dict_format_rhea.keys():
+    #   one_itm = list(set([cn.REF_RHEA2BI[val] for val in reac_dict_format_rhea[one_id] \
+    #              if val in cn.REF_RHEA2BI.keys()]))
+    #   if len(one_itm) > 0:
+    #     reac_dict_rhea[one_id] = one_itm
+    # # Annotation of KEGG (mapped to corresponding Rhea BI term) 
+    # reac_dict_raw_kegg = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.KEGG_REACTION) \
+    #                      for r in model.getListOfReactions()}
+    # reac_dict_raw_filt_kegg = {k:reac_dict_raw_kegg[k] \
+    #                            for k in reac_dict_raw_kegg.keys() \
+    #                            if reac_dict_raw_kegg[k] is not None}
+    # reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
+    #                      for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
+    #                   for k in reac_dict_raw_filt_kegg.keys()}
+    # reac_dict_filt_kegg = {k: reac_dict_kegg[k] for k in reac_dict_kegg.keys() \
+    #                           if reac_dict_kegg[k]}
+    # reac_exist_annotation = reac_dict_rhea
+    # for one_id in reac_dict_filt_kegg.keys():
+    #   if one_id in reac_exist_annotation.keys():
+    #     reac_exist_annotation[one_id] = list(set(reac_exist_annotation[one_id] + reac_dict_filt_kegg[one_id]))
+    #   else:
+    #     reac_exist_annotation[one_id] = list(set(reac_dict_filt_kegg[one_id]))
+
+    reac_exist_annotation = tools.extractExistingReactionAnnotation(inp_model=model)
     # Next, reaction components for each reaction
     reac_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
                        for val in model.getListOfReactions()}
@@ -374,48 +417,6 @@ class Recommender(object):
     recall = tools.getRecall(ref=refs, pred=preds, mean=True)
     precision = tools.getPrecision(ref=refs, pred=preds, mean=True)
     return {cn.RECALL: np.round(recall, 2), cn.PRECISION: np.round(precision, 2)}
-
-
-  def updateSpeciesAnnotation(self, update_dict):
-    """
-    Update annotation of species; 
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-
-
-    """
-    pass
-
-
-  def updateReactionAnnotation(self, update_dict):
-    """
-    Update annotation of reactions; 
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-
-
-    """
-    pass
-
-
-  def reportAnnotation(self):
-    """
-    Create (and save) a report (or table)
-    summarizing predicted anntoations.
-    """
-
-
-
-
-
 
 
 
