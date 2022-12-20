@@ -101,23 +101,6 @@ class ReactionAnnotation(object):
     self.candidates = None
     self.query_df = None
 
-  # def getMatchScore(self, score_dict):
-  #   """
-  #   Calculate match scores using 
-  #   the given dictionary
-  
-  #   Parameters
-  #   ----------
-  #   inp_match_score: dict {reaction_id: {candidate_id: float}}
-  
-  #   Returns
-  #   -------
-  #   float
-  #   """
-  #   return np.sum([np.max([score_dict[val][k] \
-  #                          for k in score_dict[val].keys()]) \
-  #                  for val in score_dict.keys()])
-
   def getReactionComponents(self,
                             inp_reaction):
     """

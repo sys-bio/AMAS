@@ -168,10 +168,11 @@ def getPrecision(ref, pred, mean=True):
   for one_k in species_to_test:
     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
     precision[one_k] = num_intersection / len(set(pred[one_k]))
+  # return value is rounded up to the three decimal places
   if mean:
-    return np.mean([precision[val] for val in precision.keys()])
+    return np.round(np.mean([precision[val] for val in precision.keys()]), cn.ROUND_DIGITS)
   else:
-    return precision
+    return {val:np.round(precision[val],cn.ROUND_DIGITS) for val in precision.keys()}
 
 
 def getRecall(ref, pred, mean=True):
@@ -210,9 +211,9 @@ def getRecall(ref, pred, mean=True):
     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
     recall[one_k] = num_intersection / len(set(ref[one_k]))
   if mean:
-    return np.mean([recall[val] for val in recall.keys()])
+    return np.round(np.mean([recall[val] for val in recall.keys()]), cn.ROUND_DIGITS)
   else:
-    return recall
+    return {val:np.round(recall[val],cn.ROUND_DIGITS) for val in recall.keys()}
 
 
 def transformCHEBIToFormula(inp_list, ref_to_formula_dict):

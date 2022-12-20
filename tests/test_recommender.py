@@ -26,8 +26,10 @@ ONE_REAC_URL = 'https://www.rhea-db.org/rhea/28830'
 SPECIES_SAM = 'SAM'
 SPECIES_SAM_NAME = 'S-adenosyl-L-methionine'
 SPECIES_ORN = 'ORN'
+SPECIES_ATP = 'ATP'
 REACTION_ODC = 'ODC'
 REACTION_SAMDC = 'SAMdc'
+REACTION_SPMS = 'SpmS'
 
 ONE_CHEBI = 'CHEBI:15414'
 
@@ -105,14 +107,20 @@ class TestRecommender(unittest.TestCase):
 
   def testGetSpeciesStatistics(self):
     recom2 = recommender.Recommender(libsbml_fpath=BIOMD_634_PATH)
-    spec_stats = recom2.getSpeciesStatistics()
-    self.assertEqual(spec_stats[cn.RECALL], 1.0)
-    self.assertEqual(spec_stats[cn.PRECISION], 0.12)
+    spec_stats1 = recom2.getSpeciesStatistics(model_mean=True)
+    self.assertEqual(spec_stats1[cn.RECALL], 1.000)
+    self.assertEqual(spec_stats1[cn.PRECISION], 0.125)
+    spec_stats2 = recom2.getSpeciesStatistics(model_mean=False)
+    self.assertEqual(spec_stats2[cn.RECALL][SPECIES_ATP], 1.000)
+    self.assertEqual(spec_stats2[cn.PRECISION][SPECIES_ATP], 0.200)
 
   def testGetReactionStatistics(self):
-    reac_stats = self.recom.getReactionStatistics()
-    self.assertEqual(reac_stats[cn.RECALL], 0.75)
-    self.assertEqual(reac_stats[cn.PRECISION], 0.63)
+    reac_stats1 = self.recom.getReactionStatistics(model_mean=True)
+    self.assertEqual(reac_stats1[cn.RECALL], 0.750)
+    self.assertEqual(reac_stats1[cn.PRECISION], 0.631)
+    reac_stats2 = self.recom.getReactionStatistics(model_mean=False)
+    self.assertEqual(reac_stats2[cn.RECALL][REACTION_SPMS], 1.000)
+    self.assertEqual(reac_stats2[cn.PRECISION][REACTION_SPMS], 0.333)
 
 
 

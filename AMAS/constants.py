@@ -30,6 +30,8 @@ PRECISION = 'precision'
 
 # Tolerance to determine identical numerical values
 TOLERANCE = 0.00001
+# Digits to be rounded up
+ROUND_DIGITS = 3
 
 # Default URLs for CHEBI/Rhea
 CHEBI_DEFAULT_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A'
