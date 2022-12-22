@@ -2,7 +2,7 @@ compress-pickle
 editdistance
 nose
 numpy
-pandas
+pandas==1.4.2
 python-libsbml
-scikit-learn
+scikit-learn==1.1.3
 sphinx

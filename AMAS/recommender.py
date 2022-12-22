@@ -102,7 +102,7 @@ class Recommender(object):
     pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res)
     urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[cn.CHEBI]]
     result = cn.Recommendation(given_id,
-                               np.round(pred_score, 2),
+                               np.round(pred_score, cn.ROUND_DIGITS),
                                pred_res[cn.MATCH_SCORE],
                                urls)
     if update:
@@ -158,7 +158,7 @@ class Recommender(object):
         pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res[one_k])
         urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[one_k][cn.CHEBI]]
         result = cn.Recommendation(one_k,
-                                   np.round(pred_score, 2),
+                                   np.round(pred_score, cn.ROUND_DIGITS),
                                    pred_res[one_k][cn.MATCH_SCORE],
                                    urls)
         res_recom.append(result)
@@ -211,10 +211,10 @@ class Recommender(object):
     pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
                                                      inp_reac_list=[pred_id],
                                                      update=update)
-    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_reaction)
+    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_result=pred_reaction)
     urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_reaction[cn.MATCH_SCORE][pred_id]]
     result = cn.Recommendation(pred_id,
-                               np.round(pred_score[pred_id], 2),
+                               np.round(pred_score[pred_id], cn.ROUND_DIGITS),
                                pred_reaction[cn.MATCH_SCORE][pred_id],
                                urls)
     return result
@@ -262,12 +262,12 @@ class Recommender(object):
     pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
                                                      inp_reac_list=pred_ids,
                                                      update=update)
-    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_reaction)
+    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_result=pred_reaction)
     urls = {k:[cn.RHEA_DEFAULT_URL+val[0][5:] \
             for val in pred_reaction[cn.MATCH_SCORE][k]] \
             for k in pred_ids}
     result = [cn.Recommendation(k,
-                               np.round(pred_score[k], 2),
+                               np.round(pred_score[k], cn.ROUND_DIGITS),
                                pred_reaction[cn.MATCH_SCORE][k],
                                urls[k]) \
               for k in pred_score.keys()]
@@ -347,7 +347,7 @@ class Recommender(object):
     return species_tuple, reaction_tuple
 
 
-  def getSpeciesStatistics(self):
+  def getSpeciesStatistics(self, model_mean=True):
     """
     Get recall and precision 
     of species in a model, for both species and
@@ -360,7 +360,9 @@ class Recommender(object):
 
     Parameters
     ----------
-    None 
+    model_mean: bool
+      If True, get single float values for recall/precision.
+      If False, get a dictionary for recall/precision. 
 
     Returns
     -------
@@ -377,15 +379,12 @@ class Recommender(object):
       return None
     preds_comb = self.species.predictAnnotationByCosineSimilarity(inp_ids=specs2eval)
     preds = {val:preds_comb[val][cn.FORMULA] for val in preds_comb.keys()}
-    # specsdict2pred = {val:self.species.getNameToUse(val) for val in specs2eval}
-    # preds = {val:self.species.predictAnnotationByCosineSimilarity(specsdict2pred[val])[cn.FORMULA] \
-    #          for val in specsdict2pred}
-    recall = tools.getRecall(ref=refs, pred=preds, mean=True)
-    precision = tools.getPrecision(ref=refs, pred=preds, mean=True)
-    return {cn.RECALL: np.round(recall, 2), cn.PRECISION: np.round(precision, 2)}
+    recall = tools.getRecall(ref=refs, pred=preds, mean=model_mean)
+    precision = tools.getPrecision(ref=refs, pred=preds, mean=model_mean)
+    return {cn.RECALL: recall, cn.PRECISION: precision}
 
 
-  def getReactionStatistics(self):
+  def getReactionStatistics(self, model_mean=True):
     """
     Get recall and precision 
     of reactions in a model, for both species and
@@ -398,7 +397,9 @@ class Recommender(object):
 
     Parameters
     ----------
-    None 
+    model_mean: bool
+      If True, get single float values for recall/precision.
+      If False, get a dictionary for recall/precision. 
 
     Returns
     -------
@@ -414,15 +415,12 @@ class Recommender(object):
     specs2pred = list(set(itertools.chain(*([self.reactions.reaction_components[val] for val in refs.keys()]))))
     spec_preds_comb = self.species.predictAnnotationByCosineSimilarity(inp_ids=specs2pred)
     specs_predicted = {val:spec_preds_comb[val][cn.FORMULA] for val in spec_preds_comb.keys()}
-    # specsdict2pred = {val:self.species.getNameToUse(val) for val in specs2pred}
-    # specs_predicted = {val:self.species.predictAnnotationByEditDistance(specsdict2pred[val])[cn.FORMULA] \
-    #                    for val in specs2pred}
     preds = self.reactions.predictAnnotation(inp_spec_dict=specs_predicted,
                                              inp_reac_list=refs.keys(),
                                              update=True)[cn.CANDIDATES]
-    recall = tools.getRecall(ref=refs, pred=preds, mean=True)
-    precision = tools.getPrecision(ref=refs, pred=preds, mean=True)
-    return {cn.RECALL: np.round(recall, 2), cn.PRECISION: np.round(precision, 2)}
+    recall = tools.getRecall(ref=refs, pred=preds, mean=model_mean)
+    precision = tools.getPrecision(ref=refs, pred=preds, mean=model_mean)
+    return {cn.RECALL: recall, cn.PRECISION: precision}
 
 
 

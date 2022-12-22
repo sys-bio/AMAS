@@ -31,7 +31,7 @@ CHARCOUNT_COMB_DF = compress_pickle.load(os.path.join(cn.REF_DIR, 'charcount_df_
 CHARCOUNT_DF = CHARCOUNT_COMB_DF.iloc[:, :-2]
 CHEBI_DF = CHARCOUNT_COMB_DF.iloc[:, -2:]
 # A trained random forest model 
-SPECIES_RF = pickle.load(open(os.path.join(cn.REF_DIR, 'species_randomforestcv.sav'), 'rb'))
+SPECIES_RF = compress_pickle.load(os.path.join(cn.REF_DIR, 'species_rf_fitted.lzma'))
 
 
 class SpeciesAnnotation(object):
@@ -67,15 +67,20 @@ class SpeciesAnnotation(object):
       # exist_annotation_chebi = {val:exist_annotation_raw[val] for val in exist_annotation_raw.keys() \
       #                          if exist_annotation_raw[val] is not None}
       self.exist_annotation = tools.extractExistingSpeciesAnnotation(self.model)
-      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(self.exist_annotation[k], cn.REF_CHEBI2FORMULA) \
-                                       for k in self.exist_annotation.keys()}
+      exist_annotation_formula_raw = {k:tools.transformCHEBIToFormula(self.exist_annotation[k], cn.REF_CHEBI2FORMULA) \
+                                      for k in self.exist_annotation.keys()}
+      self.exist_annotation_formula = {val:exist_annotation_formula_raw[val] for val in exist_annotation_formula_raw.keys() \
+                                       if exist_annotation_formula_raw[val]}
+
     # inp_tuple: ({species_id:species_name}, {species_id: [CHEBI annotations]})
     elif inp_tuple is not None:
       self.model = None
       self.names = inp_tuple[0]
       self.exist_annotation = inp_tuple[1]
-      self.exist_annotation_formula = {k:tools.transformCHEBIToFormula(inp_tuple[1][k], cn.REF_CHEBI2FORMULA) \
-                                       for k in inp_tuple[1].keys()}
+      exist_annotation_formula_raw = {k:tools.transformCHEBIToFormula(inp_tuple[1][k], cn.REF_CHEBI2FORMULA) \
+                                      for k in inp_tuple[1].keys()}
+      self.exist_annotation_formula = {val:exist_annotation_formula_raw[val] for val in exist_annotation_formula_raw.keys() \
+                                       if exist_annotation_formula_raw[val]}
     else:
       self.model = None
       self.names = None
@@ -114,7 +119,7 @@ class SpeciesAnnotation(object):
     # Results are sorted based on match_score (average of 1 - (editdistance/len_synonyms)
     res_tuple = [(one_chebi,
                   np.round(np.max([1.0-editdistance.eval(inp_str.lower(), val)/len(val) \
-                                    for val in CHEBI_LOW_SYNONYMS[one_chebi]]), 2)) \
+                                    for val in CHEBI_LOW_SYNONYMS[one_chebi]]), cn.ROUND_DIGITS)) \
                  for one_chebi in min_min_chebis] 
     res_tuple.sort(key=operator.itemgetter(1), reverse=True)
     #  CHEBI part is added, because we want a sorted list after computing res_tuple
@@ -242,7 +247,7 @@ class SpeciesAnnotation(object):
       one_res[cn.NAME_USED] = name_used[one_spec]
       cand_index = multi_mat[abs(multi_mat[one_spec]-max_val[one_spec])<cn.TOLERANCE].index
       one_res[cn.CHEBI] = list(set(chebi_df.loc[cand_index, cn.CHEBI]))
-      one_res[cn.MATCH_SCORE] = [(val, np.round(max_val[one_spec], 2)) \
+      one_res[cn.MATCH_SCORE] = [(val, np.round(max_val[one_spec], cn.ROUND_DIGITS)) \
                                  for val in one_res[cn.CHEBI]]
       one_res[cn.FORMULA] = list(set([cn.REF_CHEBI2FORMULA[val] for val in one_res[cn.CHEBI] \
                                       if val in cn.REF_CHEBI2FORMULA.keys()])) 
@@ -272,11 +277,11 @@ class SpeciesAnnotation(object):
 
   def evaluatePredictedSpeciesAnnotation(self,
                                          pred_result=None,
-                                         id_list=None,
                                          fitted_model=SPECIES_RF):
     """
-    Evaluate the quality of annotation;
-    for each individual species.
+    Predict the probability of 
+    the candidate set including the 'true'
+    annotation. 
     
     Parameters
     ---------
@@ -285,18 +290,21 @@ class SpeciesAnnotation(object):
         {'name_used':str, 'chebi':[str-chebi],
          'match_score': [chebi_tuples],
          'formula': [str-formula]}
-    id_list: str-list
-        List of species IDs to evaluate
+
 
     Returns
     -------
-    dict {species_id: level-of-species-prediction-being-correct}
-        Information of whether confident or not
+    : float
     """
-    name_length = len(pred_result)
+    name_length = len(pred_result[cn.NAME_USED])
     num_candidates = len(pred_result[cn.CHEBI])
     match_score = np.mean([val[1] for val in pred_result[cn.MATCH_SCORE]])
-    return fitted_model.predict([[name_length, num_candidates, match_score]])[0]
+    num_formulas = len(pred_result[cn.FORMULA])
+    proba_correct = fitted_model.predict_proba([[name_length,
+                                                 num_candidates,
+                                                 match_score,
+                                                 num_formulas]])[0][1]
+    return proba_correct
 
 
   def updateSpeciesWithRecommendation(self, inp_recom):
