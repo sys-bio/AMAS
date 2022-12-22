@@ -31,7 +31,7 @@ CHARCOUNT_COMB_DF = compress_pickle.load(os.path.join(cn.REF_DIR, 'charcount_df_
 CHARCOUNT_DF = CHARCOUNT_COMB_DF.iloc[:, :-2]
 CHEBI_DF = CHARCOUNT_COMB_DF.iloc[:, -2:]
 # A trained random forest model 
-SPECIES_RF = pickle.load(open(os.path.join(cn.REF_DIR, 'species_randomforestcv.sav'), 'rb'))
+SPECIES_RF = compress_pickle.load(os.path.join(cn.REF_DIR, 'species_rf_fitted.lzma'))
 
 
 class SpeciesAnnotation(object):
@@ -277,11 +277,11 @@ class SpeciesAnnotation(object):
 
   def evaluatePredictedSpeciesAnnotation(self,
                                          pred_result=None,
-                                         id_list=None,
                                          fitted_model=SPECIES_RF):
     """
-    Evaluate the quality of annotation;
-    for each individual species.
+    Predict the probability of 
+    the candidate set including the 'true'
+    annotation. 
     
     Parameters
     ---------
@@ -290,18 +290,21 @@ class SpeciesAnnotation(object):
         {'name_used':str, 'chebi':[str-chebi],
          'match_score': [chebi_tuples],
          'formula': [str-formula]}
-    id_list: str-list
-        List of species IDs to evaluate
+
 
     Returns
     -------
-    dict {species_id: level-of-species-prediction-being-correct}
-        Information of whether confident or not
+    : float
     """
-    name_length = len(pred_result)
+    name_length = len(pred_result[cn.NAME_USED])
     num_candidates = len(pred_result[cn.CHEBI])
     match_score = np.mean([val[1] for val in pred_result[cn.MATCH_SCORE]])
-    return fitted_model.predict([[name_length, num_candidates, match_score]])[0]
+    num_formulas = len(pred_result[cn.FORMULA])
+    proba_correct = fitted_model.predict_proba([[name_length,
+                                                 num_candidates,
+                                                 match_score,
+                                                 num_formulas]])[0][1]
+    return proba_correct
 
 
   def updateSpeciesWithRecommendation(self, inp_recom):

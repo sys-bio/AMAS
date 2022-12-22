@@ -82,12 +82,12 @@ class TestSpeciesAnnotation(unittest.TestCase):
   def testEvaluatePredictedSpeciesAnnotation(self):
     fdp_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=M_FDP_C)
     fdp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred_result=fdp_pred_spec)
-    self.assertTrue(fdp_score < 0.15)
-    self.assertTrue(fdp_score > 0.14)
+    self.assertTrue(fdp_score < 0.905)
+    self.assertTrue(fdp_score > 0.904)
     atp_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=M_ATP_C)
     atp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred_result=atp_pred_spec)
-    self.assertTrue(atp_score < 0.08)  
-    self.assertTrue(atp_score > 0.07)    
+    self.assertTrue(atp_score < 0.924)  
+    self.assertTrue(atp_score > 0.923)    
   
   def testUpdateSpeciesWithRecommendation(self):
     one_upd = self.spec_cl.updateSpeciesWithRecommendation(DUMMY_RECOMMENDATION)

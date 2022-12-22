@@ -32,7 +32,7 @@ REF_MAT = pd.DataFrame(0, index=inds, columns=cols)
 for val in ref_mat_pairs:
   REF_MAT.iloc[val[1], val[0]] = 1
 
-REACTION_RF = pickle.load(open(os.path.join(cn.REF_DIR, 'reaction_randomforestcv.sav'), 'rb'))
+REACTION_RF = compress_pickle.load(os.path.join(cn.REF_DIR, 'reactions_rf_fitted.lzma'))
 
 class ReactionAnnotation(object):
 
@@ -55,37 +55,6 @@ class ReactionAnnotation(object):
       reader = libsbml.SBMLReader()
       document = reader.readSBML(libsbml_fpath)
       self.model = document.getModel()
-      # Annotation of Rhea
-      # reac_dict_raw_rhea = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.RHEA) \
-      #                      for r in self.model.getListOfReactions()}
-      # reac_dict_raw_filt_rhea = {k:reac_dict_raw_rhea[k] \
-      #                            for k in reac_dict_raw_rhea.keys() \
-      #                            if reac_dict_raw_rhea[k] is not None}
-      # reac_dict_format_rhea = {k:['RHEA:'+val for val in reac_dict_raw_filt_rhea[k]] \
-      #                            for k in reac_dict_raw_filt_rhea.keys()}
-      # reac_dict_rhea = dict()
-      # for one_id in reac_dict_format_rhea.keys():
-      #   one_itm = list(set([cn.REF_RHEA2BI[val] for val in reac_dict_format_rhea[one_id] \
-      #              if val in cn.REF_RHEA2BI.keys()]))
-      #   if len(one_itm) > 0:
-      #     reac_dict_rhea[one_id] = one_itm
-      # # Annotation of KEGG (mapped to corresponding Rhea BI term) 
-      # reac_dict_raw_kegg = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.KEGG_REACTION) \
-      #                      for r in self.model.getListOfReactions()}
-      # reac_dict_raw_filt_kegg = {k:reac_dict_raw_kegg[k] \
-      #                            for k in reac_dict_raw_kegg.keys() \
-      #                            if reac_dict_raw_kegg[k] is not None}
-      # reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
-      #                      for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
-      #                   for k in reac_dict_raw_filt_kegg.keys()}
-      # reac_dict_filt_kegg = {k: reac_dict_kegg[k] for k in reac_dict_kegg.keys() \
-      #                           if reac_dict_kegg[k]}
-      # exist_annotation = reac_dict_rhea
-      # for one_id in reac_dict_filt_kegg.keys():
-      #   if one_id in exist_annotation.keys():
-      #     exist_annotation[one_id] = list(set(exist_annotation[one_id] + reac_dict_filt_kegg[one_id]))
-      #   else:
-      #     exist_annotation[one_id] = list(set(reac_dict_filt_kegg[one_id]))
       self.exist_annotation = tools.extractExistingReactionAnnotation(inp_model=self.model)
       self.reaction_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
                                   for val in self.model.getListOfReactions()}
@@ -209,262 +178,14 @@ class ReactionAnnotation(object):
             'match_score': pred_match_score,
             'query_df': query_df}
 
-  # # Changed as match_score was changed to a tuple (rhea_term, match_score)
-  # def getBestOneCandidates(self, inp_match_score=None):
-  #   """
-  #   Get a dictinoary of {reaction_id: [single candidate]}.
-  #   If self.predictAnnotation should have been already run. 
-
-  #   Parameters
-  #   ----------
-  #   inp_match_score: dict
-  #       {reaction_id: {Rhea_id: match_score(i.e., float)}}
-
-  #   Returns
-  #   -------
-  #   dict
-  #       {reaction_id: [one Rhea_id]}
-  #   """
-  #   if inp_match_score is None:
-  #     match_score = self.match_score
-  #   else:
-  #     match_score = inp_match_score
-  #   ranked_one_cands = dict()
-  #   for one_k in match_score.keys():
-  #     # already sorted; just need to get the first element. 
-  #     ranked_one_cands[one_k] = [match_score[one_k][0][0]]
-  #     # one_itm = pd.DataFrame.from_dict(match_score[one_k], orient='index', columns=['match_score'])
-  #     # one_itm.sort_values(ascending=False, by='match_score', inplace=True)
-  #     # ranked_one_cands[one_k] = [one_itm.index[0]]
-  #   return ranked_one_cands
-
-  # TODO: will be updated when iteration gets updated. 
-  # def updateSpeciesByAReaction(self, 
-  #                              inp_rid, inp_spec_dict,
-  #                              inp_rhea, inp_ref_mat=REF_MAT):
-  #   """
-  #   Update predicted species annotation
-  #   using predicted rhea annotation candidate
-  #   for a single reaction.
-  #   Current version works for when there is just
-  #   one candidate (i.e., one RHEA term).  
-  
-  #   Parameters
-  #   ----------
-  #   inp_rid: str
-  #       Reactino ID to match the candidate
-  #   inp_spec_dict: dict
-  #       {species ID: chemical formula}
-  #   inp_rhea: str
-  #       A RHEA term predicted 
-  #   inp_ref_mat: pandas.DataFrame
-  
-  #   Returns
-  #   -------
-  #   dict: {species ID: [list of CHEBI terms]}
-  #         Suggested mapping from species ID to a chebi term
-  #   """
-  #   # Chebi terms (reference) associated with the given Rhea term
-  #   # If there is no such Rhea term in the reference, return None
-  #   if inp_rhea in cn.REF_RHEA2BI.keys():
-  #     if cn.REF_RHEA2BI[inp_rhea] in REF_RHEA2CHEBI.keys():
-  #       rhea_term_to_chebi_elements = [val for val in REF_RHEA2CHEBI[cn.REF_RHEA2BI[inp_rhea]] \
-  #                                      if val in cn.REF_CHEBI2FORMULA.keys()]
-  #     else:
-  #       return None
-  #   else:
-  #     return None
-  #   # Similarly, species formula (reference) associated with the Rhea term. 
-  #   one_r_elements_row = inp_ref_mat.loc[inp_rhea, :]
-  #   one_r_elements = one_r_elements_row[one_r_elements_row!=0].index
-  #   # Next, species formulas (query) associated with the predicted Rhea term.
-  #   one_r_query_elements_row = self.query_df.loc[:, inp_rid]
-  #   one_r_query_elements = one_r_query_elements_row[one_r_query_elements_row!=0].index
-  #   #
-  #   # Identify species not included vs. species included (in query), compared to ref_mat
-  #   # species_not_included = [val for val in one_r_elements if val not in one_r_query_elements]
-  #   formula_included = [val for val in one_r_elements if val in one_r_query_elements]
-  #   # {predicted species ID: formula} for all elements in the reaction 
-  #   all_species_in_a_reaction = self.getReactionComponents(inp_rid)
-  #   spec2predicted_formula = {one_spec:inp_spec_dict[one_spec] \
-  #                                      for one_spec in all_species_in_a_reaction}  
-  #   #
-  #   possibly_correct_species_ids = []
-  #   chebi_term_already_used_in_prediction = []
-  #   for one_incl_formula in formula_included:
-  #     for one_specid in spec2predicted_formula.keys():
-  #       # If one included formula can be found in one of the predicted spec_dict,
-  #       # it will be possibly correct (we are looking for incorrect ones)
-  #       if one_incl_formula in spec2predicted_formula[one_specid]:
-  #         possibly_correct_species_ids.append(one_specid)
-  #         for one_chebi_term in rhea_term_to_chebi_elements:
-  #           if one_incl_formula == cn.REF_CHEBI2FORMULA[one_chebi_term]:
-  #             chebi_term_already_used_in_prediction.append(one_chebi_term)
-  #   remaining_chebi = [val for val in rhea_term_to_chebi_elements \
-  #                      if val not in chebi_term_already_used_in_prediction]
-  #   remaining_specid = [val for val in all_species_in_a_reaction \
-  #                       if val not in possibly_correct_species_ids]
-  #   if len(remaining_specid) == 1 and len(remaining_chebi) == 1:    
-  #     return {remaining_specid[0]: [remaining_chebi[0]]}
-  #   else:
-  #     None
-
-  # def getAccuracy(self,
-  #                 ref_annotation=None,
-  #                 pred_annotation=None):
-  #   """
-  #   Compute accuracy of reaction annotation.
-  #   A list of annotations of 
-  #   a single reaction (identified by each ID) 
-  #   is considered accurate if it includes
-  #   the corresponding value of ref_annotation.
-  #   (More precisely, if there is at least one
-  #   intersection).
-  #   Once prediction is run, self.candidates
-  #   can be used for pred_annotation. 
-  
-  #   Parameters
-  #   ----------
-  #   ref_annotation: dict
-  #       {reaction_id: [str-annotation]}
-  #       if None, get self.exist_annotation
-  #   pred_annotation: dict
-  #       {reaction_id: [str-annotation]}
-  #       if None, get self.candidates
-
-
-  #   Returns
-  #   -------
-  #   float
-  #   """
-  #   accuracy = []
-  #   if ref_annotation is None:
-  #     ref = self.exist_annotation
-  #   else:
-  #     ref = ref_annotation
-  #   if pred_annotation is None:
-  #     pred = self.candidates
-  #   else:
-  #     pred = pred_annotation
-  #   ref_keys = set(ref.keys())
-  #   pred_keys = set(pred.keys())
-  #   reactions_to_test = ref_keys.intersection(pred_keys)
-  #   for one_k in reactions_to_test:
-  #     if set(ref[one_k]).intersection(pred[one_k]):
-  #       accuracy.append(True)
-  #     else:
-  #       accuracy.append(False)
-  #   return np.mean(accuracy)
-
-  # def getRecall(self,
-  #               ref_annotation=None,
-  #               pred_annotation=None,
-  #               mean=True):
-  #   """
-  #   Compute recall of predicted reactionm
-  #   annotations by comparing them with 
-  #   reference. 
-  #   More straightforward than species
-  #   as it doens't have to convert to formulas.
-
-  #   Parameters
-  #   ----------
-  #   ref_annotation: dict
-  #       {reaction_id: [str-annotation, i.e., Rhea]}
-  #       if None, get self.exist_annotation_formula
-  #   pred_annotation: dict
-  #       {reaction_id: [str-annotation, i.e., Rhea]}
-  #       if None, get self.candidates  
-  #   mean: bool
-  #       If True, get model-level average
-  #       If False, get value of each ID
-
-  #   Returns
-  #   -------
-  # float/dict {id: float}
-  #       Depending on the 'mean' argument
-  #   """
-  #   recall = dict()
-  #   if ref_annotation is None:
-  #     ref = self.exist_annotation
-  #   else:
-  #     ref = ref_annotation
-  #   if pred_annotation is None:
-  #     pred = self.candidaates
-  #   else:
-  #     pred = pred_annotation
-  #   ref_keys = set(ref.keys())
-  #   pred_keys = set(pred.keys())
-  #   # select species that can be evaluated
-  #   species_to_test = ref_keys.intersection(pred_keys)
-  #   # go through each species
-  #   for one_k in species_to_test:
-  #     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
-  #     recall[one_k] = num_intersection / len(set(ref[one_k]))
-  #   if mean:
-  #     return np.mean([recall[val] for val in recall.keys()])
-  #   else:
-  #     return recall
-
-
-  # def getPrecision(self,
-  #                  ref_annotation=None,
-  #                  pred_annotation=None,
-  #                  mean=True):
-  #   """
-  #   Compute precision of predicted reactionm
-  #   annotations by comparing them with 
-  #   reference. 
-  #   More straightforward than species
-  #   as it doens't have to convert to formulas.
-
-  #   Parameters
-  #   ----------
-  #   ref_annotation: dict
-  #       {reaction_id: [str-annotation, i.e., Rhea]}
-  #       if None, get self.exist_annotation_formula
-  #   pred_annotation: dict
-  #       {reaction_id: [str-annotation, i.e., Rhea]}
-  #       if None, get self.candidates  
-  #   mean: bool
-  #       If True, get model-level average
-  #       If False, get value of each ID
-
-  #   Returns
-  #   -------
-  #   float/dict {id: float}
-  #       Depending on the 'mean' argument
-  #   """
-  #   precision = dict()
-  #   if ref_annotation is None:
-  #     ref = self.exist_annotation
-  #   else:
-  #     ref = ref_annotation
-  #   if pred_annotation is None:
-  #     pred = self.candidates
-  #   else:
-  #     pred = pred_annotation
-  #   ref_keys = set(ref.keys())
-  #   pred_keys = set(pred.keys())
-  #   # select species that can be evaluated
-  #   species_to_test = ref_keys.intersection(pred_keys)
-  #   # go through each species
-  #   for one_k in species_to_test:
-  #     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
-  #     precision[one_k] = num_intersection / len(set(pred[one_k]))
-  #   if mean:
-  #     return np.mean([precision[val] for val in precision.keys()])
-  #   else:
-  #     return precision
-
 
   # Develop a method to evaluate results using fitted model
-  def evaluatePredictedReactionAnnotation(self, inp_dict,
+  def evaluatePredictedReactionAnnotation(self, pred_result,
                                           fitted_model=REACTION_RF):
     """
     Evaluate the quality of annotation;
     for each individual species.
-    inp_dict is a dictionary of dictionaries,
+    pred_result includes predicted results,
     a result of self.predictAnnotation().
     All informaton needed for prediction 
     is supposed to come from inp_dict, 
@@ -472,40 +193,48 @@ class ReactionAnnotation(object):
   
     Parameters
     ---------
-    inp_dict: dict
+    pred_result: dict
         {'candidates': {reactionID: [candidates in RHEA]},
          'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
          'query_df': query_df}
 
     Returns
     -------  
-    dict {reaction_id: probability-of-reaction-prediction-being-correct}
+    dict {reaction_id: probability-of-prediction-including-correct-value}
         Information of how algorithm is confident about the result
     """
-    # candidates_info = self.candidates
-    candidates_dict = inp_dict[cn.CANDIDATES]
-    cands_num_dict = {one_k: len(candidates_dict[one_k]) for one_k in candidates_dict.keys()}
-    inp_list = list(candidates_dict.keys())
-    num_candidates = [cands_num_dict[val] for val in inp_list]
-    # num_candidates = [len(candidates_info[val]) for val in inp_list]
-    multi_mat = REF_MAT.dot(inp_dict[cn.QUERY_DF])
-    maxes = multi_mat.max()
-    max_match = [maxes[val] for val in inp_list]
-    match_scores = inp_dict[cn.MATCH_SCORE]
-    mean_match_score = [np.mean([val[1] for val in match_scores[k]]) for k in inp_list]
-    med_match_score = [np.median([val[1] for val in match_scores[k]]) for k in inp_list]
-    min_match_score = [np.min([val[1] for val in match_scores[k]]) for k in inp_list]
-    max_match_score = [np.max([val[1] for val in match_scores[k]]) for k in inp_list]
-    var_match_score = [np.var([val[1] for val in match_scores[k]]) for k in inp_list]
-    data2prediction = list(zip(num_candidates,
-                               max_match,
-                               mean_match_score,
-                               med_match_score,
-                               min_match_score,
-                               max_match_score,
-                               var_match_score))
-    pred_probs = fitted_model.predict(data2prediction)
-    # Collect probability to be correct
-    res = {val[0]:val[1] for val in list(zip(inp_list, pred_probs))}
-    return res
+    candidates_dict = pred_result[cn.CANDIDATES]
+    match_score_dict = pred_result[cn.MATCH_SCORE]
+    mean_rheas_num_dict = {one_k: np.mean([self.getRheaElementNum(val) \
+                                           for val in candidates_dict[one_k]]) \
+                           for one_k in candidates_dict.keys()}
+    num_reac_comp_dict = {one_k: len(self.reaction_components[one_k]) \
+                          for one_k in candidates_dict.keys()}
+    num_candidates = {one_k: len(candidates_dict[one_k]) \
+                          for one_k in candidates_dict.keys()}
+    mean_match_scores = {one_k: np.mean([val[1] for val in match_score_dict[one_k]]) \
+                          for one_k in candidates_dict.keys()}
+    df2pred = pd.DataFrame([mean_rheas_num_dict,
+                            num_reac_comp_dict,
+                            num_candidates,
+                            mean_match_scores]).T
+    cred_pred = fitted_model.predict_proba(df2pred)
+    prob_1_dict = {val: cred_pred[idx][1] for idx, val in enumerate(df2pred.index)}
+    return prob_1_dict
 
+  def getRheaElementNum(self,
+                        inp_rhea,
+                        inp_df=REF_MAT):
+    """
+    Get Number of elements of
+    the given rhea term.
+    
+    Parameters
+    ----------
+    inp_rhea: str
+    
+    Returns
+    -------
+    : int
+    """
+    return len(inp_df.loc[inp_rhea, :].to_numpy().nonzero()[0])

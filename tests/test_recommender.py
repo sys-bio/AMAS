@@ -46,7 +46,7 @@ class TestRecommender(unittest.TestCase):
                                               update=False,
                                               method='edist')
     self.assertEqual(one_res.id, SPECIES_SAM)
-    self.assertEqual(one_res.credibility, 1.0)
+    self.assertEqual(one_res.credibility, 0.975)
     self.assertTrue(ONE_SPEC_CAND in one_res.candidates)
     self.assertTrue(ONE_SPEC_URL in one_res.urls)
     self.assertEqual(self.recom.species.candidates, {})
@@ -55,7 +55,7 @@ class TestRecommender(unittest.TestCase):
                                               update=True,
                                               method='cdist')
     self.assertEqual(two_res.id, SPECIES_SAM_NAME)
-    self.assertEqual(two_res.credibility, 1.0)
+    self.assertEqual(two_res.credibility, 0.975)
     self.assertTrue(ONE_SPEC_CAND in two_res.candidates)
     self.assertTrue(ONE_SPEC_URL in two_res.urls)
     self.assertTrue((ONE_CHEBI, 1.0) in self.recom.species.candidates[SPECIES_SAM_NAME])
@@ -67,7 +67,7 @@ class TestRecommender(unittest.TestCase):
                                                 update=False, method='edist')
     one_res = specs[1]
     self.assertEqual(one_res.id, SPECIES_ORN)
-    self.assertEqual(one_res.credibility, 1.0)
+    self.assertEqual(one_res.credibility, 0.972)
     self.assertTrue(TWO_SPEC_CAND in one_res.candidates)
     self.assertTrue(TWO_SPEC_URL in one_res.urls)
     self.assertEqual(self.recom.species.candidates, {})
@@ -81,7 +81,7 @@ class TestRecommender(unittest.TestCase):
   def testGetReactionAnnotation(self):
     one_res = self.recom.getReactionAnnotation(REACTION_ODC)
     self.assertEqual(one_res.id, REACTION_ODC)
-    self.assertEqual(one_res.credibility, 1.0)
+    self.assertEqual(one_res.credibility, 0.817)
     self.assertTrue(ONE_REAC_CAND in one_res.candidates)
     self.assertTrue(ONE_REAC_URL in one_res.urls)
 
@@ -89,7 +89,7 @@ class TestRecommender(unittest.TestCase):
     reacs = self.recom.getReactionListAnnotation(pred_ids=[REACTION_ODC, REACTION_SAMDC])
     one_res = reacs[0]
     self.assertEqual(one_res.id, REACTION_ODC)
-    self.assertEqual(one_res.credibility, 1.0)
+    self.assertEqual(one_res.credibility, 0.817)
     self.assertTrue(ONE_REAC_CAND in one_res.candidates)
     self.assertTrue(ONE_REAC_URL in one_res.urls)
 
