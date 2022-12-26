@@ -231,12 +231,12 @@ class SpeciesAnnotation(object):
     """
     if inp_ids:
       one_query, name_used = self.prepareCounterQuery(specs=inp_ids,
-                                                 ref_cols=ref_df.columns,
-                                                 use_id=True)
+                                                      ref_cols=ref_df.columns,
+                                                      use_id=True)
     elif inp_strs:
       one_query, name_used = self.prepareCounterQuery(specs=inp_strs,
-                                                 ref_cols=ref_df.columns,
-                                                 use_id=False)  
+                                                      ref_cols=ref_df.columns,
+                                                      use_id=False)  
     else:
       return None
     multi_mat = ref_df.dot(one_query)

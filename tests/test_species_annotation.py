@@ -26,6 +26,7 @@ D_GLUCOSE = 'D-Glucose'
 ONESET_SPECIES_IDS = [M_FDP_C, M_ATP_C]
 ONE_CHEBI = 'CHEBI:15414'
 ATP_CHEBI = 'CHEBI:30616'
+GLUCOSE_CHEBI = 'CHEBI:17634'
 ATP_FORMULA = 'C10N5O13P3'
 DUMMY_RECOMMENDATION = cn.Recommendation('SAM',
                                          1.0,
@@ -74,10 +75,12 @@ class TestSpeciesAnnotation(unittest.TestCase):
 
 
   def testPredictAnnotationByCosineSimilarity(self):
-    pass
+    one_res = self.spec_cl.predictAnnotationByCosineSimilarity(inp_ids=[M_GLUCOSE])
+    self.assertEqual(one_res[M_GLUCOSE][cn.NAME_USED], D_GLUCOSE)
+    self.assertTrue(GLUCOSE_CHEBI in one_res[M_GLUCOSE][cn.CHEBI])
 
   def testGetNameToUse(self):
-    self.assertEqual(self.spec_cl.getNameToUse('M_glc__D_e'), 'D-Glucose')
+    self.assertEqual(self.spec_cl.getNameToUse(M_GLUCOSE), D_GLUCOSE)
 
   def testEvaluatePredictedSpeciesAnnotation(self):
     fdp_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=M_FDP_C)

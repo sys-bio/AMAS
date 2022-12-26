@@ -37,8 +37,8 @@ class TestReactionAnnotation(unittest.TestCase):
   def setUp(self):
     self.spec_cl = sa.SpeciesAnnotation(libsbml_fpath = E_COLI_PATH)
     self.reac_cl = ra.ReactionAnnotation(libsbml_fpath = E_COLI_PATH)
-    self.pred_species = self.spec_cl.predictAnnotationByCosineSimilarity(inp_ids=COMPONENTS)
-    self.spec_formula_dict = {val: self.pred_species[val][cn.FORMULA] for val in COMPONENTS}  
+    self.pred_species = self.spec_cl.predictAnnotationByCosineSimilarity(inp_ids=list(COMPONENTS))
+    self.spec_formula_dict = {val: self.pred_species[val][cn.FORMULA] for val in list(COMPONENTS)}  
     self.pred_reaction = self.reac_cl.predictAnnotation(inp_spec_dict=self.spec_formula_dict,
                                                         inp_reac_list=[R_PFK],
                                                         update=True)
