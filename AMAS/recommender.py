@@ -169,7 +169,8 @@ class Recommender(object):
   def getReactionAnnotation(self, pred_id,
                             use_exist_species_annotation=False,
                             use_species_formula=None,
-                            update=True):
+                            update=True,
+                            spec_method = 'cdist'):
     """
     Predict annotations of reactions using
     the provided IDs (argument). 
@@ -185,6 +186,9 @@ class Recommender(object):
     # TODO: 
     Try the use_species_formula, so if it is given,
     use information from recom.species.formula
+    spec_method: str
+        If 'cdist' Cosine Similarity
+        if 'edist' Edit distance
 
     Returns
     -------
@@ -202,7 +206,8 @@ class Recommender(object):
 
     if len(remaining_species) > 0:
       spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species,
-                                                   update=True)
+                                                   update=True,
+                                                   method=spec_method)
       for one_recom in spec_results:
         chebis = [val[0] for val in one_recom.candidates]
         forms = list(set([cn.REF_CHEBI2FORMULA[k] \
@@ -221,7 +226,8 @@ class Recommender(object):
 
   def getReactionListAnnotation(self, pred_ids,
                                 use_exist_species_annotation=False,
-                                update=True):
+                                update=True,
+                                spec_method='cdist'):
     """
     Get annotation of multiple reactions.
     Instead of applying getReactionAnnotation 
@@ -233,6 +239,9 @@ class Recommender(object):
     ----------
     pred_ids: str-list
         For now, it only accommodates calling by reaction IDs.
+    spec_method: str
+        If 'cdist' Cosine Similarity
+        if 'edist' Edit distance
 
     Returns
     -------
@@ -252,7 +261,8 @@ class Recommender(object):
 
     if len(remaining_species) > 0:
       spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species,
-                                                   update=True)
+                                                   update=True,
+                                                   method=spec_method)
       for one_recom in spec_results:
         chebis = [val[0] for val in one_recom.candidates]
         forms = list(set([cn.REF_CHEBI2FORMULA[k] \
@@ -298,47 +308,10 @@ class Recommender(object):
     elif isinstance(sbml, libsbml.SBMLDocument):
       document = sbml
     model = document.getModel()
-    # Create species_annotation instance
-    # exist_spec_annotation_raw = {val.getId():tools.getQualifierFromString(val.getAnnotationString(), cn.CHEBI) \
-    #                              for val in model.getListOfSpecies()}
-    # exist_spec_annotation_filt = {val:exist_spec_annotation_raw[val] for val in exist_spec_annotation_raw.keys() \
-    #                               if exist_spec_annotation_raw[val] is not None}
     exist_spec_annotation = tools.extractExistingSpeciesAnnotation(model)
     species_names = {val.getId():val.name for val in model.getListOfSpecies()}
     species_tuple = (species_names, exist_spec_annotation)
-    # Create reaction_annotation instance
-    # Annotation of Rhea
-    # reac_dict_raw_rhea = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.RHEA) \
-    #                      for r in model.getListOfReactions()}
-    # reac_dict_raw_filt_rhea = {k:reac_dict_raw_rhea[k] \
-    #                            for k in reac_dict_raw_rhea.keys() \
-    #                            if reac_dict_raw_rhea[k] is not None}
-    # reac_dict_format_rhea = {k:[cn.RHEA_HEADER+val for val in reac_dict_raw_filt_rhea[k]] \
-    #                            for k in reac_dict_raw_filt_rhea.keys()}
-    # reac_dict_rhea = dict()
-    # for one_id in reac_dict_format_rhea.keys():
-    #   one_itm = list(set([cn.REF_RHEA2BI[val] for val in reac_dict_format_rhea[one_id] \
-    #              if val in cn.REF_RHEA2BI.keys()]))
-    #   if len(one_itm) > 0:
-    #     reac_dict_rhea[one_id] = one_itm
-    # # Annotation of KEGG (mapped to corresponding Rhea BI term) 
-    # reac_dict_raw_kegg = {r.getId():tools.getQualifierFromString(r.getAnnotationString(), cn.KEGG_REACTION) \
-    #                      for r in model.getListOfReactions()}
-    # reac_dict_raw_filt_kegg = {k:reac_dict_raw_kegg[k] \
-    #                            for k in reac_dict_raw_kegg.keys() \
-    #                            if reac_dict_raw_kegg[k] is not None}
-    # reac_dict_kegg = {k:[cn.REF_KEGG2RHEA_BI[val] \
-    #                      for val in reac_dict_raw_filt_kegg[k] if val in cn.REF_KEGG2RHEA_BI.keys()] \
-    #                   for k in reac_dict_raw_filt_kegg.keys()}
-    # reac_dict_filt_kegg = {k: reac_dict_kegg[k] for k in reac_dict_kegg.keys() \
-    #                           if reac_dict_kegg[k]}
-    # reac_exist_annotation = reac_dict_rhea
-    # for one_id in reac_dict_filt_kegg.keys():
-    #   if one_id in reac_exist_annotation.keys():
-    #     reac_exist_annotation[one_id] = list(set(reac_exist_annotation[one_id] + reac_dict_filt_kegg[one_id]))
-    #   else:
-    #     reac_exist_annotation[one_id] = list(set(reac_dict_filt_kegg[one_id]))
-
+    #
     reac_exist_annotation = tools.extractExistingReactionAnnotation(inp_model=model)
     # Next, reaction components for each reaction
     reac_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
