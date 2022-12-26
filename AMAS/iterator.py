@@ -65,13 +65,11 @@ class Iterator(object):
     self.orig_spec_formula = cur_spec_formula
     # Storing reaction candidates separately, 
     # as it may be different than self.reactions.candidates
-    # self.orig_reac_candidates = cur_reac_candidates
     self.reactions = reaction_cl
     if reactions_to_update:
       self.r2upd = reactions_to_update
     else:
       self.r2upd = list(reaction_cl.candidates.keys())
-
 
   def getDictOfRheaComponentFormula(self, inp_rhea):
     """
@@ -240,17 +238,18 @@ class Iterator(object):
       one_rhea2formula = self.getDictOfRheaComponentFormula(inp_rhea=one_rhea)
       upd_spec2chebi, upd_spec2formula = self.getDictsToUpdate(reaction_id=one_reaction)
       # Meaning, when examining match scores we only consider 
-      # individual updates; not cumulated updtaes (so we don't use combine_spec2chhebi below) 
-      upd_val = self.getUpdatedMatchScore(cur_spec_formulas = copy.deepcopy(self.orig_spec_formula),
-                                          inp_spec2formula_dict = upd_spec2formula)
+      # individual updates; not cumulated updtaes (so we don't use combine_spec2chhebi below)
+      if upd_spec2formula: 
+        upd_val = self.getUpdatedMatchScore(cur_spec_formulas = copy.deepcopy(self.orig_spec_formula),
+                                            inp_spec2formula_dict = upd_spec2formula)
 
-      if upd_val[INCREASED]:
-        # update combine_upd_spec2chebi by combining the elements.
-        for k in upd_spec2chebi.keys():
-          if k in combine_upd_spec2chebi.keys():
-            combine_upd_spec2chebi[k] = combine_upd_spec2chebi[k] + upd_spec2chebi[k]
-          else:
-            combine_upd_spec2chebi[k] = upd_spec2chebi[k] 
+        if upd_val[INCREASED]:
+          # update combine_upd_spec2chebi by combining the elements.
+          for k in upd_spec2chebi.keys():
+            if k in combine_upd_spec2chebi.keys():
+              combine_upd_spec2chebi[k] = list(set(combine_upd_spec2chebi[k] + upd_spec2chebi[k]))
+            else:
+              combine_upd_spec2chebi[k] = upd_spec2chebi[k] 
     return combine_upd_spec2chebi
 
 
