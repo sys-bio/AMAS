@@ -12,6 +12,7 @@ import numpy as np
 import os
 
 from AMAS import constants as cn
+from AMAS import iterator as it
 from AMAS import tools
 from AMAS import species_annotation as sa
 from AMAS import reaction_annotation as ra
@@ -394,6 +395,57 @@ class Recommender(object):
     recall = tools.getRecall(ref=refs, pred=preds, mean=model_mean)
     precision = tools.getPrecision(ref=refs, pred=preds, mean=model_mean)
     return {cn.RECALL: recall, cn.PRECISION: precision}
+
+  def updateAnnotationsByIteration(self, reactions=None):
+    """
+    Update both species and reaction annotations
+    (i.e., 1. candidates/formula for species,
+           2. candidates for reactions)
+
+    Method just needs to have predicted
+    both species & reaction annotations.
+
+    Method will use all reactions 
+    whose annotations were predicted. 
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    """
+    if reactions is None:
+      reactions = list(self.reactions.candidates.keys())
+
+    anot_iter = it.Iterator(cur_spec_formula=self.species.formula,
+                            reaction_cl=self.reactions,
+                            reactions_to_update=reactions)
+    chebi2upd = anot_iter.match() 
+    for one_k in chebi2upd.keys():
+      one_chebi_list = chebi2upd[one_k]
+      # Update candidates, using the max-match score of the previous prediction
+      max_match_score = np.max([val[1] for val in self.species.candidates[one_k]])
+      self.species.candidates[one_k] = [(val, max_match_score) for val in one_chebi_list]
+      # Update self.species.formula
+      self.species.formula[one_k] = [cn.REF_CHEBI2FORMULA[val] \
+                                     for val in one_chebi_list \
+                                     if val in cn.REF_CHEBI2FORMULA.keys()]
+    #
+    # Update self.reactions.candidates by re-predicting reaction annotations (w. update)
+    new_pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=self.species.formula,
+                                                         inp_reac_list=reactions,
+                                                         update=True)
+
+
+
+
+
+
+
+
+
+
+
 
 
 

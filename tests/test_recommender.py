@@ -15,6 +15,7 @@ from AMAS import tools
 
 BIOMD_190_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000190.xml')
 BIOMD_634_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000634.xml')
+E_COLI_PATH = os.path.join(cn.TEST_DIR, 'e_coli_core.xml')
 ONE_SPEC_CAND = ('CHEBI:15414', 1.0)
 ONE_SPEC_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414'
 TWO_SPEC_CAND = ('CHEBI:15729', 1.0)
@@ -30,8 +31,16 @@ SPECIES_ATP = 'ATP'
 REACTION_ODC = 'ODC'
 REACTION_SAMDC = 'SAMdc'
 REACTION_SPMS = 'SpmS'
+R_PFK = 'R_PFK'
+R_PFL = 'R_PFL'
+ECOLI_REACTIONS = [R_PFK, R_PFL]
+ECOLI_ATP = 'M_atp_c'
+ECOLI_RHEA = 'RHEA:12423'
 
 ONE_CHEBI = 'CHEBI:15414'
+ATP_CHEBI = 'CHEBI:30616'
+FORMULA_ATP = 'C10N5O13P3'
+
 
 
 #############################
@@ -121,6 +130,21 @@ class TestRecommender(unittest.TestCase):
     reac_stats2 = self.recom.getReactionStatistics(model_mean=False)
     self.assertEqual(reac_stats2[cn.RECALL][REACTION_SPMS], 1.000)
     self.assertEqual(reac_stats2[cn.PRECISION][REACTION_SPMS], 0.333)
+
+  def testUpdateAnnotationsByIteration(self):
+    recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
+    _ = recom.getReactionListAnnotation(pred_ids=ECOLI_REACTIONS, spec_method='edist')
+    self.assertEqual(recom.species.candidates[ECOLI_ATP][0][0], 'CHEBI:182955')
+    self.assertEqual(recom.species.candidates[ECOLI_ATP][0][1], 0.231)
+    self.assertTrue('C20O4' in recom.species.formula[ECOLI_ATP])
+    self.assertEqual(recom.reactions.candidates[R_PFK][0][0], ECOLI_RHEA)
+    self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 0.8)
+    recom.updateAnnotationsByIteration()
+    self.assertEqual(recom.species.candidates[ECOLI_ATP][0][0], ATP_CHEBI)
+    self.assertEqual(recom.species.candidates[ECOLI_ATP][0][1], 0.231)
+    self.assertTrue(FORMULA_ATP in recom.species.formula[ECOLI_ATP])
+    self.assertEqual(recom.reactions.candidates[R_PFK][0][0], ECOLI_RHEA)
+    self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 1.0)
 
 
 

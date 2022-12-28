@@ -34,7 +34,7 @@ NEW_SCORE = 'new_score'
 OLD_SCORE = 'old_score'
 INCREASED = 'is_increased'
 # Max limit for iteration
-MAX_ITER = 10
+MAX_ITER = 3
 
 
 class Iterator(object):
@@ -118,7 +118,6 @@ class Iterator(object):
     dict/None
         {species_id: [chebi_term]}
     """
-    # match_dict: {chebi_id: [matched species_ids]}
     match_dict = {one_k:[spec_id for spec_id in spec2pred_formula.keys() \
                          if chebi2ref_formula[one_k] in spec2pred_formula[spec_id]
                         ] \
@@ -202,19 +201,26 @@ class Iterator(object):
             OLD_SCORE: old_pred_val,
             INCREASED: new_pred_val>old_pred_val}
 
-
   def match(self):
     """
     Use self.runOneMatchCycle()
-    and determine the final return products.
+    and determine the final products to return.
     Will be used by the recommender or the user. 
     """
-    for _ in MAX_ITER:
+    all_upd_spec_chebi = dict()
+    for _ in range(MAX_ITER):
       upd_spec_chebi = self.runOneMatchCycle()
-      if not upd_spec_chebi:
+      if upd_spec_chebi:
+        all_upd_spec_chebi.update(upd_spec_chebi)
+        # Update the formula attribute for the next iteration
+        for one_k in upd_spec_chebi.keys():
+          self.orig_spec_formula[one_k] = [cn.REF_CHEBI2FORMULA[val] \
+                                           for val in upd_spec_chebi[one_k] \
+                                           if val in cn.REF_CHEBI2FORMULA.keys()]
+      else:
         break
     # Maybe run reaction once, and return final results :) 
-    pass
+    return all_upd_spec_chebi
 
   def runOneMatchCycle(self):
     """

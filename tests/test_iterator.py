@@ -1,6 +1,7 @@
 # test_iterator.py
 # unittest for iterator class
 
+import copy
 import libsbml
 import os
 import sys
@@ -31,12 +32,32 @@ INIT_SPEC_FORMULA = {'M_accoa_c': ['C23N7O17P3S'],
                      'M_f6p_c': ['C6O9P'],
                      'M_atp_c': ['C20O4', 'C18ClN2O6S2'],
                      'M_h_c': ['H']}
+
+REACTION_CANDIDATES = {'R_PFK': [('RHEA:12423', 0.8), ('RHEA:13380', 0.8),
+                                 ('RHEA:14216', 0.8), ('RHEA:15656', 0.8),
+                                 ('RHEA:16112', 0.8), ('RHEA:20108', 0.8)],
+                       'R_PFL': [('RHEA:11847', 1.0), ('RHEA:17428', 0.8),
+                                 ('RHEA:22991', 0.8), ('RHEA:22995', 0.8),
+                                 ('RHEA:28045', 0.8), ('RHEA:12768', 0.667),
+                                 ('RHEA:21915', 0.667), ('RHEA:44143', 0.667)]}
+
 R_PFK = 'R_PFK'
 R_PFL = 'R_PFL'
-reactions = [R_PFK, R_PFL]
+REACTIONS = [R_PFK, R_PFL]
+
+
 ONE_RHEA = 'RHEA:12423'
 ONE_CHEBI = 'CHEBI:15378'
 MOLECULE_H = 'H'
+TWO_CHEBI = 'CHEBI:58695'
+MOLECULE_C6O9P = 'C6O9P'
+
+SPECIES_ATP = 'M_atp_c'
+CHEBI_ATP = 'CHEBI:30616'
+FORMULA_ATP = 'C10N5O13P3'
+
+ONE_RES_CHEBI = {'M_atp_c': ['CHEBI:30616']}
+ONE_SPEC2FORMULA = {'M_atp_c': ['C10N5O13P3']}
 
 
 #############################
@@ -46,17 +67,44 @@ class TestIterator(unittest.TestCase):
 
   def setUp(self):
     reac_cl = ra.ReactionAnnotation(libsbml_fpath = E_COLI_PATH)
-    self.anot_iter = it.Iterator(cur_spec_formula=INIT_SPEC_FORMULA,
+    reac_cl.candidates = REACTION_CANDIDATES
+    self.anot_iter = it.Iterator(cur_spec_formula=copy.deepcopy(INIT_SPEC_FORMULA),
                                  reaction_cl=reac_cl,
-                                 reactions_to_update = reactions)
+                                 reactions_to_update=REACTIONS)
 
   def testGetDictOfRheaComponentFormula(self):
     comp_formula = self.anot_iter.getDictOfRheaComponentFormula(inp_rhea=ONE_RHEA)
     self.assertEqual(comp_formula[ONE_CHEBI], MOLECULE_H)
+    self.assertEqual(comp_formula[TWO_CHEBI], MOLECULE_C6O9P)
+
+  def testGetDictMatchByItem(self):
+    rhea_comps = self.anot_iter.getDictOfRheaComponentFormula(ONE_RHEA)
+    filt_spec_formula = {k:self.anot_iter.orig_spec_formula[k] \
+                           for k in self.anot_iter.reactions.reaction_components[R_PFK]}
+    upd_spec_chebi = self.anot_iter.getDictMatchByItem(chebi2ref_formula=rhea_comps,
+                                                       spec2pred_formula=filt_spec_formula)
+    self.assertEqual(upd_spec_chebi, ONE_RES_CHEBI)
 
 
+  def testGetDictsToUpdate(self):
+    spec2chebi, spec2formula = self.anot_iter.getDictsToUpdate(reaction_id=R_PFK)
+    self.assertTrue(CHEBI_ATP in spec2chebi[SPECIES_ATP])
+    self.assertTrue(FORMULA_ATP in spec2formula[SPECIES_ATP])
 
+  def testGetUpdatedMatchScore(self):
+    res = self.anot_iter.getUpdatedMatchScore(cur_spec_formulas=copy.deepcopy(INIT_SPEC_FORMULA),
+                                              inp_spec2formula_dict=ONE_SPEC2FORMULA)
+    self.assertEqual(res[it.NEW_SCORE], 1.0)
+    self.assertEqual(res[it.OLD_SCORE], 0.9)
+    self.assertTrue(res[it.INCREASED])
 
+  def testMatch(self):
+    res_match = self.anot_iter.match()
+    self.assertEqual(res_match, ONE_RES_CHEBI)
+
+  def testRunOneMatchCycle(self):
+    match_res = self.anot_iter.runOneMatchCycle()
+    self.assertEqual(match_res, ONE_RES_CHEBI)
 
 
 
