@@ -171,7 +171,6 @@ class ReactionAnnotation(object):
       pred_match_score[one_rid] = match_score_per_cand
     if update:
       self.candidates = pred_match_score
-      # self.match_score = pred_match_score
       self.query_df = query_df
     #
     return {'candidates': pred_cands,

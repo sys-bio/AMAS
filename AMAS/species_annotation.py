@@ -62,10 +62,6 @@ class SpeciesAnnotation(object):
       document = reader.readSBML(libsbml_fpath)
       self.model = document.getModel()
       self.names = {val.getId():val.name for val in self.model.getListOfSpecies()}
-      # exist_annotation_raw = {val.getId():tools.getQualifierFromString(val.getAnnotationString(), cn.CHEBI) \
-      #                   for val in self.model.getListOfSpecies()}
-      # exist_annotation_chebi = {val:exist_annotation_raw[val] for val in exist_annotation_raw.keys() \
-      #                          if exist_annotation_raw[val] is not None}
       self.exist_annotation = tools.extractExistingSpeciesAnnotation(self.model)
       exist_annotation_formula_raw = {k:tools.transformCHEBIToFormula(self.exist_annotation[k], cn.REF_CHEBI2FORMULA) \
                                       for k in self.exist_annotation.keys()}
