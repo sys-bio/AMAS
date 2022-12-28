@@ -68,7 +68,7 @@ class TestIterator(unittest.TestCase):
   def setUp(self):
     reac_cl = ra.ReactionAnnotation(libsbml_fpath = E_COLI_PATH)
     reac_cl.candidates = REACTION_CANDIDATES
-    self.anot_iter = it.Iterator(cur_spec_formula=INIT_SPEC_FORMULA,
+    self.anot_iter = it.Iterator(cur_spec_formula=copy.deepcopy(INIT_SPEC_FORMULA),
                                  reaction_cl=reac_cl,
                                  reactions_to_update=REACTIONS)
 
@@ -102,10 +102,11 @@ class TestIterator(unittest.TestCase):
     res_match = self.anot_iter.match()
     self.assertEqual(res_match, ONE_RES_CHEBI)
 
-
   def testRunOneMatchCycle(self):
     match_res = self.anot_iter.runOneMatchCycle()
     self.assertEqual(match_res, ONE_RES_CHEBI)
+
+
 
 
 

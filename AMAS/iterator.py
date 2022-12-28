@@ -212,7 +212,7 @@ class Iterator(object):
       upd_spec_chebi = self.runOneMatchCycle()
       if upd_spec_chebi:
         all_upd_spec_chebi.update(upd_spec_chebi)
-        # Update species formula attribute for the next iteration
+        # Update the formula attribute for the next iteration
         for one_k in upd_spec_chebi.keys():
           self.orig_spec_formula[one_k] = [cn.REF_CHEBI2FORMULA[val] \
                                            for val in upd_spec_chebi[one_k] \

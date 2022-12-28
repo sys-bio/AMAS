@@ -430,12 +430,11 @@ class Recommender(object):
       self.species.formula[one_k] = [cn.REF_CHEBI2FORMULA[val] \
                                      for val in one_chebi_list \
                                      if val in cn.REF_CHEBI2FORMULA.keys()]
-
+    #
     # Update self.reactions.candidates by re-predicting reaction annotations (w. update)
     new_pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=self.species.formula,
                                                          inp_reac_list=reactions,
                                                          update=True)
-
 
 
 

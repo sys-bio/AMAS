@@ -166,7 +166,7 @@ class ReactionAnnotation(object):
         if one_cand in cn.REF_RHEA2BI.keys():
           num_matches = maxes[one_rid]
           num_maxpos_matches = len(inp_ref_mat.loc[one_cand, :].to_numpy().nonzero()[0])
-          match_score_per_cand.append((one_cand, num_matches/num_maxpos_matches))
+          match_score_per_cand.append((one_cand, np.round(num_matches/num_maxpos_matches, cn.ROUND_DIGITS)))
       match_score_per_cand.sort(key=operator.itemgetter(1), reverse=True)
       pred_match_score[one_rid] = match_score_per_cand
     if update:
