@@ -6,3 +6,4 @@ pandas
 python-libsbml
 scikit-learn
 sphinx
+tabulate

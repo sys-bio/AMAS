@@ -42,6 +42,14 @@ ATP_CHEBI = 'CHEBI:30616'
 FORMULA_ATP = 'C10N5O13P3'
 
 
+RESULT_RECOM = cn.Recommendation('R_PFK', 0.801,
+                                 [('RHEA:12423', 0.6), ('RHEA:13380', 0.6)],
+                                 ['https://www.rhea-db.org/rhea/12423', 'https://www.rhea-db.org/rhea/13380'])
+RESULT_MARKDOWN = ' R_PFK (credibility score: 0.801)\n+--------------+---------------+------------------------------------+\n|' + \
+                  ' annotation   |   match_score | url                                |\n+==============+===============+' + \
+                  '====================================+\n| RHEA:12423   |         0.600 | https://www.rhea-db.org/rhea/12423 |\n' + \
+                  '+--------------+---------------+------------------------------------+\n| RHEA:13380   |         0.600 | ' + \
+                  'https://www.rhea-db.org/rhea/13380 |\n+--------------+---------------+------------------------------------+'
 
 #############################
 # Tests
@@ -49,6 +57,10 @@ FORMULA_ATP = 'C10N5O13P3'
 class TestRecommender(unittest.TestCase):
   def setUp(self):
     self.recom = recommender.Recommender(libsbml_fpath=BIOMD_190_PATH)
+
+  def testGetMarkdownFromRecommendation(self):
+    res = self.recom.getMarkdownFromRecommendation(inp_recom=RESULT_RECOM)
+    self.assertEqual(res, RESULT_MARKDOWN)
 
   def testGetSpeciesAnnotation(self):
     one_res = self.recom.getSpeciesAnnotation(pred_id=SPECIES_SAM,

@@ -10,6 +10,7 @@ import itertools
 import libsbml
 import numpy as np
 import os
+import pandas as pd
 
 from AMAS import constants as cn
 from AMAS import iterator as it
@@ -50,12 +51,34 @@ class Recommender(object):
     self.species = sa.SpeciesAnnotation(inp_tuple=spec_tuple)
     self.reactions = ra.ReactionAnnotation(inp_tuple=reac_tuple)
 
-  # New version after discussion with Joe & Steve et al. 
+  def getMarkdownFromRecommendation(self, inp_recom):
+    """
+    Get a markdown string for 
+    a single recommendation.
+  
+    Parameters
+    ----------
+    inp_recom: cn.Recommendation
+  
+    Returns
+    -------
+    :str
+    """
+    cands = [val[0] for val in inp_recom.candidates]
+    match_scores = [val[1] for val in inp_recom.candidates]
+    urls = inp_recom.urls
+    df = pd.DataFrame({'annotation':cands, 'match_score':match_scores, 'url':urls})
+    df_str = df.to_markdown(tablefmt="grid", floatfmt=".03f", index=False)
+    df_str = " %s (credibility score: %.03f)\n" % (inp_recom.id,  inp_recom.credibility) + \
+             df_str
+    return df_str
+
   def getSpeciesAnnotation(self,
                            pred_str=None,
                            pred_id=None,
                            update=True,
-                           method='cdist'):
+                           method='cdist',
+                           get_markdown=False):
     """
     Predict annotations of species using
     the provided string or ID.
@@ -78,10 +101,13 @@ class Recommender(object):
         'cdist' represents Cosine Similarity
         'edist' represents Edit Distance.
         Default method id 'cdist'
+    get_markdown: bool
+        If true, return a markdown string.
+        If False, return a cn.Recommendation
 
     Returns
     -------
-    Recommendation (namedtuple)
+    Recommendation (namedtuple) / str
 
     """
     if method == 'edist':
@@ -108,13 +134,17 @@ class Recommender(object):
                                urls)
     if update:
       _ = self.species.updateSpeciesWithRecommendation(result)
-    return result
+    if get_markdown:
+      return self.getMarkdownFromRecommendation(inp_recom=result)
+    else:
+      return result
 
   def getSpeciesListAnnotation(self,
                                pred_strs=None,
                                pred_ids=None,
                                update=True,
-                               method='cdist'):
+                               method='cdist',
+                               get_markdown=False):
     """
     Get annotation of multiple species,
     given as a list (or an iterable object).
@@ -137,10 +167,13 @@ class Recommender(object):
         'cdist' represents Cosine Similarity
         'edist' represents Edit Distance.
         Default method id 'cdist'
+    get_markdown: bool
+        If true, return a markdown string.
+        If False, return a list of cn.Recommendation
 
     Returns
     -------
-    list-Recommendation (list-namedtuple)
+    list-Recommendation (list-namedtuple) / list-str
     """
     if method == 'edist':
       if pred_strs:
@@ -154,24 +187,29 @@ class Recommender(object):
         pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=pred_strs)
       elif pred_ids: 
         pred_res = self.species.predictAnnotationByCosineSimilarity(inp_ids=pred_ids)
-      res_recom = []
+      result = []
       for one_k in pred_res.keys():
         pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res[one_k])
         urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[one_k][cn.CHEBI]]
-        result = cn.Recommendation(one_k,
-                                   np.round(pred_score, cn.ROUND_DIGITS),
-                                   pred_res[one_k][cn.MATCH_SCORE],
-                                   urls)
-        res_recom.append(result)
+        res_recom = cn.Recommendation(one_k,
+                                      np.round(pred_score, cn.ROUND_DIGITS),
+                                      pred_res[one_k][cn.MATCH_SCORE],
+                                      urls)
+        result.append(res_recom)
         if update:
-          _ = self.species.updateSpeciesWithRecommendation(result)
-      return res_recom
+          _ = self.species.updateSpeciesWithRecommendation(res_recom)
+    if get_markdown:
+      return [self.getMarkdownFromRecommendation(inp_recom=val) \
+              for val in result]
+    else:
+      return result
+
 
   def getReactionAnnotation(self, pred_id,
                             use_exist_species_annotation=False,
-                            use_species_formula=None,
                             update=True,
-                            spec_method = 'cdist'):
+                            spec_method='cdist',
+                            get_markdown=False):
     """
     Predict annotations of reactions using
     the provided IDs (argument). 
@@ -181,19 +219,18 @@ class Recommender(object):
     ----------
     pred_id: str
         A single ID of reaction to annotate
-    # TODO:
     use_exist_speices_annotation: bool
         If True, use existing species annotation
-    # TODO: 
-    Try the use_species_formula, so if it is given,
-    use information from recom.species.formula
     spec_method: str
         If 'cdist' Cosine Similarity
         if 'edist' Edit distance
+    get_markdown: bool
+        If true, return a markdown string.
+        If False, return a cn.Recommendation
 
     Returns
     -------
-    Recommendation (namedtuple)
+    Recommendation (namedtuple) / str
     """
     # For now, just predict all species and continue? 
     specs2predict = self.reactions.reaction_components[pred_id] 
@@ -223,12 +260,16 @@ class Recommender(object):
                                np.round(pred_score[pred_id], cn.ROUND_DIGITS),
                                pred_reaction[cn.MATCH_SCORE][pred_id],
                                urls)
-    return result
+    if get_markdown:
+      return self.getMarkdownFromRecommendation(inp_recom=result)
+    else:
+      return result
 
   def getReactionListAnnotation(self, pred_ids,
                                 use_exist_species_annotation=False,
                                 update=True,
-                                spec_method='cdist'):
+                                spec_method='cdist',
+                                get_markdown=False):
     """
     Get annotation of multiple reactions.
     Instead of applying getReactionAnnotation 
@@ -243,10 +284,13 @@ class Recommender(object):
     spec_method: str
         If 'cdist' Cosine Similarity
         if 'edist' Edit distance
+    get_markdown: bool
+        If true, return a markdown string.
+        If False, return a list of cn.Recommendation
 
     Returns
     -------
-    list-Reccommendation (list-namedtuple)
+    list-Reccommendation (list-namedtuple) / list-str
     """
     # First, collect all species IDs to annotate
     specs_to_annotate = list(set(itertools.chain(*[self.reactions.reaction_components[val] \
@@ -282,7 +326,11 @@ class Recommender(object):
                                pred_reaction[cn.MATCH_SCORE][k],
                                urls[k]) \
               for k in pred_score.keys()]
-    return result 
+    if get_markdown:
+      return [self.getMarkdownFromRecommendation(inp_recom=val) \
+              for val in result]
+    else:
+      return result
 
   def _parseSBML(self, sbml):
     """
@@ -319,7 +367,6 @@ class Recommender(object):
                        for val in model.getListOfReactions()}
     reaction_tuple = (reac_components, reac_exist_annotation)
     return species_tuple, reaction_tuple
-
 
   def getSpeciesStatistics(self, model_mean=True):
     """
@@ -437,8 +484,7 @@ class Recommender(object):
                                                          update=True)
 
 
-
-
+# TODO: methods to create markdowns, from species & reaction candidates
 
 
 
