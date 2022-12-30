@@ -69,8 +69,11 @@ class Recommender(object):
     urls = inp_recom.urls
     df = pd.DataFrame({'annotation':cands, 'match_score':match_scores, 'url':urls})
     df_str = df.to_markdown(tablefmt="grid", floatfmt=".03f", index=False)
-    df_str = " %s (credibility score: %.03f)\n" % (inp_recom.id,  inp_recom.credibility) + \
-             df_str
+    # Centering and adding the title 
+    len_first_line = len(df_str.split('\n')[0])
+    title_line = "%s (credibility score: %.03f)" % (inp_recom.id,  inp_recom.credibility)
+    title_line = title_line.center(len_first_line)
+    df_str = title_line + '\n' + df_str
     return df_str
 
   def getSpeciesAnnotation(self,

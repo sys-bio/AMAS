@@ -45,7 +45,8 @@ FORMULA_ATP = 'C10N5O13P3'
 RESULT_RECOM = cn.Recommendation('R_PFK', 0.801,
                                  [('RHEA:12423', 0.6), ('RHEA:13380', 0.6)],
                                  ['https://www.rhea-db.org/rhea/12423', 'https://www.rhea-db.org/rhea/13380'])
-RESULT_MARKDOWN = ' R_PFK (credibility score: 0.801)\n+--------------+---------------+------------------------------------+\n|' + \
+RESULT_MARKDOWN = '                   R_PFK (credibility score: 0.801)                  \n' + \
+                  '+--------------+---------------+------------------------------------+\n|' + \
                   ' annotation   |   match_score | url                                |\n+==============+===============+' + \
                   '====================================+\n| RHEA:12423   |         0.600 | https://www.rhea-db.org/rhea/12423 |\n' + \
                   '+--------------+---------------+------------------------------------+\n| RHEA:13380   |         0.600 | ' + \
