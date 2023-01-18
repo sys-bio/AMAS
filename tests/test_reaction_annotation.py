@@ -19,7 +19,7 @@ BIOMD_248_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000248.xml')
 R_PFK = 'R_PFK'
 ATP = 'M_atp_c'
 COMPONENTS = {'M_fdp_c', 'M_adp_c', 'M_atp_c', 'M_f6p_c', 'M_h_c'}
-ONE_CANDIDATE = 'RHEA:12423'
+ONE_CANDIDATE = 'RHEA:12420'
 ONE_CHEBI = 'CHEBI:30616'
 
 # Dummy data for calculating accuracy, recalll & precision
@@ -59,7 +59,7 @@ class TestReactionAnnotation(unittest.TestCase):
 
   def testEvaluatePredictedReactionAnnotation(self):
     one_eval = self.reac_cl.evaluatePredictedReactionAnnotation(pred_result=self.pred_reaction)
-    self.assertEqual(np.round(one_eval[R_PFK], cn.ROUND_DIGITS), 0.801)
+    self.assertEqual(np.round(one_eval[R_PFK], cn.ROUND_DIGITS), 0.817)
 
 
   def testGetRheaElementNum(self):

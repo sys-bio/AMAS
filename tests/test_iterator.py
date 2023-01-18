@@ -33,20 +33,20 @@ INIT_SPEC_FORMULA = {'M_accoa_c': ['C23N7O17P3S'],
                      'M_atp_c': ['C20O4', 'C18ClN2O6S2'],
                      'M_h_c': ['H']}
 
-REACTION_CANDIDATES = {'R_PFK': [('RHEA:12423', 0.8), ('RHEA:13380', 0.8),
-                                 ('RHEA:14216', 0.8), ('RHEA:15656', 0.8),
-                                 ('RHEA:16112', 0.8), ('RHEA:20108', 0.8)],
-                       'R_PFL': [('RHEA:11847', 1.0), ('RHEA:17428', 0.8),
-                                 ('RHEA:22991', 0.8), ('RHEA:22995', 0.8),
-                                 ('RHEA:28045', 0.8), ('RHEA:12768', 0.667),
-                                 ('RHEA:21915', 0.667), ('RHEA:44143', 0.667)]}
+REACTION_CANDIDATES = {'R_PFK': [('RHEA:12420', 0.8), ('RHEA:13377', 0.8),
+                                 ('RHEA:14213', 0.8), ('RHEA:15653', 0.8),
+                                 ('RHEA:16109', 0.8), ('RHEA:20105', 0.8)],
+                       'R_PFL': [('RHEA:11844', 1.0), ('RHEA:17425', 0.8),
+                                 ('RHEA:22988', 0.8), ('RHEA:22992', 0.8),
+                                 ('RHEA:28042', 0.8), ('RHEA:12765', 0.667),
+                                 ('RHEA:21912', 0.667), ('RHEA:44140', 0.667)]}
 
 R_PFK = 'R_PFK'
 R_PFL = 'R_PFL'
 REACTIONS = [R_PFK, R_PFL]
 
 
-ONE_RHEA = 'RHEA:12423'
+ONE_RHEA = 'RHEA:12420'
 ONE_CHEBI = 'CHEBI:15378'
 MOLECULE_H = 'H'
 TWO_CHEBI = 'CHEBI:58695'

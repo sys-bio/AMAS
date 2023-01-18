@@ -19,7 +19,7 @@ import pandas as pd
 import pickle
 
 
-with open(os.path.join(cn.REF_DIR, 'dat_ref_mat_comp.lzma'), 'rb') as handle:
+with open(os.path.join(cn.REF_DIR, 'data2ref_mat.lzma'), 'rb') as handle:
   REF_DAT = compress_pickle.load(handle)
 
 # first of list is list of columns
@@ -163,7 +163,7 @@ class ReactionAnnotation(object):
       # Now, match_scpre (calculated per each candidate) => replaced as a tuple
       match_score_per_cand = []
       for one_cand in candidates:
-        if one_cand in cn.REF_RHEA2BI.keys():
+        if one_cand in cn.REF_RHEA2MASTER.keys():
           num_matches = maxes[one_rid]
           num_maxpos_matches = len(inp_ref_mat.loc[one_cand, :].to_numpy().nonzero()[0])
           match_score_per_cand.append((one_cand, np.round(num_matches/num_maxpos_matches, cn.ROUND_DIGITS)))
