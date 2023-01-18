@@ -17,6 +17,7 @@ CANDIDATES = 'candidates'
 CHEBI = 'chebi'
 EC = 'ec-code'
 EC_HEADER = 'EC:'
+KEGG_HEADER = 'KEGG:'
 GO = 'go'
 RHEA = "rhea"
 RHEA_HEADER = 'RHEA:'
@@ -43,11 +44,11 @@ Recommendation = collections.namedtuple('Recommendation',
 
 with open(os.path.join(REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
   REF_CHEBI2FORMULA = compress_pickle.load(f)
-with open(os.path.join(REF_DIR, 'ec2rhea_bi.lzma'), 'rb') as handle:
-  REF_EC2RHEA_BI = compress_pickle.load(handle)
-with open(os.path.join(REF_DIR, 'kegg2rhea_bi_comp.lzma'), 'rb') as handle:
-  REF_KEGG2RHEA_BI = compress_pickle.load(handle)
-with open(os.path.join(REF_DIR, 'rhea_all2bi_comp.lzma'), 'rb') as f:
-  REF_RHEA2BI = compress_pickle.load(f)
-with open(os.path.join(REF_DIR, 'rhea2chebi_comp.lzma'), 'rb') as f:
+with open(os.path.join(REF_DIR, 'ec2mrhea.lzma'), 'rb') as handle:
+  REF_EC2RHEA = compress_pickle.load(handle)
+with open(os.path.join(REF_DIR, 'kegg2mrhea.lzma'), 'rb') as handle:
+  REF_KEGG2RHEA = compress_pickle.load(handle)
+with open(os.path.join(REF_DIR, 'rhea_all2master.lzma'), 'rb') as f:
+  REF_RHEA2MASTER = compress_pickle.load(f)
+with open(os.path.join(REF_DIR, 'mrhea2chebi_prime.lzma'), 'rb') as f:
   REF_RHEA2CHEBI = compress_pickle.load(f)

@@ -62,14 +62,15 @@ def extractRheaFromAnnotationString(inp_str):
   list-str
   """
   exist_rheas = [cn.RHEA_HEADER+val for val in getQualifierFromString(inp_str, cn.RHEA)]
-  map_rhea_bis = [cn.REF_RHEA2BI[val] for val in exist_rheas if val in cn.REF_RHEA2BI.keys()]
+  map_rhea_bis = [cn.REF_RHEA2MASTER[val] for val in exist_rheas if val in cn.REF_RHEA2MASTER.keys()]
 
-  exist_keggs = [val for val in getQualifierFromString(inp_str, cn.KEGG_REACTION)]
-  map_kegg2rhea = [cn.REF_KEGG2RHEA_BI[val] for val in exist_keggs if val in cn.REF_KEGG2RHEA_BI.keys()]
+  exist_keggs = [cn.KEGG_HEADER+val for val in getQualifierFromString(inp_str, cn.KEGG_REACTION)]
+  map_kegg2rhea = list(itertools.chain(*[cn.REF_KEGG2RHEA[val] \
+                                         for val in exist_keggs if val in cn.REF_KEGG2RHEA.keys()]))
 
   exist_ecs = [cn.EC_HEADER+val for val in getQualifierFromString(inp_str, cn.EC)]
-  map_ec2rhea = list(itertools.chain(*[cn.REF_EC2RHEA_BI[val] \
-                                      for val in exist_ecs if val in cn.REF_EC2RHEA_BI.keys()]))
+  map_ec2rhea = list(itertools.chain(*[cn.REF_EC2RHEA[val] \
+                                      for val in exist_ecs if val in cn.REF_EC2RHEA.keys()]))
 
   return list(set(map_rhea_bis + map_kegg2rhea + map_ec2rhea))
 

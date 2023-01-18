@@ -21,8 +21,8 @@ ONE_SPEC_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414'
 TWO_SPEC_CAND = ('CHEBI:15729', 1.0)
 TWO_SPEC_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15729'
 
-ONE_REAC_CAND = ('RHEA:28830', 1.0)
-ONE_REAC_URL = 'https://www.rhea-db.org/rhea/28830'
+ONE_REAC_CAND = ('RHEA:28827', 1.0)
+ONE_REAC_URL = 'https://www.rhea-db.org/rhea/28827'
 
 SPECIES_SAM = 'SAM'
 SPECIES_SAM_NAME = 'S-adenosyl-L-methionine'
@@ -35,7 +35,7 @@ R_PFK = 'R_PFK'
 R_PFL = 'R_PFL'
 ECOLI_REACTIONS = [R_PFK, R_PFL]
 ECOLI_ATP = 'M_atp_c'
-ECOLI_RHEA = 'RHEA:12423'
+ECOLI_RHEA = 'RHEA:12420'
 
 ONE_CHEBI = 'CHEBI:15414'
 ATP_CHEBI = 'CHEBI:30616'
@@ -138,7 +138,7 @@ class TestRecommender(unittest.TestCase):
 
   def testGetReactionStatistics(self):
     reac_stats1 = self.recom.getReactionStatistics(model_mean=True)
-    self.assertEqual(reac_stats1[cn.RECALL], 0.750)
+    self.assertEqual(reac_stats1[cn.RECALL], 0.694)
     self.assertEqual(reac_stats1[cn.PRECISION], 0.631)
     reac_stats2 = self.recom.getReactionStatistics(model_mean=False)
     self.assertEqual(reac_stats2[cn.RECALL][REACTION_SPMS], 1.000)
