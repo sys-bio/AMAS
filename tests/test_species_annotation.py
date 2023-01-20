@@ -24,16 +24,18 @@ M_GLUCOSE = 'M_glc__D_e'
 D_GLUCOSE = 'D-Glucose'
 
 ONESET_SPECIES_IDS = [M_FDP_C, M_ATP_C]
-ONE_CHEBI = 'CHEBI:15414'
+ONE_CHEBI = 'CHEBI:4167'
 ATP_CHEBI = 'CHEBI:30616'
 GLUCOSE_CHEBI = 'CHEBI:17634'
 ATP_FORMULA = 'C10N5O13P3'
-DUMMY_RECOMMENDATION = cn.Recommendation('SAM',
-                                         1.0,
-                                         [('CHEBI:15414', 1.0), ('CHEBI:59789', 1.0)],
-                                         ['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414',
-                                         'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A59789'])
-DUMMY_ID = 'SAM'
+DUMMY_RECOMMENDATION = cn.Recommendation('M_glc__D_e',
+                                         0.967,
+                                         [('CHEBI:4167', 1.0), ('CHEBI:17634', 1.0), ('CHEBI:42758', 1.0)],
+                                         ['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A4167',
+                                          'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A17634',
+                                          'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A42758'],
+                                         ['D-glucopyranose', 'D-glucose', 'aldehydo-D-glucose'])
+DUMMY_ID = 'M_glc__D_e'
 # Dummy data for calculating accuracy, recalll & precision
 DUMMY_REF = {'a': ['ABC', 'BCD'],
               'b': ['DEF']}
@@ -62,9 +64,9 @@ class TestSpeciesAnnotation(unittest.TestCase):
 
   def testGetCountOfIndividualCharacters(self):
     one_res = self.spec_cl.getCountOfIndividualCharacters(DUMMY_ID)
-    self.assertEqual(one_res['s'], 1)
-    self.assertEqual(one_res['a'], 1)
     self.assertEqual(one_res['m'], 1)
+    self.assertEqual(one_res['g'], 1)
+    self.assertEqual(one_res['c'], 1)
 
   def testPrepareCounterQuery(self):
     one_query, one_name = self.spec_cl.prepareCounterQuery([M_GLUCOSE],

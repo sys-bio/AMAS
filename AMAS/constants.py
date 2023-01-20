@@ -40,10 +40,12 @@ RHEA_DEFAULT_URL = 'https://www.rhea-db.org/rhea/'
 
 # Output; namedtuple 'Recommendation'
 Recommendation = collections.namedtuple('Recommendation',
-                                        ['id', 'credibility', 'candidates', 'urls'])
+                                        ['id', 'credibility', 'candidates', 'urls', 'labels'])
 
 with open(os.path.join(REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
   REF_CHEBI2FORMULA = compress_pickle.load(f)
+with open(os.path.join(REF_DIR, 'chebi2label.lzma'), 'rb') as f:
+  REF_CHEBI2LABEL = compress_pickle.load(f)
 with open(os.path.join(REF_DIR, 'ec2mrhea.lzma'), 'rb') as handle:
   REF_EC2RHEA = compress_pickle.load(handle)
 with open(os.path.join(REF_DIR, 'kegg2mrhea.lzma'), 'rb') as handle:
@@ -52,3 +54,5 @@ with open(os.path.join(REF_DIR, 'rhea_all2master.lzma'), 'rb') as f:
   REF_RHEA2MASTER = compress_pickle.load(f)
 with open(os.path.join(REF_DIR, 'mrhea2chebi_prime.lzma'), 'rb') as f:
   REF_RHEA2CHEBI = compress_pickle.load(f)
+with open(os.path.join(REF_DIR, 'rhea2label.lzma'), 'rb') as f:
+  REF_RHEA2LABEL = compress_pickle.load(f)  

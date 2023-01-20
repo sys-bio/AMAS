@@ -42,15 +42,18 @@ ATP_CHEBI = 'CHEBI:30616'
 FORMULA_ATP = 'C10N5O13P3'
 
 
-RESULT_RECOM = cn.Recommendation('R_PFK', 0.801,
-                                 [('RHEA:12423', 0.6), ('RHEA:13380', 0.6)],
-                                 ['https://www.rhea-db.org/rhea/12423', 'https://www.rhea-db.org/rhea/13380'])
-RESULT_MARKDOWN = '                   R_PFK (credibility score: 0.801)                  \n' + \
-                  '+--------------+---------------+------------------------------------+\n|' + \
-                  ' annotation   |   match_score | url                                |\n+==============+===============+' + \
-                  '====================================+\n| RHEA:12423   |         0.600 | https://www.rhea-db.org/rhea/12423 |\n' + \
-                  '+--------------+---------------+------------------------------------+\n| RHEA:13380   |         0.600 | ' + \
-                  'https://www.rhea-db.org/rhea/13380 |\n+--------------+---------------+------------------------------------+'
+RESULT_RECOM = cn.Recommendation('R_PFK', 0.817,
+                                 [('RHEA:12420', 0.6), ('RHEA:13377', 0.6)],
+                                 ['https://www.rhea-db.org/rhea/12420', 'https://www.rhea-db.org/rhea/13377'],
+                                 ['tagatose-6-phosphate kinase activity', 'phosphoglucokinase activity'])
+RESULT_MARKDOWN = '                                      R_PFK (credibility score: 0.817)                                      \n' + \
+                  '+--------------+---------------+------------------------------------+--------------------------------------+\n' + \
+                  '| annotation   |   match_score | url                                | label                                |\n' + \
+                  '+==============+===============+====================================+======================================+\n' + \
+                  '| RHEA:12420   |         0.600 | https://www.rhea-db.org/rhea/12420 | tagatose-6-phosphate kinase activity |\n' + \
+                  '+--------------+---------------+------------------------------------+--------------------------------------+\n' + \
+                  '| RHEA:13377   |         0.600 | https://www.rhea-db.org/rhea/13377 | phosphoglucokinase activity          |\n' + \
+                  '+--------------+---------------+------------------------------------+--------------------------------------+'
 
 #############################
 # Tests
