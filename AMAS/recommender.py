@@ -67,7 +67,8 @@ class Recommender(object):
     cands = [val[0] for val in inp_recom.candidates]
     match_scores = [val[1] for val in inp_recom.candidates]
     urls = inp_recom.urls
-    df = pd.DataFrame({'annotation':cands, 'match_score':match_scores, 'url':urls})
+    labels = inp_recom.labels
+    df = pd.DataFrame({'annotation':cands, 'match_score':match_scores, 'url':urls, 'label':labels})
     df_str = df.to_markdown(tablefmt="grid", floatfmt=".03f", index=False)
     # Centering and adding the title 
     len_first_line = len(df_str.split('\n')[0])
@@ -131,10 +132,12 @@ class Recommender(object):
     #
     pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res)
     urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[cn.CHEBI]]
+    labels = [cn.REF_CHEBI2LABEL[val] for val in pred_res[cn.CHEBI]]
     result = cn.Recommendation(given_id,
                                np.round(pred_score, cn.ROUND_DIGITS),
                                pred_res[cn.MATCH_SCORE],
-                               urls)
+                               urls,
+                               labels)
     if update:
       _ = self.species.updateSpeciesWithRecommendation(result)
     if get_markdown:
@@ -194,10 +197,12 @@ class Recommender(object):
       for one_k in pred_res.keys():
         pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res[one_k])
         urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[one_k][cn.CHEBI]]
+        labels = [cn.REF_CHEBI2LABEL[val] for val in pred_res[one_k][cn.CHEBI]]
         res_recom = cn.Recommendation(one_k,
                                       np.round(pred_score, cn.ROUND_DIGITS),
                                       pred_res[one_k][cn.MATCH_SCORE],
-                                      urls)
+                                      urls,
+                                      labels)
         result.append(res_recom)
         if update:
           _ = self.species.updateSpeciesWithRecommendation(res_recom)
@@ -259,10 +264,12 @@ class Recommender(object):
                                                      update=update)
     pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_result=pred_reaction)
     urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_reaction[cn.MATCH_SCORE][pred_id]]
+    labels = [cn.REF_RHEA2LABEL[val[0]] for val in pred_reaction[cn.MATCH_SCORE][pred_id]]
     result = cn.Recommendation(pred_id,
                                np.round(pred_score[pred_id], cn.ROUND_DIGITS),
                                pred_reaction[cn.MATCH_SCORE][pred_id],
-                               urls)
+                               urls,
+                               labels)
     if get_markdown:
       return self.getMarkdownFromRecommendation(inp_recom=result)
     else:
@@ -324,10 +331,14 @@ class Recommender(object):
     urls = {k:[cn.RHEA_DEFAULT_URL+val[0][5:] \
             for val in pred_reaction[cn.MATCH_SCORE][k]] \
             for k in pred_ids}
+    labels = {k:[cn.REF_RHEA2LABEL[val[0]] \
+              for val in pred_reaction[cn.MATCH_SCORE][k]] \
+              for k in pred_ids}
     result = [cn.Recommendation(k,
                                np.round(pred_score[k], cn.ROUND_DIGITS),
                                pred_reaction[cn.MATCH_SCORE][k],
-                               urls[k]) \
+                               urls[k],
+                               labels[k]) \
               for k in pred_score.keys()]
     if get_markdown:
       return [self.getMarkdownFromRecommendation(inp_recom=val) \
