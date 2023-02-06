@@ -62,6 +62,15 @@ class TestRecommender(unittest.TestCase):
   def setUp(self):
     self.recom = recommender.Recommender(libsbml_fpath=BIOMD_190_PATH)
 
+  def testGilterRecommendationByThreshold(self):
+    recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
+    one_recom = recom.getReactionAnnotation(pred_id=R_PFK)
+    two_recom = recom.getReactionAnnotation(pred_id=R_PFL)
+    self.assertEqual(None, recom.filterRecommendationByThreshold(inp_recom=one_recom, inp_thresh=0.8))
+    filt_two_recom = recom.filterRecommendationByThreshold(inp_recom=two_recom, inp_thresh=0.8)
+    self.assertEqual(len(two_recom.candidates), 8)
+    self.assertEqual(len(filt_two_recom.candidates), 5)
+
   def testGetMarkdownFromRecommendation(self):
     res = self.recom.getMarkdownFromRecommendation(inp_recom=RESULT_RECOM)
     self.assertEqual(res, RESULT_MARKDOWN)

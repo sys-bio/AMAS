@@ -51,6 +51,33 @@ class Recommender(object):
     self.species = sa.SpeciesAnnotation(inp_tuple=spec_tuple)
     self.reactions = ra.ReactionAnnotation(inp_tuple=reac_tuple)
 
+  def filterRecommendationByThreshold(self, inp_recom, inp_thresh):
+    """
+    Filter a single recommendation 
+    based on the threshold value.
+    If none meets the criteria,
+    returns None (or something else?)
+
+    Parameters
+    ----------
+    inp_recom: cn.Recommdnation
+    inp_thresh: float (0.0-1.0)
+
+    Returns
+    -------
+    cn.Recommendation/None
+    """
+    thresh_index = np.sum([val[1]>=inp_thresh for val in inp_recom.candidates])
+    if thresh_index > 0:
+      filt_recom = cn.Recommendation(inp_recom.id,
+                                     inp_recom.credibility,
+                                     inp_recom.candidates[:thresh_index],
+                                     inp_recom.urls[:thresh_index],
+                                     inp_recom.labels[:thresh_index])
+      return filt_recom
+    else:
+      return None
+
   def getMarkdownFromRecommendation(self, inp_recom):
     """
     Get a markdown string for 
@@ -82,7 +109,8 @@ class Recommender(object):
                            pred_id=None,
                            update=True,
                            method='cdist',
-                           get_markdown=False):
+                           get_markdown=False,
+                           threshold=0.0):
     """
     Predict annotations of species using
     the provided string or ID.
@@ -150,7 +178,8 @@ class Recommender(object):
                                pred_ids=None,
                                update=True,
                                method='cdist',
-                               get_markdown=False):
+                               get_markdown=False,
+                               threshold=0.0):
     """
     Get annotation of multiple species,
     given as a list (or an iterable object).
@@ -217,7 +246,8 @@ class Recommender(object):
                             use_exist_species_annotation=False,
                             update=True,
                             spec_method='cdist',
-                            get_markdown=False):
+                            get_markdown=False,
+                            threshold=0.0):
     """
     Predict annotations of reactions using
     the provided IDs (argument). 
@@ -279,7 +309,8 @@ class Recommender(object):
                                 use_exist_species_annotation=False,
                                 update=True,
                                 spec_method='cdist',
-                                get_markdown=False):
+                                get_markdown=False,
+                                threshold=0.0):
     """
     Get annotation of multiple reactions.
     Instead of applying getReactionAnnotation 
@@ -496,17 +527,6 @@ class Recommender(object):
     new_pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=self.species.formula,
                                                          inp_reac_list=reactions,
                                                          update=True)
-
-
-# TODO: methods to create markdowns, from species & reaction candidates
-
-
-
-
-
-
-
-
 
 
 
