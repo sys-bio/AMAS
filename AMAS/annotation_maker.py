@@ -62,7 +62,7 @@ class AnnotationMaker(object):
                             match_score,
                             knowledge_resource=None,
                             score_type=None,
-                            nested_qual='bqbiol:hasProperty'):
+                            nested_prefix='bqbiol:hasProperty'):
     """
     Parameters
     ----------
@@ -77,7 +77,7 @@ class AnnotationMaker(object):
         'name' for species or 
         'component' for reactions
         Optional unless user wants to specify it
-    nested_qual: str
+    nested_prefix: str
         Default is 'bqbiol:hasProperty'
 
     Returns
@@ -89,7 +89,7 @@ class AnnotationMaker(object):
     if score_type is None:
       score_type = self.score_type
 
-    tags_nested = [nested_qual, 'rdf:Bag']
+    tags_nested = [nested_prefix, 'rdf:Bag']
     one_annotation = self.createAnnotationLine(knowledge_resource,
                                                identifier)   
     one_score = self.createScoreLine(match_score,
@@ -102,11 +102,15 @@ class AnnotationMaker(object):
                                     inp_list=nest_container,
                                     insert_loc=2,
                                     is_tag=False)
-    # pad one indent
-    indent_nested_block = [self.getIndent(1)+val for val in nested_block]
-    # 'bqbiol:is' item
-    res = [one_annotation] + indent_nested_block
-    return res
+    # Indentation for nested content unnecessary;
+    # libsbml saved without it
+    return [one_annotation] + nested_block
+
+    # # pad one indent
+    # indent_nested_block = [self.getIndent(1)+val for val in nested_block]
+    # # 'bqbiol:is' item
+    # res = [one_annotation] + indent_nested_block
+    # return res
 
   def _createAnnotationContainer(self, cont_items):
     """
@@ -122,7 +126,7 @@ class AnnotationMaker(object):
     list-str
     """
     container =[]
-    for idx, one_str in enumerate(cont_items):
+    for one_str in cont_items:
       container = self.insertEntry(inp_str=one_str,
       	                           inp_list=container)
     return container
@@ -243,10 +247,6 @@ class AnnotationMaker(object):
       val2insert = [self.getIndent(idx_insert) + inp_str]
 
     return inp_list[:idx_insert] + val2insert + inp_list[idx_insert:]
-    # if insert:
-    #   return inp_list[:idx_insert] + val2insert + inp_list[idx_insert:]
-    # else:
-    #   return val2insert
 
   def insertList(self,
   	             insert_to,
@@ -265,18 +265,39 @@ class AnnotationMaker(object):
 
     start_loc: int
         If not given, insert_from will be 
-        added at the end of insert_to
+        added in the middle of insert_to
     """
-    if start_loc:
-      return inser_to[:start_loc] + insert_from + inser_to[start_loc:]
-    else:
-      return insert_to + insert_from
+    if start_loc is None:
+      start_loc = int(len(insert_to)/2)
+    indents = self.getIndent(start_loc)
+    insert_from_indented = [indents+val for val in insert_from]
+    return insert_to[:start_loc] + \
+           insert_from_indented + \
+           insert_to[start_loc:]
 
+  def getAnnotationString(self,
+  	                      candidates):
+    """
+    Get a string of annotations,
+    using a list of tuples (annotation, match_score).
 
+    Parameters
+    ----------
+    candidates: list-tuple
+        e.g., [(CHEBI:12345, 1.0), (CHEBI:98765, 0.8)]
 
-
-
-
+    Returns
+    -------
+    str
+    """
+    items_from = []
+    for one_cand in candidates:
+      items_from = items_from + \
+                   self.createAnnotationBlock(one_cand[0], one_cand[1])
+    #
+    result = self.insertList(insert_to=self.empty_container,
+    	                     insert_from=items_from)
+    return ('\n').join(result)
 
 
 
