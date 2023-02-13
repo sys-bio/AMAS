@@ -97,7 +97,7 @@ class AnnotationMaker(object):
     nested_block = self.insertEntry(inp_str=one_score,
                                     inp_list=nest_container,
                                     insert_loc=2,
-                                    is_tag=False)
+                                    is_prefix=False)
     # Indentation for nested content unnecessary;
     # libsbml saved without it
     return [one_annotation] + nested_block
@@ -241,7 +241,7 @@ class AnnotationMaker(object):
                   inp_str,
                   inp_list=[],
                   insert_loc=None,
-                  is_tag=True):
+                  is_prefix=True):
     """
     Create an entry
   
@@ -259,6 +259,10 @@ class AnnotationMaker(object):
     insert: bool
         If None, just return the create tag
 
+    is_prefix: bool
+        If False, insert as it is;
+        If True, create <prefix> </prefix> to be inserted
+
     Returns
     -------
     : list-str
@@ -267,7 +271,7 @@ class AnnotationMaker(object):
       idx_insert = insert_loc
     else:
       idx_insert = int(len(inp_list)/2)
-    if is_tag: 
+    if is_prefix: 
       val2insert = self.createTag(tag_str=inp_str, indent_val=idx_insert)
     else:
       val2insert = [self.getIndent(idx_insert) + inp_str]
@@ -275,9 +279,9 @@ class AnnotationMaker(object):
     return inp_list[:idx_insert] + val2insert + inp_list[idx_insert:]
 
   def insertList(self,
-  	             insert_to,
-  	             insert_from,
-  	             start_loc=None):
+                 insert_to,
+                 insert_from,
+                 start_loc=None):
     """
     Insert a list to another list.
 

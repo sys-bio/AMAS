@@ -25,12 +25,16 @@ CHEBI = 'chebi'
 ONE_ANNOTATION_ITEM = '<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>'
 ONE_SCORE_ITEM = '<rdf:li rdf:resource="http://amas/match_score/by_name/0.2"/>'
 ONE_TAG = ['<annotation>', '</annotation>']
+TWO_TAG = ['<rdf:RDF>', '</rdf:RDF>']
+
 with open(os.path.join(cn.TEST_DIR, 'full_annotation_example.txt')) as file:
     lines = [line.rstrip() for line in file]
 FULL_ANNOTATION = '\n'.join(lines)
 with open(os.path.join(cn.TEST_DIR, 'annotation_block_example.txt')) as file:
     ONE_BLOCK = [line.rstrip() for line in file]
 
+ONE_INSERTED = ['<annotation>', '  <rdf:RDF>', '  </rdf:RDF>', '</annotation>']
+TWO_INSERTED = ['rdf:RDF']
 
 #############################
 # Tests
@@ -83,8 +87,32 @@ class TestAnnotationMaker(unittest.TestCase):
     self.assertEqual(one_tag, ONE_TAG)
 
   def testGetAnnotationString(self):
-  	one_str = self.maker.getAnnotationString(CANDIDATES)
-  	self.assertEqual(one_str, FULL_ANNOTATION)
+    one_str = self.maker.getAnnotationString(CANDIDATES)
+    self.assertEqual(one_str, FULL_ANNOTATION)
+
+  def testInsertEntry(self):
+    one_ent = self.maker.insertEntry(inp_str='rdf:RDF',
+                                     inp_list=ONE_TAG,
+                                     insert_loc=None,
+                                     is_prefix=True)
+    self.assertEqual(one_ent, ONE_INSERTED)
+    two_ent = self.maker.insertEntry(inp_str='rdf:RDF',
+                                     inp_list=[],
+                                     insert_loc=None,
+                                     is_prefix=False)
+    self.assertEqual(two_ent, TWO_INSERTED)
+
+  def testInsertList(self):
+    one_ins = self.maker.insertList(insert_to=ONE_TAG,
+                                    insert_from=TWO_TAG,
+                                    start_loc=None)
+    self.assertEqual(one_ins, ONE_INSERTED)
+    two_ins = self.maker.insertList(insert_to=ONE_TAG,
+                                    insert_from=['rdf:RDF'],
+                                    start_loc=None)
+    self.assertEqual(two_ins,
+                     ['<annotation>', '  rdf:RDF', '</annotation>'])
+
 
 
 
