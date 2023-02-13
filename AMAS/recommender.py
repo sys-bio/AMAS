@@ -6,11 +6,13 @@ This module is going to be directly used by the users.
 
 # import collections
 import compress_pickle
+import fnmatch
 import itertools
 import libsbml
 import numpy as np
 import os
 import pandas as pd
+import re
 
 from AMAS import constants as cn
 from AMAS import iterator as it
@@ -36,6 +38,8 @@ class Recommender(object):
     mdoel_specs: tuple/list
         Iterable object of two tuples including model specifications
     """
+    # Document will be updated and saved if chosen. 
+    self.sbml_document = None
     # First of all, collect model information from libsbml model
     # and send the informaton to create species/reaction annotations
     if libsbml_cl:
@@ -173,6 +177,43 @@ class Recommender(object):
     else:
       return result
 
+  def getSpeciesIDs(self, pattern, regex=False):
+    """
+    Returns Species IDs that match the pattern.
+    The pattern is given as glob
+    If none is given, returns all available
+    species that exist in the model.
+  
+    Parameters
+    ---------
+    pattern: str
+      string pattern
+    reges: bool
+      if True, use regex
+      if False, use glob
+
+    Returns
+    -------
+    list-str/None
+        None returned if no match was found
+    """
+    # list of species ids
+    specs = list(self.species.names.keys())
+    # returns a list of ids thta match pattern, if None, return all
+    if pattern is None:
+      return specs
+    else:
+      if regex:
+        re_pattern = pattern
+      else:
+        re_pattern = fnmatch.translate(pattern)
+      matched = [re.match(re_pattern, val) for val in specs]
+      filt_matched = [val.group(0) for val in matched if val]
+      if len(filt_matched)>0:
+        return filt_matched
+      else:
+        return None
+
   def getSpeciesListAnnotation(self,
                                pred_strs=None,
                                pred_ids=None,
@@ -305,6 +346,47 @@ class Recommender(object):
     else:
       return result
 
+
+  def getReactionIDs(self, pattern, by_species=True, regex=False):
+    """
+    Get IDs of reactions based on
+    the pattern.
+    
+    If by_species is True, it retrieves
+    all reaction with the species that match
+    the pattern; 
+    if False, it searches based on the ID of 
+    reactions
+    
+    Parameters
+    ---------
+    pattern: str
+        Pattern
+        
+    by_species: bool
+      If True, find species with pattern
+      If False, find reaction IDs
+      
+    regex: bool
+      If True, use regex expression
+      If False, convert it to regex.
+    """
+    if regex:
+      re_pattern = pattern
+    else:
+      re_pattern = fnmatch.translate(pattern)
+    if by_species:
+      specs2use = self.getSpeciesIDs(pattern=re_pattern, regex=True)
+      comp_items = list(self.reactions.reaction_components.items())
+      result = [val[0] for val in comp_items \
+                if any(set(val[1]).intersection(specs2use))]
+    else:
+      reacts = list(self.reactions.reaction_components.keys())
+      matched = [re.match(re_pattern, val) for val in reacts]
+      result = [val.group(0) for val in matched if val]
+    return result
+
+
   def getReactionListAnnotation(self, pred_ids,
                                 use_exist_species_annotation=False,
                                 update=True,
@@ -398,10 +480,10 @@ class Recommender(object):
     """
     if isinstance(sbml, str):
       reader = libsbml.SBMLReader()
-      document = reader.readSBML(sbml)
+      self.sbml_document = reader.readSBML(sbml)
     elif isinstance(sbml, libsbml.SBMLDocument):
-      document = sbml
-    model = document.getModel()
+      self.sbml_document = sbml
+    model = self.sbml_document.getModel()
     exist_spec_annotation = tools.extractExistingSpeciesAnnotation(model)
     species_names = {val.getId():val.name for val in model.getListOfSpecies()}
     species_tuple = (species_names, exist_spec_annotation)
@@ -412,6 +494,7 @@ class Recommender(object):
                        for val in model.getListOfReactions()}
     reaction_tuple = (reac_components, reac_exist_annotation)
     return species_tuple, reaction_tuple
+
 
   def getSpeciesStatistics(self, model_mean=True):
     """

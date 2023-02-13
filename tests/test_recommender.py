@@ -62,7 +62,7 @@ class TestRecommender(unittest.TestCase):
   def setUp(self):
     self.recom = recommender.Recommender(libsbml_fpath=BIOMD_190_PATH)
 
-  def testGilterRecommendationByThreshold(self):
+  def testFilterRecommendationByThreshold(self):
     recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
     one_recom = recom.getReactionAnnotation(pred_id=R_PFK)
     two_recom = recom.getReactionAnnotation(pred_id=R_PFL)
@@ -96,6 +96,14 @@ class TestRecommender(unittest.TestCase):
     one_formula = cn.REF_CHEBI2FORMULA[ONE_CHEBI]
     self.assertTrue(one_formula in self.recom.species.formula[SPECIES_SAM_NAME])    
 
+  def testGetSpeciesIDs(self):
+    one_res = self.recom.getSpeciesIDs(pattern="*CoA")
+    self.assertTrue('AcCoA' in one_res)
+    self.assertTrue('CoA' in one_res)
+    self.assertEqual(len(one_res), 2)
+    none_res = self.recom.getSpeciesIDs(pattern="AAA")
+    self.assertEqual(none_res, None)
+
   def testGetSpeciesListAnnotation(self):
     specs = self.recom.getSpeciesListAnnotation(pred_ids=[SPECIES_SAM, SPECIES_ORN],
                                                 update=False, method='edist')
@@ -118,6 +126,14 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(one_res.credibility, 0.817)
     self.assertTrue(ONE_REAC_CAND in one_res.candidates)
     self.assertTrue(ONE_REAC_URL in one_res.urls)
+
+  def testGetReactionIDs(self):
+    one_res = self.recom.getReactionIDs(pattern='*CoA', by_species=True)
+    self.assertEqual(len(one_res), 4)
+    self.assertTrue('SSAT_for_S' in one_res)
+    two_res = self.recom.getReactionIDs(pattern='*CoA', by_species=False)
+    self.assertEqual(len(two_res), 2)
+    self.assertTrue('VCoA' in two_res)
 
   def testGetReactionListAnnotation(self):
     reacs = self.recom.getReactionListAnnotation(pred_ids=[REACTION_ODC, REACTION_SAMDC])
