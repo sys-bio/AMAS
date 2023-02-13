@@ -34,12 +34,13 @@ class AnnotationMaker(object):
         the type of match score
         and the knowledge resource used. 
     """
+    self.meta_id = meta_id
     self.score_type = ELEMENT_TYPE_TO_MATCH_SCORE_TYPE[element]
     self.knowledge_resource = ELEMENT_TYPE_TO_KNOWLEDGE_RESOURCE[element]
 
     container_items = ['annotation', 
                        RDF_TAG,
-                       'rdf:Description rdf:about="#metaid_'+meta_id+'"',
+                       'rdf:Description rdf:about="#metaid_'+self.meta_id+'"',
                        prefix,
                        'rdf:Bag']
     self.empty_container = self._createAnnotationContainer(container_items)
@@ -52,6 +53,14 @@ class AnnotationMaker(object):
                             score_type=None,
                             nested_prefix='bqbiol:hasProperty'):
     """
+    An annotation block is a list of strings,
+    with an annotation item at first
+    and a list of string such as 
+    <tag> <bag> <rdf:li 'amas_score'> </bag> </tag>.
+    A block per each candidate is created,
+    and they will be inserted into 
+    the 'annotation container'.
+
     Parameters
     ----------
     identifier: str
@@ -80,8 +89,7 @@ class AnnotationMaker(object):
     tags_nested = [nested_prefix, 'rdf:Bag']
     one_annotation = self.createAnnotationItem(knowledge_resource,
                                                identifier)   
-    one_score = self.createScoreLine(match_score,
-                                     score_type)
+    one_score = self.createScoreItem(match_score, self.score_type)
     # outer tags to be nested
     nest_container = []
     for idx_indent, one_str in enumerate(tags_nested):
@@ -139,30 +147,30 @@ class AnnotationMaker(object):
     return res
 
 
-  def createScoreLine(self,
+  def createScoreItem(self,
   	                  match_score,
-                      score_type):
+  	                  score_type):
     """
     Create a one-line score annotation,
-    e.g., <rdf:li rdf:resource="http://amas/match_scoree/by_name/0.2"/>
+    e.g., <rdf:li rdf:resource="http://amas/match_score/by_name/0.2"/>
+    Score type, e.g., by_name,
+    is determined in __init__,
+    when the type of model element was
+    determined by either as species or reaction. 
 
     Parameters
     ----------
     match_score: float/str/int
 
     score_type: str
-        'by_name' or 'by_component'
-
-    identifier: str
 
     Returns
     -------
     str
     """
-
     score_items = ['amas',
                    'match_score',
-                   score_type,
+                   self.score_type,
                    str(match_score)]
     res = '<rdf:li rdf:resource="http://' +\
           '/'.join(score_items)  +\
@@ -213,7 +221,7 @@ class AnnotationMaker(object):
                    self.createAnnotationBlock(one_cand[0], one_cand[1])
     #
     result = self.insertList(insert_to=self.empty_container,
-    	                     insert_from=items_from)
+                             insert_from=items_from)
     return ('\n').join(result)
 
   def getIndent(self, num_indents=0):
@@ -230,11 +238,10 @@ class AnnotationMaker(object):
     return '  ' * (num_indents)
 
   def insertEntry(self, 
-  	              inp_str,
-  	              inp_list=[],
-  	              insert_loc=None,
-  	              is_tag=True):
-  	              # insert=True):
+                  inp_str,
+                  inp_list=[],
+                  insert_loc=None,
+                  is_tag=True):
     """
     Create an entry
   

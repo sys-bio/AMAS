@@ -1,0 +1,6 @@
+<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>
+<bqbiol:hasProperty>
+  <rdf:Bag>
+    <rdf:li rdf:resource="http://amas/match_score/by_name/1.0"/>
+  </rdf:Bag>
+</bqbiol:hasProperty>
