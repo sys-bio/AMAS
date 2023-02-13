@@ -44,18 +44,6 @@ class AnnotationMaker(object):
                        'rdf:Bag']
     self.empty_container = self._createAnnotationContainer(container_items)
 
-  def getIndent(self, num_indents=0):
-    """
-    Parameters
-    ----------
-    num_indents: int
-      Time of indentation
-    
-    Returns
-    -------
-    :str
-    """
-    return '  ' * (num_indents)
 
   def createAnnotationBlock(self,
                             identifier,
@@ -90,7 +78,7 @@ class AnnotationMaker(object):
       score_type = self.score_type
 
     tags_nested = [nested_prefix, 'rdf:Bag']
-    one_annotation = self.createAnnotationLine(knowledge_resource,
+    one_annotation = self.createAnnotationItem(knowledge_resource,
                                                identifier)   
     one_score = self.createScoreLine(match_score,
                                      score_type)
@@ -105,12 +93,6 @@ class AnnotationMaker(object):
     # Indentation for nested content unnecessary;
     # libsbml saved without it
     return [one_annotation] + nested_block
-
-    # # pad one indent
-    # indent_nested_block = [self.getIndent(1)+val for val in nested_block]
-    # # 'bqbiol:is' item
-    # res = [one_annotation] + indent_nested_block
-    # return res
 
   def _createAnnotationContainer(self, cont_items):
     """
@@ -131,7 +113,7 @@ class AnnotationMaker(object):
       	                           inp_list=container)
     return container
 
-  def createAnnotationLine(self,
+  def createAnnotationItem(self,
                            knowledge_resource,
                            identifier):
     """
@@ -210,6 +192,43 @@ class AnnotationMaker(object):
     res_tag = [indent2pad+'<'+head_str+'>', indent2pad+'</'+tail_str+'>']
     return res_tag
 
+  def getAnnotationString(self,
+                          candidates):
+    """
+    Get a string of annotations,
+    using a list of tuples (annotation, match_score).
+
+    Parameters
+    ----------
+    candidates: list-tuple
+        e.g., [(CHEBI:12345, 1.0), (CHEBI:98765, 0.8)]
+
+    Returns
+    -------
+    str
+    """
+    items_from = []
+    for one_cand in candidates:
+      items_from = items_from + \
+                   self.createAnnotationBlock(one_cand[0], one_cand[1])
+    #
+    result = self.insertList(insert_to=self.empty_container,
+    	                     insert_from=items_from)
+    return ('\n').join(result)
+
+  def getIndent(self, num_indents=0):
+    """
+    Parameters
+    ----------
+    num_indents: int
+      Time of indentation
+    
+    Returns
+    -------
+    :str
+    """
+    return '  ' * (num_indents)
+
   def insertEntry(self, 
   	              inp_str,
   	              inp_list=[],
@@ -275,29 +294,6 @@ class AnnotationMaker(object):
            insert_from_indented + \
            insert_to[start_loc:]
 
-  def getAnnotationString(self,
-  	                      candidates):
-    """
-    Get a string of annotations,
-    using a list of tuples (annotation, match_score).
-
-    Parameters
-    ----------
-    candidates: list-tuple
-        e.g., [(CHEBI:12345, 1.0), (CHEBI:98765, 0.8)]
-
-    Returns
-    -------
-    str
-    """
-    items_from = []
-    for one_cand in candidates:
-      items_from = items_from + \
-                   self.createAnnotationBlock(one_cand[0], one_cand[1])
-    #
-    result = self.insertList(insert_to=self.empty_container,
-    	                     insert_from=items_from)
-    return ('\n').join(result)
 
 
 
