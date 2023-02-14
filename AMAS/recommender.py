@@ -54,6 +54,9 @@ class Recommender(object):
       reac_tuple = None
     self.species = sa.SpeciesAnnotation(inp_tuple=spec_tuple)
     self.reactions = ra.ReactionAnnotation(inp_tuple=reac_tuple)
+    # Below are elements to interact with user
+    self.just_displayed = None
+    self.selected_annotation = dict()
 
   def filterRecommendationByThreshold(self, inp_recom, inp_thresh):
     """
@@ -82,45 +85,110 @@ class Recommender(object):
     else:
       return None
 
-  def getMarkdownFromRecommendation(self, inp_recom):
+  def getDataFrameFromRecommendation(self,
+                                     rec,
+                                     show_url=False):
     """
-    Get a markdown string for 
+    Get a pandas dataframe from 
     a single recommendation.
-  
+
     Parameters
     ----------
-    inp_recom: cn.Recommendation
-  
+    rec: cn.Recommendation
+
+    show_url: bool
+        If False, omit this column
+
     Returns
     -------
     :str
     """
-    cands = [val[0] for val in inp_recom.candidates]
-    match_scores = [val[1] for val in inp_recom.candidates]
-    urls = inp_recom.urls
-    labels = inp_recom.labels
-    df = pd.DataFrame({'annotation':cands, 'match_score':match_scores, 'url':urls, 'label':labels})
-    df_str = df.to_markdown(tablefmt="grid", floatfmt=".03f", index=False)
+    cands = [val[0] for val in rec.candidates]
+    match_scores = [val[1] for val in rec.candidates]
+    
+    labels = rec.labels
+    # index starts from 1;
+    df = pd.DataFrame({'annotation':cands,
+                       'match_score':match_scores,
+                       'label':labels},
+                       index=[1+val for val in list(range(len(cands)))])
+    df.index.name = 'ID: %s' % rec.id
+    if show_url:
+      urls = rec.urls
+      df['url'] = urls
+    return df
+
+  def getMarkdownFromRecommendation(self,
+                                    rec,
+                                    show_url=False):
+    """
+    Get a markdown using 
+    a recommendation.
+
+    Parameters
+    ----------
+    rec: cn.Recommendation
+
+    show_url: bool
+        If False, omit this column
+
+    Returns
+    -------
+    :str
+    """
+    df = self.getDataFrameFromRecommendation(rec, show_url)
+    # In markdown, title is shown separately,
+    # so index name with element ID is removed; 
+    df.index.name=None
+    df_str = df.to_markdown(tablefmt="grid", floatfmt=".03f", index=True)
     # Centering and adding the title 
     len_first_line = len(df_str.split('\n')[0])
-    title_line = "%s (credibility score: %.03f)" % (inp_recom.id,  inp_recom.credibility)
+    title_line = "%s (credibility score: %.03f)" % (rec.id,  rec.credibility)
     title_line = title_line.center(len_first_line)
     df_str = title_line + '\n' + df_str
     return df_str
 
-  def getSpeciesAnnotation(self,
-                           pred_str=None,
-                           pred_id=None,
-                           update=True,
-                           method='cdist',
-                           get_markdown=False,
-                           threshold=0.0):
+
+
+  # def getMarkdownFromRecommendation(self, inp_recom):
+  #   """
+  #   Get a markdown string for 
+  #   a single recommendation.
+  
+  #   Parameters
+  #   ----------
+  #   inp_recom: cn.Recommendation
+  
+  #   Returns
+  #   -------
+  #   :str
+  #   """
+  #   cands = [val[0] for val in inp_recom.candidates]
+  #   match_scores = [val[1] for val in inp_recom.candidates]
+  #   urls = inp_recom.urls
+  #   labels = inp_recom.labels
+  #   df = pd.DataFrame({'annotation':cands, 'match_score':match_scores, 'url':urls, 'label':labels})
+  #   df_str = df.to_markdown(tablefmt="grid", floatfmt=".03f", index=False)
+  #   # Centering and adding the title 
+  #   len_first_line = len(df_str.split('\n')[0])
+  #   title_line = "%s (credibility score: %.03f)" % (inp_recom.id,  inp_recom.credibility)
+  #   title_line = title_line.center(len_first_line)
+  #   df_str = title_line + '\n' + df_str
+  #   return df_str
+
+  def getSpeciesRecommendation(self,
+                               pred_str=None,
+                               pred_id=None,
+                               update=True,
+                               method='cdist',
+                               get_markdown=False,
+                               threshold=0.0):
     """
     Predict annotations of species using
     the provided string or ID.
-    If pred_str is given, directly run the string;
-    if pred_id is given, search for species ID and display name 
-    to find useable name. 
+    If pred_str is given, directly use the string;
+    if pred_id is given, determine the appropriate
+    name using the species ID. 
 
     Parameters
     ----------
@@ -143,7 +211,7 @@ class Recommender(object):
 
     Returns
     -------
-    Recommendation (namedtuple) / str
+    cn.Recommendation (namedtuple) / str
 
     """
     if method == 'edist':
@@ -157,10 +225,11 @@ class Recommender(object):
     elif method == 'cdist':
       if pred_str: 
         given_id = pred_str
-        pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=[pred_str])[pred_str]
+        # pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=[pred_str])[pred_str]
       elif pred_id:
         given_id = pred_id
-        pred_res = self.species.predictAnnotationByCosineSimilarity(inp_ids=[pred_id])[pred_id]
+        # pred_res = self.species.predictAnnotationByCosineSimilarity(inp_ids=[pred_id])[pred_id]
+      pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=[given_id])[given_id]
     #
     pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res)
     urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[cn.CHEBI]]
@@ -214,17 +283,17 @@ class Recommender(object):
       else:
         return None
 
-  def getSpeciesListAnnotation(self,
-                               pred_strs=None,
-                               pred_ids=None,
-                               update=True,
-                               method='cdist',
-                               get_markdown=False,
-                               threshold=0.0):
+  def getSpeciesListRecommendation(self,
+                                   pred_strs=None,
+                                   pred_ids=None,
+                                   update=True,
+                                   method='cdist',
+                                   get_markdown=False,
+                                   threshold=0.0):
     """
     Get annotation of multiple species,
     given as a list (or an iterable object).
-    self.getSpeciesAnnotation is applied to
+    self.getSpeciesRecommendation is applied to
     each element. 
 
     Parameters
@@ -253,10 +322,10 @@ class Recommender(object):
     """
     if method == 'edist':
       if pred_strs:
-        return [self.getSpeciesAnnotation(pred_str=val, update=update, method='edist') \
+        return [self.getSpeciesRecommendation(pred_str=val, update=update, method='edist') \
                 for val in pred_strs]
       elif pred_ids:
-        return [self.getSpeciesAnnotation(pred_id=val, update=update, method='edist') \
+        return [self.getSpeciesRecommendation(pred_id=val, update=update, method='edist') \
                 for val in pred_ids]
     elif method == 'cdist':
       if pred_strs: 
@@ -283,12 +352,12 @@ class Recommender(object):
       return result
 
 
-  def getReactionAnnotation(self, pred_id,
-                            use_exist_species_annotation=False,
-                            update=True,
-                            spec_method='cdist',
-                            get_markdown=False,
-                            threshold=0.0):
+  def getReactionRecommendation(self, pred_id,
+                                use_exist_species_annotation=False,
+                                update=True,
+                                spec_method='cdist',
+                                get_markdown=False,
+                                threshold=0.0):
     """
     Predict annotations of reactions using
     the provided IDs (argument). 
@@ -311,7 +380,6 @@ class Recommender(object):
     -------
     Recommendation (namedtuple) / str
     """
-    # For now, just predict all species and continue? 
     specs2predict = self.reactions.reaction_components[pred_id] 
     if use_exist_species_annotation:
       pred_formulas = {val:self.species.exist_annotation_formula[val] \
@@ -322,7 +390,7 @@ class Recommender(object):
     remaining_species = [val for val in specs2predict if val not in pred_formulas.keys()]
 
     if len(remaining_species) > 0:
-      spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species,
+      spec_results = self.getSpeciesListRecommendation(pred_ids=remaining_species,
                                                    update=True,
                                                    method=spec_method)
       for one_recom in spec_results:
@@ -345,7 +413,6 @@ class Recommender(object):
       return self.getMarkdownFromRecommendation(inp_recom=result)
     else:
       return result
-
 
   def getReactionIDs(self, pattern, by_species=True, regex=False):
     """
@@ -386,16 +453,15 @@ class Recommender(object):
       result = [val.group(0) for val in matched if val]
     return result
 
-
-  def getReactionListAnnotation(self, pred_ids,
-                                use_exist_species_annotation=False,
-                                update=True,
-                                spec_method='cdist',
-                                get_markdown=False,
-                                threshold=0.0):
+  def getReactionListRecommendation(self, pred_ids,
+                                    use_exist_species_annotation=False,
+                                    update=True,
+                                    spec_method='cdist',
+                                    get_markdown=False,
+                                    threshold=0.0):
     """
     Get annotation of multiple reactions.
-    Instead of applying getReactionAnnotation 
+    Instead of applying getReactionRecommendation 
     for each reaction,
     it'll predict all component species first
     and proceed (this will reduce computational cost).
@@ -426,17 +492,17 @@ class Recommender(object):
     else:
       pred_formulas = {}
     remaining_species = [val for val in specs_to_annotate if val not in pred_formulas.keys()]
-
+    # Get annotation of collected species
     if len(remaining_species) > 0:
-      spec_results = self.getSpeciesListAnnotation(pred_ids=remaining_species,
-                                                   update=True,
-                                                   method=spec_method)
+      spec_results = self.getSpeciesListRecommendation(pred_ids=remaining_species,
+                                                       update=True,
+                                                       method=spec_method)
       for one_recom in spec_results:
         chebis = [val[0] for val in one_recom.candidates]
         forms = list(set([cn.REF_CHEBI2FORMULA[k] \
                  for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
         pred_formulas[one_recom.id] = forms
-    # Use predicted species in formula
+    # Predict reaction annotations. 
     pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
                                                      inp_reac_list=pred_ids,
                                                      update=update)
@@ -490,7 +556,8 @@ class Recommender(object):
     #
     reac_exist_annotation = tools.extractExistingReactionAnnotation(inp_model=model)
     # Next, reaction components for each reaction
-    reac_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
+    reac_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+\
+                                            [k.species for k in val.getListOfProducts()])) \
                        for val in model.getListOfReactions()}
     reaction_tuple = (reac_components, reac_exist_annotation)
     return species_tuple, reaction_tuple

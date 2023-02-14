@@ -193,7 +193,6 @@ class SpeciesAnnotation(object):
     norm_query = query_mat.divide(div_row, axis=1)
     return norm_query, name_used
 
-
   def predictAnnotationByCosineSimilarity(self,
                                           inp_strs=None,
                                           inp_ids=None,
@@ -216,7 +215,7 @@ class SpeciesAnnotation(object):
     chebi_df: DataFrame
         ChEBI information sharing the index with ref_df    
 
-    Returnsa
+    Returns
     -------
     : dict/None
         {'name_used': str,
