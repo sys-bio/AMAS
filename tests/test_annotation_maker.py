@@ -15,15 +15,15 @@ from AMAS import constants as cn
 # from AMAS import tools
 
 ONE_CHEBI = 'CHEBI:15414'
-ONE_CHEBI_SCORE = 1.0
+ONE_CHEBI_SCORE = 1.00
 TWO_CHEBI = 'CHEBI:59789'
-TWO_CHEBI_SCORE = 1.0
+TWO_CHEBI_SCORE = 1.00
 CANDIDATES = [(ONE_CHEBI, ONE_CHEBI_SCORE),
               (TWO_CHEBI, TWO_CHEBI_SCORE)]
 CHEBI = 'chebi'
 
 ONE_ANNOTATION_ITEM = '<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>'
-ONE_SCORE_ITEM = '<rdf:li rdf:resource="http://amas/match_score/by_name/0.2"/>'
+ONE_SCORE_ITEM = '<rdf:li rdf:resource="http://reproduciblebiomodels.org/amas/v1/by_name/0.20"/>'
 ONE_TAG = ['<annotation>', '</annotation>']
 TWO_TAG = ['<rdf:RDF>', '</rdf:RDF>']
 
@@ -43,7 +43,7 @@ class TestAnnotationMaker(unittest.TestCase):
   def setUp(self):
     self.cands = CANDIDATES
     # '00001' indicates a meta ID
-    self.maker = am.AnnotationMaker('species', '00001')
+    self.maker = am.AnnotationMaker('species')
 
   def testGetIndent(self):
     one_indent = self.maker.getIndent(num_indents=1)
@@ -66,7 +66,7 @@ class TestAnnotationMaker(unittest.TestCase):
       	still_good = False
 
   def testCreateAnnotationContainer(self):
-  	one_container = self.maker._createAnnotationContainer(['annotation'])
+  	one_container = self.maker.createAnnotationContainer(['annotation'])
   	self.assertEqual(one_container, ONE_TAG)
 
   def testCreateAnnotationItem(self):
@@ -87,7 +87,7 @@ class TestAnnotationMaker(unittest.TestCase):
     self.assertEqual(one_tag, ONE_TAG)
 
   def testGetAnnotationString(self):
-    one_str = self.maker.getAnnotationString(CANDIDATES)
+    one_str = self.maker.getAnnotationString(CANDIDATES, meta_id='00001')
     self.assertEqual(one_str, FULL_ANNOTATION)
 
   def testInsertEntry(self):

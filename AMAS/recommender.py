@@ -55,8 +55,9 @@ class Recommender(object):
     self.species = sa.SpeciesAnnotation(inp_tuple=spec_tuple)
     self.reactions = ra.ReactionAnnotation(inp_tuple=reac_tuple)
     # Below are elements to interact with user
+    self.current_element_type = None
     self.just_displayed = None
-    self.selected_annotation = dict()
+    self.selected_annotation = dict.fromkeys(['speies', 'reaction'])
 
   def filterRecommendationByThreshold(self, inp_recom, inp_thresh):
     """
@@ -148,40 +149,12 @@ class Recommender(object):
     df_str = title_line + '\n' + df_str
     return df_str
 
-
-
-  # def getMarkdownFromRecommendation(self, inp_recom):
-  #   """
-  #   Get a markdown string for 
-  #   a single recommendation.
-  
-  #   Parameters
-  #   ----------
-  #   inp_recom: cn.Recommendation
-  
-  #   Returns
-  #   -------
-  #   :str
-  #   """
-  #   cands = [val[0] for val in inp_recom.candidates]
-  #   match_scores = [val[1] for val in inp_recom.candidates]
-  #   urls = inp_recom.urls
-  #   labels = inp_recom.labels
-  #   df = pd.DataFrame({'annotation':cands, 'match_score':match_scores, 'url':urls, 'label':labels})
-  #   df_str = df.to_markdown(tablefmt="grid", floatfmt=".03f", index=False)
-  #   # Centering and adding the title 
-  #   len_first_line = len(df_str.split('\n')[0])
-  #   title_line = "%s (credibility score: %.03f)" % (inp_recom.id,  inp_recom.credibility)
-  #   title_line = title_line.center(len_first_line)
-  #   df_str = title_line + '\n' + df_str
-  #   return df_str
-
   def getSpeciesRecommendation(self,
                                pred_str=None,
                                pred_id=None,
                                update=True,
                                method='cdist',
-                               get_markdown=False,
+                               get_df=False,
                                threshold=0.0):
     """
     Predict annotations of species using
@@ -205,8 +178,8 @@ class Recommender(object):
         'cdist' represents Cosine Similarity
         'edist' represents Edit Distance.
         Default method id 'cdist'
-    get_markdown: bool
-        If true, return a markdown string.
+    get_df: bool
+        If true, return a pandas.DataFrame.
         If False, return a cn.Recommendation
 
     Returns
@@ -241,8 +214,8 @@ class Recommender(object):
                                labels)
     if update:
       _ = self.species.updateSpeciesWithRecommendation(result)
-    if get_markdown:
-      return self.getMarkdownFromRecommendation(inp_recom=result)
+    if get_df:
+      return self.getDataFrameFromRecommendation(inp_recom=result)
     else:
       return result
 
@@ -288,7 +261,7 @@ class Recommender(object):
                                    pred_ids=None,
                                    update=True,
                                    method='cdist',
-                                   get_markdown=False,
+                                   get_df=False,
                                    threshold=0.0):
     """
     Get annotation of multiple species,
@@ -312,8 +285,8 @@ class Recommender(object):
         'cdist' represents Cosine Similarity
         'edist' represents Edit Distance.
         Default method id 'cdist'
-    get_markdown: bool
-        If true, return a markdown string.
+    get_df: bool
+        If True, return a list of pandas.DataFrame.
         If False, return a list of cn.Recommendation
 
     Returns
@@ -345,8 +318,8 @@ class Recommender(object):
         result.append(res_recom)
         if update:
           _ = self.species.updateSpeciesWithRecommendation(res_recom)
-    if get_markdown:
-      return [self.getMarkdownFromRecommendation(inp_recom=val) \
+    if get_df:
+      return [self.getDataFrameFromRecommendation(inp_recom=val) \
               for val in result]
     else:
       return result
@@ -356,7 +329,7 @@ class Recommender(object):
                                 use_exist_species_annotation=False,
                                 update=True,
                                 spec_method='cdist',
-                                get_markdown=False,
+                                get_df=False,
                                 threshold=0.0):
     """
     Predict annotations of reactions using
@@ -372,8 +345,8 @@ class Recommender(object):
     spec_method: str
         If 'cdist' Cosine Similarity
         if 'edist' Edit distance
-    get_markdown: bool
-        If true, return a markdown string.
+    get_df: bool
+        If True, return a pandas DataFrame.
         If False, return a cn.Recommendation
 
     Returns
@@ -409,8 +382,8 @@ class Recommender(object):
                                pred_reaction[cn.MATCH_SCORE][pred_id],
                                urls,
                                labels)
-    if get_markdown:
-      return self.getMarkdownFromRecommendation(inp_recom=result)
+    if get_df:
+      return self.getDataFrameFromRecommendation(inp_recom=result)
     else:
       return result
 
@@ -457,7 +430,7 @@ class Recommender(object):
                                     use_exist_species_annotation=False,
                                     update=True,
                                     spec_method='cdist',
-                                    get_markdown=False,
+                                    get_df=False,
                                     threshold=0.0):
     """
     Get annotation of multiple reactions.
@@ -473,8 +446,8 @@ class Recommender(object):
     spec_method: str
         If 'cdist' Cosine Similarity
         if 'edist' Edit distance
-    get_markdown: bool
-        If true, return a markdown string.
+    get_df: bool
+        If True, return a list of pandas DataFrames.
         If False, return a list of cn.Recommendation
 
     Returns
@@ -519,8 +492,8 @@ class Recommender(object):
                                urls[k],
                                labels[k]) \
               for k in pred_score.keys()]
-    if get_markdown:
-      return [self.getMarkdownFromRecommendation(inp_recom=val) \
+    if get_df:
+      return [self.getDataFrameFromRecommendation(inp_recom=val) \
               for val in result]
     else:
       return result

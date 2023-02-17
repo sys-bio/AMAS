@@ -13,17 +13,16 @@ RDF_TAG_ITEM = ['rdf:RDF',
                 'xmlns:bqmodel="http://biomodels.net/model-qualifiers/"']
 RDF_TAG = ' '.join(RDF_TAG_ITEM)
 
-ELEMENT_TYPE_TO_MATCH_SCORE_TYPE = {'species': 'by_name',
-                                    'reaction': 'by_component'}
-ELEMENT_TYPE_TO_KNOWLEDGE_RESOURCE = {'species': 'chebi',
-                                      'reaction': 'rhea'}
+MATCH_SCORE_BY = {'species': 'by_name',
+                  'reaction': 'by_component'}
+KNOWLEDGE_RESOURCE = {'species': 'chebi',
+                      'reaction': 'rhea'}
 
 
 class AnnotationMaker(object):
 
   def __init__(self,
   	           element,
-  	           meta_id='not_provided',
   	           prefix='bqbiol:is'):
     """
     Parameters
@@ -34,17 +33,10 @@ class AnnotationMaker(object):
         the type of match score
         and the knowledge resource used. 
     """
-    self.meta_id = meta_id
-    self.score_type = ELEMENT_TYPE_TO_MATCH_SCORE_TYPE[element]
-    self.knowledge_resource = ELEMENT_TYPE_TO_KNOWLEDGE_RESOURCE[element]
-
-    container_items = ['annotation', 
-                       RDF_TAG,
-                       'rdf:Description rdf:about="#metaid_'+self.meta_id+'"',
-                       prefix,
-                       'rdf:Bag']
-    self.empty_container = self._createAnnotationContainer(container_items)
-
+    self.version = 'v1'
+    self.prefix = prefix
+    self.score_type = MATCH_SCORE_BY[element]
+    self.knowledge_resource = KNOWLEDGE_RESOURCE[element]
 
   def createAnnotationBlock(self,
                             identifier,
@@ -71,8 +63,8 @@ class AnnotationMaker(object):
         'chebi' or 'rhea'
         Optional unless want to use a different one
     score_type: str
-        'name' for species or 
-        'component' for reactions
+        'by_name' for species or 
+        'by_component' for reactions
         Optional unless user wants to specify it
     nested_prefix: str
         Default is 'bqbiol:hasProperty'
@@ -102,7 +94,7 @@ class AnnotationMaker(object):
     # libsbml saved without it
     return [one_annotation] + nested_block
 
-  def _createAnnotationContainer(self, cont_items):
+  def createAnnotationContainer(self, cont_items):
     """
     Create an empty annotation container
     that will hold the annotation blocks
@@ -152,8 +144,8 @@ class AnnotationMaker(object):
   	                  score_type):
     """
     Create a one-line score annotation,
-    e.g., <rdf:li rdf:resource="http://amas/match_score/by_name/0.2"/>
-    Score type, e.g., by_name,
+    e.g., <rdf:li rdf:resource="http://reproduciblebiomodels.org/amas/v1/by_name/1.00"/>
+    Score type, e.g., name,
     is determined in __init__,
     when the type of model element was
     determined by either as species or reaction. 
@@ -168,11 +160,10 @@ class AnnotationMaker(object):
     -------
     str
     """
-    score_items = ['amas',
-                   'match_score',
+    score_items = [self.version,
                    self.score_type,
-                   str(match_score)]
-    res = '<rdf:li rdf:resource="http://' +\
+                   format(match_score, '.2f')]
+    res = '<rdf:li rdf:resource="http://reproduciblebiomodels.org/amas/' +\
           '/'.join(score_items)  +\
           '"/>'
     return res
@@ -201,7 +192,8 @@ class AnnotationMaker(object):
     return res_tag
 
   def getAnnotationString(self,
-                          candidates):
+                          candidates,
+                          meta_id):
     """
     Get a string of annotations,
     using a list of tuples (annotation, match_score).
@@ -211,6 +203,8 @@ class AnnotationMaker(object):
     candidates: list-tuple
         e.g., [(CHEBI:12345, 1.0), (CHEBI:98765, 0.8)]
 
+    meta_id: str
+        Meta ID of the element to be included in the annotation. 
     Returns
     -------
     str
@@ -220,7 +214,13 @@ class AnnotationMaker(object):
       items_from = items_from + \
                    self.createAnnotationBlock(one_cand[0], one_cand[1])
     #
-    result = self.insertList(insert_to=self.empty_container,
+    container_items = ['annotation', 
+                       RDF_TAG,
+                       'rdf:Description rdf:about="#metaid_'+meta_id+'"',
+                       self.prefix,
+                       'rdf:Bag']
+    empty_container = self.createAnnotationContainer(container_items)
+    result = self.insertList(insert_to=empty_container,
                              insert_from=items_from)
     return ('\n').join(result)
 

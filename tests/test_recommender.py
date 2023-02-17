@@ -84,8 +84,8 @@ class TestRecommender(unittest.TestCase):
 
   def testGetSpeciesRecommendation(self):
     one_res = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM,
-                                              update=False,
-                                              method='edist')
+                                                  update=False,
+                                                  method='edist')
     self.assertEqual(one_res.id, SPECIES_SAM)
     self.assertEqual(one_res.credibility, 0.975)
     self.assertTrue(ONE_SPEC_CAND in one_res.candidates)
