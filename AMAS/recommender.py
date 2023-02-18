@@ -20,7 +20,7 @@ from AMAS import tools
 from AMAS import species_annotation as sa
 from AMAS import reaction_annotation as ra
 
-
+ELEMENT_TYPES = ['species', 'reaction']
 
 class Recommender(object):
 
@@ -55,11 +55,11 @@ class Recommender(object):
     self.species = sa.SpeciesAnnotation(inp_tuple=spec_tuple)
     self.reactions = ra.ReactionAnnotation(inp_tuple=reac_tuple)
     # Below are elements to interact with user
-    self.current_element_type = None
+    self.current_type = None
     self.just_displayed = None
-    self.selected_annotation = dict.fromkeys(['speies', 'reaction'])
+    self.selection = {val:dict() for val in ELEMENT_TYPES}
 
-  def filterRecommendationByThreshold(self, inp_recom, inp_thresh):
+  def filterRecommendationByThreshold(self, rec, thresh):
     """
     Filter a single recommendation 
     based on the threshold value.
@@ -68,23 +68,24 @@ class Recommender(object):
 
     Parameters
     ----------
-    inp_recom: cn.Recommdnation
-    inp_thresh: float (0.0-1.0)
+    rec: cn.Recommdnation
+    thresh: float (0.0-1.0)
 
     Returns
     -------
     cn.Recommendation/None
     """
-    thresh_index = np.sum([val[1]>=inp_thresh for val in inp_recom.candidates])
+    thresh_index = np.sum([val[1]>=thresh for val in rec.candidates])
     if thresh_index > 0:
-      filt_recom = cn.Recommendation(inp_recom.id,
-                                     inp_recom.credibility,
-                                     inp_recom.candidates[:thresh_index],
-                                     inp_recom.urls[:thresh_index],
-                                     inp_recom.labels[:thresh_index])
+      filt_recom = cn.Recommendation(rec.id,
+                                     rec.credibility,
+                                     rec.candidates[:thresh_index],
+                                     rec.urls[:thresh_index],
+                                     rec.labels[:thresh_index])
       return filt_recom
     else:
       return None
+
 
   def getDataFrameFromRecommendation(self,
                                      rec,
@@ -110,10 +111,10 @@ class Recommender(object):
     labels = rec.labels
     # index starts from 1;
     df = pd.DataFrame({'annotation':cands,
-                       'match_score':match_scores,
+                       'match score':match_scores,
                        'label':labels},
                        index=[1+val for val in list(range(len(cands)))])
-    df.index.name = 'ID: %s' % rec.id
+    df.index.name = '%s (cred. %.3f)' % (rec.id ,rec.credibility)
     if show_url:
       urls = rec.urls
       df['url'] = urls
@@ -124,11 +125,11 @@ class Recommender(object):
                                     show_url=False):
     """
     Get a markdown using 
-    a recommendation.
+    a cn.Recommendation or pandas.DataFrame.
 
     Parameters
     ----------
-    rec: cn.Recommendation
+    rec: cn.Recommendation/pandas.DataFrame
 
     show_url: bool
         If False, omit this column
@@ -137,14 +138,22 @@ class Recommender(object):
     -------
     :str
     """
-    df = self.getDataFrameFromRecommendation(rec, show_url)
+    if isinstance(rec, pd.DataFrame):
+      df = rec
+      idx_name = df.index.name.split(' ')
+      rec_id = idx_name[0]
+      rec_credibility = float(idx_name[-1][:-1])
+    else:
+      df = self.getDataFrameFromRecommendation(rec, show_url)
+      rec_id = rec.id
+      rec_credibility = rec.credibility
     # In markdown, title is shown separately,
     # so index name with element ID is removed; 
     df.index.name=None
     df_str = df.to_markdown(tablefmt="grid", floatfmt=".03f", index=True)
     # Centering and adding the title 
     len_first_line = len(df_str.split('\n')[0])
-    title_line = "%s (credibility score: %.03f)" % (rec.id,  rec.credibility)
+    title_line = "%s (credibility score: %.03f)" % (rec_id,  rec_credibility)
     title_line = title_line.center(len_first_line)
     df_str = title_line + '\n' + df_str
     return df_str
@@ -154,8 +163,7 @@ class Recommender(object):
                                pred_id=None,
                                update=True,
                                method='cdist',
-                               get_df=False,
-                               threshold=0.0):
+                               get_df=False):
     """
     Predict annotations of species using
     the provided string or ID.
@@ -215,11 +223,11 @@ class Recommender(object):
     if update:
       _ = self.species.updateSpeciesWithRecommendation(result)
     if get_df:
-      return self.getDataFrameFromRecommendation(inp_recom=result)
+      return self.getDataFrameFromRecommendation(rec=result)
     else:
       return result
 
-  def getSpeciesIDs(self, pattern, regex=False):
+  def getSpeciesIDs(self, pattern=None, regex=False):
     """
     Returns Species IDs that match the pattern.
     The pattern is given as glob
@@ -228,7 +236,7 @@ class Recommender(object):
   
     Parameters
     ---------
-    pattern: str
+    pattern: str/None
       string pattern
     reges: bool
       if True, use regex
@@ -261,8 +269,7 @@ class Recommender(object):
                                    pred_ids=None,
                                    update=True,
                                    method='cdist',
-                                   get_df=False,
-                                   threshold=0.0):
+                                   get_df=False):
     """
     Get annotation of multiple species,
     given as a list (or an iterable object).
@@ -319,7 +326,7 @@ class Recommender(object):
         if update:
           _ = self.species.updateSpeciesWithRecommendation(res_recom)
     if get_df:
-      return [self.getDataFrameFromRecommendation(inp_recom=val) \
+      return [self.getDataFrameFromRecommendation(rec=val) \
               for val in result]
     else:
       return result
@@ -329,8 +336,7 @@ class Recommender(object):
                                 use_exist_species_annotation=False,
                                 update=True,
                                 spec_method='cdist',
-                                get_df=False,
-                                threshold=0.0):
+                                get_df=False):
     """
     Predict annotations of reactions using
     the provided IDs (argument). 
@@ -383,11 +389,11 @@ class Recommender(object):
                                urls,
                                labels)
     if get_df:
-      return self.getDataFrameFromRecommendation(inp_recom=result)
+      return self.getDataFrameFromRecommendation(rec=result)
     else:
       return result
 
-  def getReactionIDs(self, pattern, by_species=True, regex=False):
+  def getReactionIDs(self, pattern=None, by_species=True, regex=False):
     """
     Get IDs of reactions based on
     the pattern.
@@ -411,6 +417,10 @@ class Recommender(object):
       If True, use regex expression
       If False, convert it to regex.
     """
+    reacts = list(self.reactions.reaction_components.keys())
+    if pattern is None:
+      return reacts
+    # returns a list of ids thta match pattern, if None, return all
     if regex:
       re_pattern = pattern
     else:
@@ -421,7 +431,6 @@ class Recommender(object):
       result = [val[0] for val in comp_items \
                 if any(set(val[1]).intersection(specs2use))]
     else:
-      reacts = list(self.reactions.reaction_components.keys())
       matched = [re.match(re_pattern, val) for val in reacts]
       result = [val.group(0) for val in matched if val]
     return result
@@ -430,8 +439,7 @@ class Recommender(object):
                                     use_exist_species_annotation=False,
                                     update=True,
                                     spec_method='cdist',
-                                    get_df=False,
-                                    threshold=0.0):
+                                    get_df=False):
     """
     Get annotation of multiple reactions.
     Instead of applying getReactionRecommendation 
@@ -493,7 +501,7 @@ class Recommender(object):
                                labels[k]) \
               for k in pred_score.keys()]
     if get_df:
-      return [self.getDataFrameFromRecommendation(inp_recom=val) \
+      return [self.getDataFrameFromRecommendation(rec=val) \
               for val in result]
     else:
       return result
@@ -650,6 +658,199 @@ class Recommender(object):
     new_pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=self.species.formula,
                                                          inp_reac_list=reactions,
                                                          update=True)
+
+  ### Below are methods that interacts with user; 
+  def filterDataFrameByThreshold(self, df, min_score):
+    """
+    Filter dataframe by min_score (threshold),
+    and returns the result;
+  
+    Note that if no item meets the threshold,
+    it'll still return an empty dataframe. 
+
+    Paramters
+    ---------
+    df: pd.DataFrame
+  
+    min_score: float (0.0-1.0)
+  
+    Returns
+    -------
+    pd.DataFrame  
+    """
+    scores = df['match score']
+    filt_idx = scores[scores>=min_score].index
+    filt_df = df.loc[filt_idx, :]
+    return filt_df
+
+  def recommendReaction(self, ids, min_score=0.0):
+    """
+    Recommend one or more ids of species
+    and returns a single dataframe or
+    a list of dataframes.
+  
+    Parameters
+    ----------
+    ids: str/list-str
+  
+    min_score: threshold for cutoff
+        If None given, returns all values; 
+
+    Returns
+    -------
+    None
+    """
+    self.updateCurrentElementType('reaction')
+    if isinstance(ids, str):
+      reaction_list = [ids]
+    else:
+      reaction_list = ids
+    res = self.getReactionListRecommendation(pred_ids=reaction_list,
+                                             get_df=True)
+    res_dict = {val:res[idx] for idx, val in enumerate(reaction_list)}
+    for k in res_dict.keys():
+      filt_df = self.filterDataFrameByThreshold(res_dict[k], min_score)
+      print(self.getMarkdownFromRecommendation(filt_df)+"\n")
+    self.updateJustDisplayed(res_dict)
+    return None
+
+  def recommendSpecies(self, ids, min_score=0.0):
+    """
+    Recommend one or more ids of species
+    and returns a single dataframe or
+    a list of dataframes.
+  
+    Parameters
+    ----------
+    ids: str/list-str
+  
+    min_score: threshold for cutoff
+        If None given, returns all values; 
+
+    Returns
+    -------
+    None
+    """
+    self.updateCurrentElementType('species')
+  
+    if isinstance(ids, str):
+      species_list = [ids]
+    else:
+      species_list = ids
+    res = self.getSpeciesListRecommendation(pred_ids=species_list,
+                                            get_df=True)
+    res_dict = {val:res[idx] for idx, val in enumerate(species_list)}
+    for k in res_dict.keys():
+      filt_df = self.filterDataFrameByThreshold(res_dict[k], min_score)
+      print(self.getMarkdownFromRecommendation(filt_df)+'\n')
+    self.updateJustDisplayed(res_dict)
+    return None
+
+  def updateCurrentElementType(self, element_type):
+    """
+    Updating self.current_type
+    indicator; updated when
+    recommendSpecies or recommendReaction 
+    is called; 
+  
+    Parameters
+    ----------
+    element_type: str
+        Either 'species' or 'reaction'
+    """
+    self.current_type = element_type
+
+  def updateJustDisplayed(self, df_dict):
+    """
+    Used it every time
+    result is shown to user.
+    called by 
+    /recommendSpecies/recommendReaction/
+    /selectAnnotation/
+    For now, always in the format as
+    pandas.DataFrame. 
+
+    Parameters
+    ----------
+    df_dict: dict()
+        Dictionary of pandas.DataFrame
+  
+    Returns
+    -------
+    None
+    """
+    self.just_displayed = df_dict
+
+  def selectAnnotation(self, choice=None):
+    """
+    Based on the previous recommendation,
+    determine the annotations to store.
+    If 'all' given in choice[1],
+    select all.
+  
+    Parameters
+    ----------
+    choice: tuple/list-tuple (str, int)
+        [(element ID, choice number)]
+    """
+    # assumes self.just_displayced is {id: pd.dataframe}
+    sel_id = choice[0]
+    sel_idx = choice[1]
+    df = self.just_displayed[choice[0]]
+    if sel_idx == 'all':
+      result = df
+    else:
+      if isinstance(sel_idx, int):
+        chosen = [sel_idx]
+      else:
+        chosen = sel_idx
+      result = df.loc[chosen, :]
+    # Now, update the selected annotation
+    self.updateSelection(sel_id, result)
+    print("Selection updated.")
+    return None
+
+  def updateSelection(self, sel_id, sel_df):
+    """
+    Direct result of selectAnnotation;
+    filtered or non-filtered
+    dictionary of dataframes.
+  
+    By calling SaveFile,
+    All selected annotations will be
+    saved as an .xml file. 
+  
+    Parameters
+    ----------
+    sel_id: str
+  
+    sel_df: pandas.DataFrame
+    """
+    self.selection[self.current_type].update({sel_id: sel_df})
+
+  def displaySelection(self):
+    """
+    To assist user, 
+    display all selected
+    annotations from
+    self.selection.
+    """
+    for one_type in ELEMENT_TYPES:
+      type_selection = self.selection[one_type]
+      for k in type_selection.keys():
+        print(self.getMarkdownFromRecommendation(type_selection[k])+"\n")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

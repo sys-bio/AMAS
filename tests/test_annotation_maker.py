@@ -42,7 +42,6 @@ TWO_INSERTED = ['rdf:RDF']
 class TestAnnotationMaker(unittest.TestCase):
   def setUp(self):
     self.cands = CANDIDATES
-    # '00001' indicates a meta ID
     self.maker = am.AnnotationMaker('species')
 
   def testGetIndent(self):
@@ -87,7 +86,7 @@ class TestAnnotationMaker(unittest.TestCase):
     self.assertEqual(one_tag, ONE_TAG)
 
   def testGetAnnotationString(self):
-    one_str = self.maker.getAnnotationString(CANDIDATES, meta_id='00001')
+    one_str = self.maker.getAnnotationString(CANDIDATES, meta_id='metaid_00001')
     self.assertEqual(one_str, FULL_ANNOTATION)
 
   def testInsertEntry(self):

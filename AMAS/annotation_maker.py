@@ -216,7 +216,7 @@ class AnnotationMaker(object):
     #
     container_items = ['annotation', 
                        RDF_TAG,
-                       'rdf:Description rdf:about="#metaid_'+meta_id+'"',
+                       'rdf:Description rdf:about="#'+meta_id+'"',
                        self.prefix,
                        'rdf:Bag']
     empty_container = self.createAnnotationContainer(container_items)

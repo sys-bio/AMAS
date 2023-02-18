@@ -48,7 +48,7 @@ RESULT_RECOM = cn.Recommendation('R_PFK', 0.817,
                                  ['tagatose-6-phosphate kinase activity', 'phosphoglucokinase activity'])
 RESULT_MARKDOWN = '                      R_PFK (credibility score: 0.817)                      \n' + \
                   '+----+--------------+---------------+--------------------------------------+\n' + \
-                  '|    | annotation   |   match_score | label                                |\n' + \
+                  '|    | annotation   |   match score | label                                |\n' + \
                   '+====+==============+===============+======================================+\n' + \
                   '|  1 | RHEA:12420   |         0.600 | tagatose-6-phosphate kinase activity |\n' + \
                   '+----+--------------+---------------+--------------------------------------+\n' + \
@@ -66,8 +66,8 @@ class TestRecommender(unittest.TestCase):
     recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
     one_recom = recom.getReactionRecommendation(pred_id=R_PFK)
     two_recom = recom.getReactionRecommendation(pred_id=R_PFL)
-    self.assertEqual(None, recom.filterRecommendationByThreshold(inp_recom=one_recom, inp_thresh=0.8))
-    filt_two_recom = recom.filterRecommendationByThreshold(inp_recom=two_recom, inp_thresh=0.8)
+    self.assertEqual(None, recom.filterRecommendationByThreshold(rec=one_recom, thresh=0.8))
+    filt_two_recom = recom.filterRecommendationByThreshold(rec=two_recom, thresh=0.8)
     self.assertEqual(len(two_recom.candidates), 8)
     self.assertEqual(len(filt_two_recom.candidates), 5)
 
