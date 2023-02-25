@@ -4,17 +4,7 @@
       <bqbiol:is>
         <rdf:Bag>
           <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>
-          <bqbiol:hasProperty>
-            <rdf:Bag>
-              <rdf:li rdf:resource="http://reproduciblebiomodels.org/amas/v1/by_name/1.00"/>
-            </rdf:Bag>
-          </bqbiol:hasProperty>
           <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:59789"/>
-          <bqbiol:hasProperty>
-            <rdf:Bag>
-              <rdf:li rdf:resource="http://reproduciblebiomodels.org/amas/v1/by_name/1.00"/>
-            </rdf:Bag>
-          </bqbiol:hasProperty>
         </rdf:Bag>
       </bqbiol:is>
     </rdf:Description>

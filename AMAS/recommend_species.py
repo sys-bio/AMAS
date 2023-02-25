@@ -2,7 +2,7 @@
 """
 Predicts annotations of species using a local XML file
 and the species ID. 
-Usage: recommend_species <filepath> <species_id_1> <species_id_2>.. etc.
+Usage: python recommend_species <filepath> <species_id_1> <species_id_2>.. etc.
 """
 
 import  argparse
@@ -24,7 +24,7 @@ def main():
   # check if all species are included in the species
   specs = args.species_id
   try:
-    res_mkd = recom.getSpeciesListAnnotation(pred_ids=specs, get_markdown=True)
+    res_mkd = recom.getSpeciesListAnnotation(pred_ids=specs, get_df=True)
     for one_mkd in res_mkd:
       print(one_mkd)
   except:

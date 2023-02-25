@@ -6,6 +6,7 @@ This module is going to be directly used by the users.
 
 # import collections
 import compress_pickle
+import copy
 import fnmatch
 import itertools
 import libsbml
@@ -14,6 +15,7 @@ import os
 import pandas as pd
 import re
 
+from AMAS import annotation_maker as am
 from AMAS import constants as cn
 from AMAS import iterator as it
 from AMAS import tools
@@ -139,7 +141,9 @@ class Recommender(object):
     :str
     """
     if isinstance(rec, pd.DataFrame):
-      df = rec
+      # to deepcopy so original data doesn't get changed
+      # in line 156. 
+      df = copy.deepcopy(rec)
       idx_name = df.index.name.split(' ')
       rec_id = idx_name[0]
       rec_credibility = float(idx_name[-1][:-1])
@@ -393,7 +397,7 @@ class Recommender(object):
     else:
       return result
 
-  def getReactionIDs(self, pattern=None, by_species=True, regex=False):
+  def getReactionIDs(self, pattern=None, by_species=False, regex=False):
     """
     Get IDs of reactions based on
     the pattern.
@@ -427,9 +431,13 @@ class Recommender(object):
       re_pattern = fnmatch.translate(pattern)
     if by_species:
       specs2use = self.getSpeciesIDs(pattern=re_pattern, regex=True)
-      comp_items = list(self.reactions.reaction_components.items())
-      result = [val[0] for val in comp_items \
-                if any(set(val[1]).intersection(specs2use))]
+      if any(specs2use):
+        comp_items = list(self.reactions.reaction_components.items())
+        result = [val[0] for val in comp_items \
+                  if any(set(val[1]).intersection(specs2use))]
+      # if no species match was found
+      else:
+        return None
     else:
       matched = [re.match(re_pattern, val) for val in reacts]
       result = [val.group(0) for val in matched if val]
@@ -841,8 +849,46 @@ class Recommender(object):
         print(self.getMarkdownFromRecommendation(type_selection[k])+"\n")
 
 
-
-
+  def saveToFile(self,
+                 fpath="updated_model.xml",
+                 choice=None):
+    """
+    Update and save model;
+    How to distinguish species vs. reactions? 
+    by using self.current_element_type
+  
+    Call annotation maker;
+  
+    Parameters
+    ----------
+    fpath: str
+  
+    choice: list-str/None
+        If list of ID given, 
+        only annotations of the provided IDs 
+        will be saved.
+        If None, all will be saved;
+    """
+    model = self.sbml_document.getModel()
+    ELEMENT_FUNC = {'species': model.getSpecies,
+                   'reaction': model.getReaction}
+    for one_type in ELEMENT_TYPES:
+      type_selection = self.selection[one_type]
+      maker = am.AnnotationMaker(one_type)
+      if choice: 
+        sel2save = {val:type_selection[val] for val in choice if val in type_selection.keys()}
+      else:
+        sel2save = type_selection
+      for one_k in sel2save.keys():
+        one_element = ELEMENT_FUNC[one_type](one_k)
+        meta_id = one_element.meta_id
+        df = sel2save[one_k]
+        upd_tuples = list(zip(df['annotation'], df['match score']))
+        annotation_str = maker.getAnnotationString(upd_tuples, meta_id)
+        one_element.setAnnotation(annotation_str)
+        print("Annotation of %s saved." % one_k)  
+    # finally, write the sbml document 
+    libsbml.writeSBMLToFile(self.sbml_document, fpath)
 
 
 

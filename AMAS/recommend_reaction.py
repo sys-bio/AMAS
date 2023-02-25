@@ -24,7 +24,7 @@ def main():
   # check if all species are included in the species
   reacts = args.reaction_id
   try:
-    res_mkd = recom.getReactionListAnnotation(pred_ids=reacts, get_markdown=True)
+    res_mkd = recom.getReactionListAnnotation(pred_ids=reacts, get_df=True)
     for one_mkd in res_mkd:
       print(one_mkd)
   except:
