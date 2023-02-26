@@ -194,8 +194,17 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(recom.reactions.candidates[R_PFK][0][0], ECOLI_RHEA)
     self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 1.0)
 
+  #### testing methods for user-interface
+  def testAutoSelectAnnotation(self):
+    min_threshold = 0.6
+    res1 = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM, get_df=True)
+    df1 = self.recom.autoSelectAnnotation(res1, min_threshold)
+    self.assertEqual(df1.shape[0], 2)
+    self.assertEqual(set(df1['match score']), {1.0})
 
-
+    res2 = self.recom.getReactionRecommendation(pred_id=REACTION_SAMDC, get_df=True)
+    df2 = self.recom.autoSelectAnnotation(res2, min_threshold)
+    self.assertEqual(df2.shape[0], 0)
 
 
 

@@ -668,6 +668,40 @@ class Recommender(object):
                                                          update=True)
 
   ### Below are methods that interacts with user; 
+  def autoSelectAnnotation(self, df, min_score=0.0):
+    """
+    Choose annotations based on 
+    the set threshold; 
+    (1) if None meets the threshold, return an empty frame
+    (2) if multiple meet the threshold,
+        (a) find the highest match score among them
+        (b) return all above match score == highest_match_score
+      
+    Parameters
+    ----------
+    df: pandas.DataFrame
+  
+    min_score: float (0.0-1.0)
+  
+    Returns
+    -------
+    pandas.DataFrame
+      if nothing matched,
+      an empty dataframe is returned
+    """ 
+    scores = df['match score']
+    # max_score: highest match score that exists
+    # min_score: threshold
+    max_score = np.max(scores)
+    if max_score < min_score:
+      # this will create an empty dataframe
+      filt_idx = scores[scores>=min_score].index
+    else:
+      filt_idx = scores[scores==max_score].index
+    filt_df = df.loc[filt_idx, :]  
+    return filt_df
+
+
   def filterDataFrameByThreshold(self, df, min_score):
     """
     Filter dataframe by min_score (threshold),
@@ -848,10 +882,28 @@ class Recommender(object):
       for k in type_selection.keys():
         print(self.getMarkdownFromRecommendation(type_selection[k])+"\n")
 
+  def saveToCSV(self, fpath="recommendation.csv"):
+    """
+    Save self.selection to csv.
+    """
+    dfs = []
+    pd.set_option('display.max_colwidth', 255)
+    for one_type in self.selection.keys():
+      type_selection = self.selection[one_type]
+      if any(type_selection):
+        element_df = pd.concat([type_selection[k] for k in type_selection.keys()])
+        element_ids = list(itertools.chain(*[[k]*type_selection[k].shape[0] \
+                                             for k in type_selection.keys()]))
+        element_types = [one_type]*len(element_ids)
+        element_df.insert(0, "type", element_types)
+        element_df.insert(1, "id", element_ids)
+        dfs.append(element_df)
+    res = pd.concat(dfs)
+    # Write result to csv
+    res.to_csv(fpath, index=False) 
 
-  def saveToFile(self,
-                 fpath="updated_model.xml",
-                 choice=None):
+  def saveToSBML(self,
+                 fpath="sbml_model.xml"):
     """
     Update and save model;
     How to distinguish species vs. reactions? 
@@ -862,35 +914,27 @@ class Recommender(object):
     Parameters
     ----------
     fpath: str
-  
-    choice: list-str/None
-        If list of ID given, 
-        only annotations of the provided IDs 
-        will be saved.
-        If None, all will be saved;
     """
     model = self.sbml_document.getModel()
     ELEMENT_FUNC = {'species': model.getSpecies,
-                   'reaction': model.getReaction}
+                    'reaction': model.getReaction}
     for one_type in ELEMENT_TYPES:
       type_selection = self.selection[one_type]
       maker = am.AnnotationMaker(one_type)
-      if choice: 
-        sel2save = {val:type_selection[val] for val in choice if val in type_selection.keys()}
-      else:
-        sel2save = type_selection
+      sel2save = type_selection
       for one_k in sel2save.keys():
         one_element = ELEMENT_FUNC[one_type](one_k)
         meta_id = one_element.meta_id
         df = sel2save[one_k]
-        upd_tuples = list(zip(df['annotation'], df['match score']))
-        annotation_str = maker.getAnnotationString(upd_tuples, meta_id)
-        one_element.setAnnotation(annotation_str)
-        print("Annotation of %s saved." % one_k)  
+        cands2save = list(df['annotation'])
+        if cands2save:
+          annotation_str = maker.getAnnotationString(cands2save, meta_id)
+          one_element.setAnnotation(annotation_str)
+          print("Annotation of %s saved." % one_k) 
+        else:
+          continue
     # finally, write the sbml document 
     libsbml.writeSBMLToFile(self.sbml_document, fpath)
-
-
 
 
 

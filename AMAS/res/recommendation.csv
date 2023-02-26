@@ -1,0 +1,14 @@
+type,id,annotation,match score,label
+species,SAM,CHEBI:15414,1.0,S-adenosyl-L-methionine
+species,SAM,CHEBI:67040,1.0,S-adenosyl-L-methioninate
+species,A,CHEBI:28515,1.0,acetoacetamide
+species,A,CHEBI:15843,1.0,arachidonic acid
+species,A,CHEBI:46217,1.0,L-alanine residue
+species,A,CHEBI:50306,1.0,adenosine 5'-monophosphate residue
+species,A,CHEBI:62885,1.0,adenosine residue
+species,A,CHEBI:16708,1.0,adenine
+species,A,CHEBI:72816,1.0,L-alanyl-L-alanine
+species,A,CHEBI:16977,1.0,L-alanine
+species,A,CHEBI:13193,1.0,hydrogen acceptor
+species,A,CHEBI:73313,1.0,Ala-Ala-Ala
+species,A,CHEBI:16449,1.0,alanine
