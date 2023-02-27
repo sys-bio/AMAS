@@ -1,14 +1,12 @@
 type,id,annotation,match score,label
-species,SAM,CHEBI:15414,1.0,S-adenosyl-L-methionine
-species,SAM,CHEBI:67040,1.0,S-adenosyl-L-methioninate
-species,A,CHEBI:28515,1.0,acetoacetamide
-species,A,CHEBI:15843,1.0,arachidonic acid
-species,A,CHEBI:46217,1.0,L-alanine residue
-species,A,CHEBI:50306,1.0,adenosine 5'-monophosphate residue
-species,A,CHEBI:62885,1.0,adenosine residue
-species,A,CHEBI:16708,1.0,adenine
-species,A,CHEBI:72816,1.0,L-alanyl-L-alanine
-species,A,CHEBI:16977,1.0,L-alanine
-species,A,CHEBI:13193,1.0,hydrogen acceptor
-species,A,CHEBI:73313,1.0,Ala-Ala-Ala
-species,A,CHEBI:16449,1.0,alanine
+reaction,ODC,RHEA:28827,1.0,L-ornithine(out) + putrescine(in) = L-ornithine(in) + putrescine(out)
+reaction,SSAT_for_S,RHEA:33099,0.8,acetyl-CoA + spermine = CoA + H(+) + N(1)-acetylspermine
+reaction,SSAT_for_D,RHEA:28150,0.8,acetyl-CoA + spermidine = CoA + H(+) + N(1)-acetylspermidine
+reaction,SSAT_for_D,RHEA:28270,0.8,acetyl-CoA + spermidine = CoA + H(+) + N(8)-acetylspermidine
+reaction,SpdS,RHEA:12721,0.6,spermidine synthase activity
+reaction,SpmS,RHEA:19973,0.6,spermine synthase activity
+reaction,SpmS,RHEA:30515,0.6,thermospermine synthase activity
+reaction,SpmS,RHEA:42876,0.6,S-adenosyl 3-(methylsulfanyl)propylamine + spermidine = H(+) + N(4)-aminopropylspermidine + S-methyl-5'-thioadenosine
+reaction,VCoA,RHEA:20289,0.6,acetyl-CoA hydrolase activity
+reaction,VacCoA,RHEA:20289,0.6,acetyl-CoA hydrolase activity
+reaction,P_efflux,RHEA:72135,1.0,putrescine(out) = putrescine(in)

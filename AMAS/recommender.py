@@ -725,7 +725,7 @@ class Recommender(object):
     filt_df = df.loc[filt_idx, :]
     return filt_df
 
-  def recommendReaction(self, ids, min_score=0.0):
+  def recommendReaction(self, ids=None, min_score=0.0):
     """
     Recommend one or more ids of species
     and returns a single dataframe or
@@ -734,6 +734,7 @@ class Recommender(object):
     Parameters
     ----------
     ids: str/list-str
+        If None, recommend all reactionos.
   
     min_score: threshold for cutoff
         If None given, returns all values; 
@@ -745,6 +746,8 @@ class Recommender(object):
     self.updateCurrentElementType('reaction')
     if isinstance(ids, str):
       reaction_list = [ids]
+    elif ids is None:
+      reaction_list = self.getReactionIDs()
     else:
       reaction_list = ids
     res = self.getReactionListRecommendation(pred_ids=reaction_list,
@@ -756,7 +759,7 @@ class Recommender(object):
     self.updateJustDisplayed(res_dict)
     return None
 
-  def recommendSpecies(self, ids, min_score=0.0):
+  def recommendSpecies(self, ids=None, min_score=0.0):
     """
     Recommend one or more ids of species
     and returns a single dataframe or
@@ -765,6 +768,7 @@ class Recommender(object):
     Parameters
     ----------
     ids: str/list-str
+        If None, will predict all
   
     min_score: threshold for cutoff
         If None given, returns all values; 
@@ -777,6 +781,8 @@ class Recommender(object):
   
     if isinstance(ids, str):
       species_list = [ids]
+    elif ids is None:
+      species_list = self.getSpeciesIDs()
     else:
       species_list = ids
     res = self.getSpeciesListRecommendation(pred_ids=species_list,
@@ -903,7 +909,7 @@ class Recommender(object):
     res.to_csv(fpath, index=False) 
 
   def saveToSBML(self,
-                 fpath="sbml_model.xml"):
+                 fpath="model_amas_annotations.xml"):
     """
     Update and save model;
     How to distinguish species vs. reactions? 
@@ -918,6 +924,8 @@ class Recommender(object):
     model = self.sbml_document.getModel()
     ELEMENT_FUNC = {'species': model.getSpecies,
                     'reaction': model.getReaction}
+    # dictionary with empty lists; 
+    saved_elements = {k:[] for k in ELEMENT_TYPES}
     for one_type in ELEMENT_TYPES:
       type_selection = self.selection[one_type]
       maker = am.AnnotationMaker(one_type)
@@ -930,18 +938,39 @@ class Recommender(object):
         if cands2save:
           annotation_str = maker.getAnnotationString(cands2save, meta_id)
           one_element.setAnnotation(annotation_str)
-          print("Annotation of %s saved." % one_k) 
+          saved_elements[one_type].append(one_k)
         else:
           continue
     # finally, write the sbml document 
     libsbml.writeSBMLToFile(self.sbml_document, fpath)
 
+    # Summary message
+    for one_type in ELEMENT_TYPES:
+      self.printSummary(saved_elements[one_type], one_type)
 
-
-
-
-
-
-
-
+  def printSummary(self, saved, element_type):
+    """
+    Print out a summary of 
+    saved element IDs and numbers. 
+  
+    Parameters
+    ----------
+    saved: list-str
+        List of elements saved. 
+    """
+    plural_str = {'species': ' were',
+                  'reaction': 's were'}
+    num_saved = len(saved)
+    if num_saved == 0:
+      return None
+    str2add = ""
+    if num_saved==1:
+      print("Recommendation of %s %s was saved.\n" % \
+             (element_type, saved[0]))
+    elif num_saved>1:
+      print("Recommendations of %d %s%s saved:\n[%s]\n" %\
+            (num_saved,
+             element_type,
+             plural_str[element_type],
+             ', '.join(saved))) 
     

@@ -2,7 +2,7 @@
 """
 Predicts annotations of species using a local XML file
 and the species ID. 
-Usage: python recommend_species <infile_path> <species_id_1> <species_id_2>.. etc.
+Usage: python recommend_species.py --model files/BIOMD0000000190.xml --min_score 0.6 --out_dir res
 """
 
 import argparse
@@ -19,12 +19,11 @@ def main():
   parser = argparse.ArgumentParser(description='SBML file (.XML) and one or more species IDs in the model.') 
   parser.add_argument('--model', type=str, help='SBML file in the XML format')
   # One or more species IDs can be given
-  parser.add_argument('--species', type=str, help='ID of species in the model', nargs='+')
+  parser.add_argument('--species', type=str, help='ID of species in the model', nargs='*')
   parser.add_argument('--min_score', type=float, help='Minimum threshold')
   parser.add_argument('--out_dir', type=str, help='Path of directory to save files')
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
-  # check if all species are included in the species
   one_fpath = args.model
   specs = args.species
   min_score = args.min_score
@@ -32,14 +31,19 @@ def main():
   try:
     recom = recommender.Recommender(libsbml_fpath=one_fpath)
     recom.current_type = 'species'
+    # if nothing is given, predict all IDs
+    if specs is None:
+      specs = recom.getSpeciesIDs()
+    print("\nRecommending %d species...\n" % len(specs))
     res = recom.getSpeciesListRecommendation(specs, get_df=True)
     for idx, one_df in enumerate(res):
       filt_df = recom.autoSelectAnnotation(one_df, min_score)
       recom.updateSelection(specs[idx], filt_df)
-    # store file to csv
-    os.mkdir(out_dir)
+    # Create a new directory if it doesn't exist already
+    if not os.path.exists(out_dir):
+      os.mkdir(out_dir)
     recom.saveToCSV(os.path.join(out_dir, 'recommendation.csv'))
-    recom.saveToSBML(os.path.join(out_dir, 'sbml_model.xml'))
+    recom.saveToSBML(os.path.join(out_dir, 'model_amas_annotations.xml'))
   except:
   	raise ValueError("Please check arguments.")
 
