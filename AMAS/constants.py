@@ -15,6 +15,7 @@ TEST_DIR = os.path.join(CUR_DIR, os.pardir, 'tests')
 # Strings used in the modules
 CANDIDATES = 'candidates'
 CHEBI = 'chebi'
+OBO_CHEBI = 'obo.chebi'
 EC = 'ec-code'
 EC_HEADER = 'EC:'
 KEGG_HEADER = 'KEGG:'
@@ -28,6 +29,9 @@ FORMULA = "formula"
 QUERY_DF = 'query_df'
 RECALL = 'recall'
 PRECISION = 'precision'
+
+# For resulting DataFrame
+DF_MATCH_SCORE_COL = 'match score'
 
 # Tolerance to determine identical numerical values
 TOLERANCE = 0.00001

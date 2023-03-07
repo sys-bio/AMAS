@@ -159,7 +159,7 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(len(dummy_recom.reactions.reaction_components), 13)
     self.assertTrue(SPECIES_SAM in dummy_recom.species.names.keys())
     self.assertTrue(REACTION_ODC in dummy_recom.reactions.reaction_components.keys())
-    self.assertEqual(len(dummy_recom.species.exist_annotation), 0)
+    self.assertEqual(len(dummy_recom.species.exist_annotation), 11)
     self.assertEqual(len(dummy_recom.reactions.exist_annotation), 9)
 
   def testGetSpeciesStatistics(self):
@@ -200,12 +200,14 @@ class TestRecommender(unittest.TestCase):
     res1 = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM, get_df=True)
     df1 = self.recom.autoSelectAnnotation(res1, min_threshold)
     self.assertEqual(df1.shape[0], 2)
-    self.assertEqual(set(df1['match score']), {1.0})
+    self.assertEqual(set(df1[cn.DF_MATCH_SCORE_COL]), {1.0})
 
     res2 = self.recom.getReactionRecommendation(pred_id=REACTION_SAMDC, get_df=True)
     df2 = self.recom.autoSelectAnnotation(res2, min_threshold)
     self.assertEqual(df2.shape[0], 0)
 
+  def testPrintSummary(self):
+    pass
 
 
 

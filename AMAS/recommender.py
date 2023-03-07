@@ -44,16 +44,20 @@ class Recommender(object):
     self.sbml_document = None
     # First of all, collect model information from libsbml model
     # and send the informaton to create species/reaction annotations
+    fname = None
     if libsbml_cl:
       spec_tuple, reac_tuple = self._parseSBML(libsbml_cl)
     elif libsbml_fpath:
       spec_tuple, reac_tuple = self._parseSBML(libsbml_fpath)
+      # basically split fpath and use the last one
+      fname = libsbml_fpath.split('/')[-1]
     elif model_specs:
       spec_tuple = model_specs[0]
       reac_tuple = model_specs[1]
     else:
       spec_tuple = None
       reac_tuple = None
+    self.fname = fname
     self.species = sa.SpeciesAnnotation(inp_tuple=spec_tuple)
     self.reactions = ra.ReactionAnnotation(inp_tuple=reac_tuple)
     # Below are elements to interact with user
@@ -113,7 +117,7 @@ class Recommender(object):
     labels = rec.labels
     # index starts from 1;
     df = pd.DataFrame({'annotation':cands,
-                       'match score':match_scores,
+                       cn.DF_MATCH_SCORE_COL:match_scores,
                        'label':labels},
                        index=[1+val for val in list(range(len(cands)))])
     df.index.name = '%s (cred. %.3f)' % (rec.id ,rec.credibility)
@@ -503,10 +507,10 @@ class Recommender(object):
               for val in pred_reaction[cn.MATCH_SCORE][k]] \
               for k in pred_ids}
     result = [cn.Recommendation(k,
-                               np.round(pred_score[k], cn.ROUND_DIGITS),
-                               pred_reaction[cn.MATCH_SCORE][k],
-                               urls[k],
-                               labels[k]) \
+                                np.round(pred_score[k], cn.ROUND_DIGITS),
+                                pred_reaction[cn.MATCH_SCORE][k],
+                                urls[k],
+                                labels[k]) \
               for k in pred_score.keys()]
     if get_df:
       return [self.getDataFrameFromRecommendation(rec=val) \
@@ -668,14 +672,17 @@ class Recommender(object):
                                                          update=True)
 
   ### Below are methods that interacts with user; 
-  def autoSelectAnnotation(self, df, min_score=0.0):
+  def autoSelectAnnotation(self, df, min_score=0.0, method='best'):
     """
     Choose annotations based on 
     the set threshold; 
     (1) if None meets the threshold, return an empty frame
     (2) if multiple meet the threshold,
-        (a) find the highest match score among them
-        (b) return all above match score == highest_match_score
+        (a) if method is 'best':
+            (i) find the highest match score among them
+            (ii) return all above match score == highest_match_score
+        (b) if method is 'all':
+            (i) return all that is at or above min_score
       
     Parameters
     ----------
@@ -689,18 +696,19 @@ class Recommender(object):
       if nothing matched,
       an empty dataframe is returned
     """ 
-    scores = df['match score']
+    scores = df[cn.DF_MATCH_SCORE_COL]
     # max_score: highest match score that exists
     # min_score: threshold
     max_score = np.max(scores)
     if max_score < min_score:
       # this will create an empty dataframe
       filt_idx = scores[scores>=min_score].index
-    else:
+    elif method=='best':
       filt_idx = scores[scores==max_score].index
+    else:
+      filt_idx = scores[scores>=min_score].index
     filt_df = df.loc[filt_idx, :]  
     return filt_df
-
 
   def filterDataFrameByThreshold(self, df, min_score):
     """
@@ -720,7 +728,7 @@ class Recommender(object):
     -------
     pd.DataFrame  
     """
-    scores = df['match score']
+    scores = df[cn.DF_MATCH_SCORE_COL]
     filt_idx = scores[scores>=min_score].index
     filt_df = df.loc[filt_idx, :]
     return filt_df
@@ -892,19 +900,39 @@ class Recommender(object):
     """
     Save self.selection to csv.
     """
+    TYPE_EXISTING_ATTR = {'species': self.species.exist_annotation,
+                          'reaction': self.reactions.exist_annotation}
     dfs = []
     pd.set_option('display.max_colwidth', 255)
+    # retrieve a model
+    model = self.sbml_document.getModel()
+    ELEMENT_FUNC = {'species': model.getSpecies,
+                    'reaction': model.getReaction}
     for one_type in self.selection.keys():
       type_selection = self.selection[one_type]
       if any(type_selection):
         element_df = pd.concat([type_selection[k] for k in type_selection.keys()])
-        element_ids = list(itertools.chain(*[[k]*type_selection[k].shape[0] \
-                                             for k in type_selection.keys()]))
-        element_types = [one_type]*len(element_ids)
-        element_df.insert(0, "type", element_types)
-        element_df.insert(1, "id", element_ids)
+        fnames = [self.fname]*element_df.shape[0]
+        ids = list(itertools.chain(*[[k]*type_selection[k].shape[0] \
+                                     for k in type_selection.keys()]))
+        metaids = list(itertools.chain(*[[ELEMENT_FUNC[one_type](k).meta_id]*type_selection[k].shape[0] \
+                                         for k in type_selection.keys()]))
+
+        display_names = list(itertools.chain(*[[ELEMENT_FUNC[one_type](k).name]*type_selection[k].shape[0] \
+                                                for k in type_selection.keys()]))
+        existing = [1 if val in TYPE_EXISTING_ATTR[one_type][ids[idx]] else 0 \
+                    for idx, val in enumerate(element_df['annotation'])]
+        types = [one_type]*len(ids)
+        # insert the columns
+        element_df.insert(0, "file", fnames)
+        element_df.insert(1, "type", types)
+        element_df.insert(2, "id", ids)
+        element_df.insert(3, "meta id", metaids)
+        element_df.insert(4, "display name", display_names)
+        element_df["existing"] = existing
         dfs.append(element_df)
     res = pd.concat(dfs)
+    res["USE ANNOTATION"] = 0
     # Write result to csv
     res.to_csv(fpath, index=False) 
 
@@ -958,19 +986,17 @@ class Recommender(object):
     saved: list-str
         List of elements saved. 
     """
-    plural_str = {'species': ' were',
-                  'reaction': 's were'}
+    plural_str = {'species': '',
+                  'reaction': '(s)'}
     num_saved = len(saved)
     if num_saved == 0:
       return None
-    str2add = ""
-    if num_saved==1:
-      print("Recommendation of %s %s was saved.\n" % \
-             (element_type, saved[0]))
-    elif num_saved>1:
-      print("Recommendations of %d %s%s saved:\n[%s]\n" %\
-            (num_saved,
-             element_type,
-             plural_str[element_type],
-             ', '.join(saved))) 
+    print("Annotation recommended for %d %s%s:\n[%s]\n" %\
+          (num_saved,
+           element_type,
+           plural_str[element_type],
+           ', '.join(saved))) 
     
+
+
+

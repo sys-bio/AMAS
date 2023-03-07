@@ -17,33 +17,38 @@ from AMAS import recommender
 
 def main():
   parser = argparse.ArgumentParser(description='SBML file (.XML) and one or more species IDs in the model.') 
-  parser.add_argument('--model', type=str, help='SBML file in the XML format')
+  parser.add_argument('model', type=str, help='SBML model file in the XML format')
   # One or more species IDs can be given
   parser.add_argument('--species', type=str, help='ID of species in the model', nargs='*')
-  parser.add_argument('--min_score', type=float, help='Minimum threshold')
-  parser.add_argument('--out_dir', type=str, help='Path of directory to save files')
+  parser.add_argument('--min_score', type=float, help='Minimum threshold', nargs='?', default=0.0)
+  parser.add_argument('--method', type=str, help='Choose either "best" or "all". Default is "best".', nargs='?', default='best')
+  parser.add_argument('--out_dir', type=str, help='Path of directory to save files', nargs='?', default=os.getcwd())
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
   specs = args.species
   min_score = args.min_score
+  method = args.method
   out_dir = args.out_dir
+
   try:
     recom = recommender.Recommender(libsbml_fpath=one_fpath)
     recom.current_type = 'species'
     # if nothing is given, predict all IDs
     if specs is None:
       specs = recom.getSpeciesIDs()
-    print("\nRecommending %d species...\n" % len(specs))
-    res = recom.getSpeciesListRecommendation(specs, get_df=True)
+    print("\nAnalyzing %d species...\n" % len(specs))
+    res = recom.getSpeciesListRecommendation(pred_ids=specs, get_df=True)
     for idx, one_df in enumerate(res):
-      filt_df = recom.autoSelectAnnotation(one_df, min_score)
+      filt_df = recom.autoSelectAnnotation(df=one_df,
+                                           min_score=min_score,
+                                           method=method)
       recom.updateSelection(specs[idx], filt_df)
     # Create a new directory if it doesn't exist already
     if not os.path.exists(out_dir):
       os.mkdir(out_dir)
-    recom.saveToCSV(os.path.join(out_dir, 'recommendation.csv'))
-    recom.saveToSBML(os.path.join(out_dir, 'model_amas_annotations.xml'))
+    recom.saveToCSV(os.path.join(out_dir, 'species_recommendation.csv'))
+    recom.saveToSBML(os.path.join(out_dir, 'model_amas_species.xml'))
   except:
   	raise ValueError("Please check arguments.")
 
