@@ -61,7 +61,6 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertTrue('CHEBI:49299' in one_pred_spec[cn.CHEBI])
     self.assertEqual(one_pred_spec[cn.FORMULA],  ['C6O12P2'])
 
-
   def testGetCountOfIndividualCharacters(self):
     one_res = self.spec_cl.getCountOfIndividualCharacters(DUMMY_ID)
     self.assertEqual(one_res['m'], 1)

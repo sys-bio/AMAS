@@ -248,8 +248,8 @@
             <rdf:Description rdf:about="#metaid_0000036">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:59789"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -303,8 +303,8 @@
             <rdf:Description rdf:about="#metaid_0000040">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:57834"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16610"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:57834"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -317,8 +317,8 @@
             <rdf:Description rdf:about="#metaid_0000041">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:58101"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:17312"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:58101"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -331,8 +331,8 @@
             <rdf:Description rdf:about="#metaid_0000042">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:58324"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:17927"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:58324"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -345,8 +345,8 @@
             <rdf:Description rdf:about="#metaid_0000043">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16811"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16643"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16811"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:64558"/>
                 </rdf:Bag>
               </bqbiol:is>
@@ -360,8 +360,8 @@
             <rdf:Description rdf:about="#metaid_0000044">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15729"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:46911"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15729"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -374,8 +374,8 @@
             <rdf:Description rdf:about="#metaid_0000045">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15351"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:57288"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15351"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -388,8 +388,8 @@
             <rdf:Description rdf:about="#metaid_0000046">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:48076"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:57287"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:48076"/>
                   <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15346"/>
                 </rdf:Bag>
               </bqbiol:is>

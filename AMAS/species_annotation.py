@@ -350,3 +350,6 @@ class SpeciesAnnotation(object):
     self.formula.update(info2upd_formula)
 
 
+
+
+

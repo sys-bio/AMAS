@@ -1,24 +1,24 @@
 file,type,id,meta id,display name,annotation,match score,label,existing,USE ANNOTATION
+BIOMD0000000190.xml,species,SAM,metaid_0000036,S-adenosyl-L-methionine,CHEBI:59789,1.0,S-adenosyl-L-methionine zwitterion,0,1
 BIOMD0000000190.xml,species,SAM,metaid_0000036,S-adenosyl-L-methionine,CHEBI:15414,1.0,S-adenosyl-L-methionine,1,0
-BIOMD0000000190.xml,species,SAM,metaid_0000036,S-adenosyl-L-methionine,CHEBI:59789,1.0,S-adenosyl-L-methionine zwitterion,0,0
 BIOMD0000000190.xml,species,A,metaid_0000037,S-adenosylmethioninamine,CHEBI:15625,1.0,S-adenosylmethioninamine,1,0
-BIOMD0000000190.xml,species,P,metaid_0000038,Putrescine,CHEBI:17148,1.0,putrescine,1,0
+BIOMD0000000190.xml,species,P,metaid_0000038,Putrescine,CHEBI:17148,1.0,putrescine,1,1
 BIOMD0000000190.xml,species,P,metaid_0000038,Putrescine,CHEBI:326268,1.0,"1,4-butanediammonium",0,0
 BIOMD0000000190.xml,species,S,metaid_0000039,Spermine,CHEBI:45725,1.0,spermine(4+),0,0
-BIOMD0000000190.xml,species,S,metaid_0000039,Spermine,CHEBI:15746,1.0,spermine,1,0
-BIOMD0000000190.xml,species,D,metaid_0000040,Spermidine,CHEBI:57834,1.0,spermidine(3+),0,0
+BIOMD0000000190.xml,species,S,metaid_0000039,Spermine,CHEBI:15746,1.0,spermine,1,1
 BIOMD0000000190.xml,species,D,metaid_0000040,Spermidine,CHEBI:16610,1.0,spermidine,1,0
+BIOMD0000000190.xml,species,D,metaid_0000040,Spermidine,CHEBI:57834,1.0,spermidine(3+),0,0
+BIOMD0000000190.xml,species,aS,metaid_0000041,N1-Acetylspermine,CHEBI:17312,1.0,N(1)-acetylspermine,1,1
 BIOMD0000000190.xml,species,aS,metaid_0000041,N1-Acetylspermine,CHEBI:58101,1.0,N(1)-acetylsperminium(3+),0,0
-BIOMD0000000190.xml,species,aS,metaid_0000041,N1-Acetylspermine,CHEBI:17312,1.0,N(1)-acetylspermine,1,0
-BIOMD0000000190.xml,species,aD,metaid_0000042,N1-Acetylspermidine,CHEBI:58324,1.0,N(1)-acetylspermidinium(2+),0,0
 BIOMD0000000190.xml,species,aD,metaid_0000042,N1-Acetylspermidine,CHEBI:17927,1.0,N(1)-acetylspermidine,0,0
+BIOMD0000000190.xml,species,aD,metaid_0000042,N1-Acetylspermidine,CHEBI:58324,1.0,N(1)-acetylspermidinium(2+),0,0
+BIOMD0000000190.xml,species,Met,metaid_0000043,Methionine,CHEBI:16643,1.0,L-methionine,1,1
 BIOMD0000000190.xml,species,Met,metaid_0000043,Methionine,CHEBI:16811,1.0,methionine,0,0
-BIOMD0000000190.xml,species,Met,metaid_0000043,Methionine,CHEBI:16643,1.0,L-methionine,1,0
 BIOMD0000000190.xml,species,Met,metaid_0000043,Methionine,CHEBI:64558,1.0,methionine zwitterion,0,0
-BIOMD0000000190.xml,species,ORN,metaid_0000044,L-Ornithine,CHEBI:15729,1.0,L-ornithine,1,0
 BIOMD0000000190.xml,species,ORN,metaid_0000044,L-Ornithine,CHEBI:46911,1.0,L-ornithinium(1+),0,0
-BIOMD0000000190.xml,species,AcCoA,metaid_0000045,Acetyl-CoA,CHEBI:15351,1.0,acetyl-CoA,1,0
+BIOMD0000000190.xml,species,ORN,metaid_0000044,L-Ornithine,CHEBI:15729,1.0,L-ornithine,1,1
 BIOMD0000000190.xml,species,AcCoA,metaid_0000045,Acetyl-CoA,CHEBI:57288,1.0,acetyl-CoA(4-),0,0
+BIOMD0000000190.xml,species,AcCoA,metaid_0000045,Acetyl-CoA,CHEBI:15351,1.0,acetyl-CoA,1,0
+BIOMD0000000190.xml,species,CoA,metaid_0000046,CoA,CHEBI:57287,1.0,coenzyme A(4-),0,1
 BIOMD0000000190.xml,species,CoA,metaid_0000046,CoA,CHEBI:48076,1.0,acetyloxy group,0,0
-BIOMD0000000190.xml,species,CoA,metaid_0000046,CoA,CHEBI:57287,1.0,coenzyme A(4-),0,0
-BIOMD0000000190.xml,species,CoA,metaid_0000046,CoA,CHEBI:15346,1.0,coenzyme A,1,0
+BIOMD0000000190.xml,species,CoA,metaid_0000046,CoA,CHEBI:15346,1.0,coenzyme A,1,1

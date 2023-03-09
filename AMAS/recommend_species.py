@@ -21,7 +21,7 @@ def main():
   # One or more species IDs can be given
   parser.add_argument('--species', type=str, help='ID of species in the model', nargs='*')
   parser.add_argument('--min_score', type=float, help='Minimum threshold', nargs='?', default=0.0)
-  parser.add_argument('--method', type=str, help='Choose either "best" or "all". Default is "best".', nargs='?', default='best')
+  parser.add_argument('--method', type=str, help='Choose either "top" or "above". Default is "top".', nargs='?', default='top')
   parser.add_argument('--out_dir', type=str, help='Path of directory to save files', nargs='?', default=os.getcwd())
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)

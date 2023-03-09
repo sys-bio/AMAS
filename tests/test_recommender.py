@@ -209,5 +209,12 @@ class TestRecommender(unittest.TestCase):
   def testPrintSummary(self):
     pass
 
+  def testGetMatchScoreOfCHEBI(self):
+    chebi_score = self.recom.getMatchScoreOfCHEBI(inp_id=SPECIES_SAM,
+                                                  inp_chebi='CHEBI:15414')
+    self.assertEqual(chebi_score, 1.0)
 
-
+  def testGetMatchScoreOfRHEA(self):
+    rhea_score = self.recom.getMatchScoreOfRHEA(inp_id='SSAT_for_S',
+                                                inp_rhea='RHEA:33099')
+    self.assertEqual(rhea_score, 0.8)

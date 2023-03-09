@@ -214,10 +214,8 @@ class Recommender(object):
     elif method == 'cdist':
       if pred_str: 
         given_id = pred_str
-        # pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=[pred_str])[pred_str]
       elif pred_id:
         given_id = pred_id
-        # pred_res = self.species.predictAnnotationByCosineSimilarity(inp_ids=[pred_id])[pred_id]
       pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=[given_id])[given_id]
     #
     pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res)
@@ -672,7 +670,7 @@ class Recommender(object):
                                                          update=True)
 
   ### Below are methods that interacts with user; 
-  def autoSelectAnnotation(self, df, min_score=0.0, method='best'):
+  def autoSelectAnnotation(self, df, min_score=0.0, method='top'):
     """
     Choose annotations based on 
     the set threshold; 
@@ -703,7 +701,7 @@ class Recommender(object):
     if max_score < min_score:
       # this will create an empty dataframe
       filt_idx = scores[scores>=min_score].index
-    elif method=='best':
+    elif method=='top':
       filt_idx = scores[scores==max_score].index
     else:
       filt_idx = scores[scores>=min_score].index
@@ -899,6 +897,11 @@ class Recommender(object):
   def saveToCSV(self, fpath="recommendation.csv"):
     """
     Save self.selection to csv.
+
+    Parameters
+    ----------
+    fpath: str
+        Path of the csv file to be saved. 
     """
     TYPE_EXISTING_ATTR = {'species': self.species.exist_annotation,
                           'reaction': self.reactions.exist_annotation}
@@ -998,5 +1001,74 @@ class Recommender(object):
            ', '.join(saved))) 
     
 
+  def getMatchScoreOfCHEBI(self, inp_id, inp_chebi):
+    """
+    Calculate match score of a species (by ID)
+    with a ChEBI term. 
+    This is to inform user of how well it matches with
+    a specific ChEBI term.
+    To do this, all synonyms are considered and
+    the largest value will be returned. 
 
+    Parameters
+    ----------
+    inp_id: str
+        ID of a species
 
+    inp_chebi: str
+        A CHEBI term. 
+
+    Returns
+    -------
+    res_match_score: float
+    """
+    chebi_sub_df = sa.CHEBI_DF[sa.CHEBI_DF['chebi']==inp_chebi]
+    charcount_sub_df = sa.CHARCOUNT_DF.loc[chebi_sub_df.index, :]
+    one_query, name_used = self.species.prepareCounterQuery(specs=[inp_id],
+                                                            ref_cols=charcount_sub_df.columns,
+                                                            use_id=True)
+    multi_mat = charcount_sub_df.dot(one_query)
+    res_match_score = np.round(float(multi_mat.max()), cn.ROUND_DIGITS)
+    return res_match_score
+
+  def getMatchScoreOfRHEA(self, inp_id, inp_rhea):
+    """
+    Calculate match score of a reaction (by ID)
+    with a Rhea term. 
+    This is to inform user of how well it matches with
+    a specific Rhea term. 
+
+    Parameters
+    ----------
+    inp_id: str
+        ID of a species
+
+    inp_rhea: str
+        A Rhea term. 
+
+    Returns
+    -------
+    res_match_score: float
+    """
+    specs2predict = self.reactions.reaction_components[inp_id] 
+    spec_results = self.getSpeciesListRecommendation(pred_ids=specs2predict,
+                                                     update=False,
+                                                     method='cdist')
+    pred_formulas = dict()
+    for one_recom in spec_results:
+      chebis = [val[0] for val in one_recom.candidates]
+      forms = list(set([cn.REF_CHEBI2FORMULA[k] \
+             for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
+      pred_formulas[one_recom.id] = forms
+    query_df = pd.DataFrame(0, 
+                            index=ra.REF_MAT.columns,
+                            columns=[inp_id])
+    for one_spec_key in pred_formulas.keys():
+        one_spec = pred_formulas[one_spec_key]
+        # For each one_rid, set the values 1.0
+        query_df.loc[[val for val in one_spec if val in query_df.index], inp_id] = 1
+    sub_ref_mat = ra.REF_MAT.loc[inp_rhea, :]
+    num_matches = int(sub_ref_mat.dot(query_df))
+    num_cand_elements = len(sub_ref_mat.to_numpy().nonzero()[0])
+    res_match_score = np.round(num_matches/num_cand_elements, cn.ROUND_DIGITS)
+    return res_match_score
