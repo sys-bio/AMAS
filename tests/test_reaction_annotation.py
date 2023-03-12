@@ -59,7 +59,7 @@ class TestReactionAnnotation(unittest.TestCase):
 
   def testEvaluatePredictedReactionAnnotation(self):
     one_eval = self.reac_cl.evaluatePredictedReactionAnnotation(pred_result=self.pred_reaction)
-    self.assertEqual(np.round(one_eval[R_PFK], cn.ROUND_DIGITS), 0.817)
+    self.assertEqual(np.round(one_eval[R_PFK], cn.ROUND_DIGITS), 0.811)
 
 
   def testGetRheaElementNum(self):

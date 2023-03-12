@@ -903,38 +903,51 @@ class Recommender(object):
     fpath: str
         Path of the csv file to be saved. 
     """
+    model = self.sbml_document.getModel()
     TYPE_EXISTING_ATTR = {'species': self.species.exist_annotation,
                           'reaction': self.reactions.exist_annotation}
-    dfs = []
-    pd.set_option('display.max_colwidth', 255)
-    # retrieve a model
-    model = self.sbml_document.getModel()
     ELEMENT_FUNC = {'species': model.getSpecies,
                     'reaction': model.getReaction}
+    pd.set_option('display.max_colwidth', 255)
+    # edf: element_df
+    edfs = []    
     for one_type in self.selection.keys():
       type_selection = self.selection[one_type]
-      if any(type_selection):
-        element_df = pd.concat([type_selection[k] for k in type_selection.keys()])
-        fnames = [self.fname]*element_df.shape[0]
-        ids = list(itertools.chain(*[[k]*type_selection[k].shape[0] \
-                                     for k in type_selection.keys()]))
-        metaids = list(itertools.chain(*[[ELEMENT_FUNC[one_type](k).meta_id]*type_selection[k].shape[0] \
-                                         for k in type_selection.keys()]))
-
-        display_names = list(itertools.chain(*[[ELEMENT_FUNC[one_type](k).name]*type_selection[k].shape[0] \
-                                                for k in type_selection.keys()]))
-        existing = [1 if val in TYPE_EXISTING_ATTR[one_type][ids[idx]] else 0 \
-                    for idx, val in enumerate(element_df['annotation'])]
-        types = [one_type]*len(ids)
-        # insert the columns
-        element_df.insert(0, "file", fnames)
-        element_df.insert(1, "type", types)
-        element_df.insert(2, "id", ids)
-        element_df.insert(3, "meta id", metaids)
-        element_df.insert(4, "display name", display_names)
-        element_df["existing"] = existing
-        dfs.append(element_df)
-    res = pd.concat(dfs)
+      for k in list(type_selection.keys()):   
+        one_edf = type_selection[k]
+        annotations = list(one_edf['annotation'])
+        match_scores = list(one_edf['match score'])
+        labels = list(one_edf['label'])
+        # if there is existing annotation;
+        if k in TYPE_EXISTING_ATTR[one_type].keys():
+          existings = [1 if val in TYPE_EXISTING_ATTR[one_type][k] else 0 \
+                       for idx, val in enumerate(one_edf['annotation'])]
+          annotation2add = [val for val in TYPE_EXISTING_ATTR[one_type][k] \
+                            if val not in list(one_edf['annotation'])]
+        # if there doesn't exist existing annotataion;
+        else:
+          existings = [0]*len(annotations)
+          annotation2add = []
+        for new_anot in annotation2add:
+          annotations.append(new_anot)
+          if one_type=='reaction':
+            match_scores.append(self.getMatchScoreOfRHEA(k, new_anot))
+            labels.append(cn.REF_RHEA2LABEL[new_anot])
+          elif one_type=='species':
+            match_scores.append(self.getMatchScoreOfCHEBI(k, new_anot))
+            labels.append(cn.REF_CHEBI2LABEL[new_anot])
+          existings.append(1)
+        new_edf = pd.DataFrame({'type': [one_type]*len(annotations),
+                                'id': [k]*len(annotations),
+                                'display name': [ELEMENT_FUNC[one_type](k).name]*len(annotations),
+                                'meta id': [ELEMENT_FUNC[one_type](k).meta_id]*len(annotations),
+                                'annotation': annotations,
+                                'annotation label': labels,
+                                'match score': match_scores,
+                                'existing': existings})
+        edfs.append(new_edf)
+    res = pd.concat(edfs)
+    res.insert(0, 'file', self.fname)
     res["USE ANNOTATION"] = 0
     # Write result to csv
     res.to_csv(fpath, index=False) 

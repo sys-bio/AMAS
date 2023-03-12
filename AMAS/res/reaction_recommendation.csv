@@ -1,0 +1,129 @@
+file,type,id,display name,meta id,annotation,annotation label,match score,existing,USE ANNOTATION
+BIOMD0000000190.xml,reaction,ODC,Ornithine decarboxylase,metaid_0000062,RHEA:28827,L-ornithine(out) + putrescine(in) = L-ornithine(in) + putrescine(out),1.0,0,0
+BIOMD0000000190.xml,reaction,ODC,Ornithine decarboxylase,metaid_0000062,RHEA:22964,ornithine decarboxylase activity,0.5,1,0
+BIOMD0000000190.xml,reaction,ODC,Ornithine decarboxylase,metaid_0000062,RHEA:59048,D-ornithine + H(+) = CO2 + putrescine,0.5,0,0
+BIOMD0000000190.xml,reaction,SAMdc,S-adenosylmethionine decarboxylase,metaid_0000063,RHEA:15981,adenosylmethionine decarboxylase activity,0.5,1,0
+BIOMD0000000190.xml,reaction,SSAT_for_S,Spermidine/Spermine N1-acetyltransferase for S,metaid_0000064,RHEA:33099,acetyl-CoA + spermine = CoA + H(+) + N(1)-acetylspermine,0.8,1,0
+BIOMD0000000190.xml,reaction,SSAT_for_S,Spermidine/Spermine N1-acetyltransferase for S,metaid_0000064,RHEA:11116,diamine N-acetyltransferase activity,0.4,1,0
+BIOMD0000000190.xml,reaction,SSAT_for_S,Spermidine/Spermine N1-acetyltransferase for S,metaid_0000064,RHEA:28270,acetyl-CoA + spermidine = CoA + H(+) + N(8)-acetylspermidine,0.4,1,0
+BIOMD0000000190.xml,reaction,SSAT_for_S,Spermidine/Spermine N1-acetyltransferase for S,metaid_0000064,RHEA:28150,acetyl-CoA + spermidine = CoA + H(+) + N(1)-acetylspermidine,0.4,1,0
+BIOMD0000000190.xml,reaction,SSAT_for_D,Spermidine/spermine N1-acetyltransferase for D,metaid_0000065,RHEA:28150,acetyl-CoA + spermidine = CoA + H(+) + N(1)-acetylspermidine,0.8,1,0
+BIOMD0000000190.xml,reaction,SSAT_for_D,Spermidine/spermine N1-acetyltransferase for D,metaid_0000065,RHEA:28270,acetyl-CoA + spermidine = CoA + H(+) + N(8)-acetylspermidine,0.8,1,0
+BIOMD0000000190.xml,reaction,SSAT_for_D,Spermidine/spermine N1-acetyltransferase for D,metaid_0000065,RHEA:11116,diamine N-acetyltransferase activity,0.4,1,0
+BIOMD0000000190.xml,reaction,SSAT_for_D,Spermidine/spermine N1-acetyltransferase for D,metaid_0000065,RHEA:33099,acetyl-CoA + spermine = CoA + H(+) + N(1)-acetylspermine,0.4,1,0
+BIOMD0000000190.xml,reaction,PAO_for_aD,Polyamine oxidase for aD,metaid_0000066,RHEA:25812,N1-acetylspermidine:oxygen oxidoreductase (3-acetamidopropanal-forming) activity,0.4,0,0
+BIOMD0000000190.xml,reaction,PAO_for_aD,Polyamine oxidase for aD,metaid_0000066,RHEA:25800,N1-acetylspermine:oxygen oxidoreductase (3-acetamidopropanal-forming) activity,0.0,1,0
+BIOMD0000000190.xml,reaction,PAO_for_aD,Polyamine oxidase for aD,metaid_0000066,RHEA:16133,H2O + N(1)-acetylspermine + O2 = 3-aminopropanal + H2O2 + N(1)-acetylspermidine,0.2,1,0
+BIOMD0000000190.xml,reaction,PAO_for_aS,Polyamine oxidase for aS,metaid_0000067,RHEA:25800,N1-acetylspermine:oxygen oxidoreductase (3-acetamidopropanal-forming) activity,0.4,1,0
+BIOMD0000000190.xml,reaction,PAO_for_aS,Polyamine oxidase for aS,metaid_0000067,RHEA:16133,H2O + N(1)-acetylspermine + O2 = 3-aminopropanal + H2O2 + N(1)-acetylspermidine,0.2,1,0
+BIOMD0000000190.xml,reaction,SpdS,Spermidine synthase,metaid_0000068,RHEA:12721,spermidine synthase activity,0.6,1,0
+BIOMD0000000190.xml,reaction,SpmS,Spermine synthase,metaid_0000069,RHEA:19973,spermine synthase activity,0.6,1,0
+BIOMD0000000190.xml,reaction,SpmS,Spermine synthase,metaid_0000069,RHEA:30515,thermospermine synthase activity,0.6,0,0
+BIOMD0000000190.xml,reaction,SpmS,Spermine synthase,metaid_0000069,RHEA:42876,S-adenosyl 3-(methylsulfanyl)propylamine + spermidine = H(+) + N(4)-aminopropylspermidine + S-methyl-5'-thioadenosine,0.6,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:13761,methionine S-methyltransferase activity,0.5,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:16661,adenosyl-fluoride synthase activity,0.5,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:28110,chloride + S-adenosyl-L-methionine = 5'-chloro-5'-deoxyadenosine + L-methionine,0.5,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:17609,L-seryl-[sulfatase] + S-adenosyl-L-methionine = 3-oxo-L-alanyl-[sulfatase] + 5'-deoxyadenosine + H(+) + L-methionine,0.4,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:21820,S-adenosylmethionine-homocysteine S-methyltransferase activity,0.4,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:33083,dehypoxanthine futalosine + S-adenosyl-L-methionine = 5'-deoxyadenosine + cyclic dehypoxanthinylfutalosinate + H(+) + L-methionine,0.4,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:34275,"2-deoxy-scyllo-inosamine + S-adenosyl-L-methionine = 3-amino-2,3-dideoxy-scyllo-inosose + 5'-deoxyadenosine + H(+) + L-methionine",0.4,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:49104,Mg-13(1)-hydroxyprotoporphyrin 13-monomethyl ester + S-adenosyl-L-methionine = 5'-deoxyadenosine + H(+) + L-methionine + Mg-13(1)-oxoprotoporphyrin 13-monomethyl ester,0.4,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:49108,"Mg-13(1)-oxoprotoporphyrin 13-monomethyl ester + S-adenosyl-L-methionine = 3,8-divinyl protochlorophyllide a + 5'-deoxyadenosine + 2 H(+) + L-methionine",0.4,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:56836,[PQQ precursor protein] + S-adenosyl-L-methionine = 5'-deoxyadenosine + E-Y cross-linked-[PQQ precursor protein] + H(+) + L-methionine,0.4,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:67240,(R)-S-adenosyl-L-methionine + H2O = adenosine + H(+) + L-methionine,0.4,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:71551,5-N(alpha)-glycyl-dTMP in DNA + AH2 + S-adenosyl-L-methionine = 5'-deoxyadenosine + 5-C(alpha)-glycyl-dTMP in DNA + A + H(+) + L-methionine,0.4,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:15425,coproporphyrinogen dehydrogenase activity,0.333,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:19225,[formate-C-acetyltransferase]-activating enzyme activity,0.333,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:21080,methionine adenosyltransferase activity,0.333,1,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:32155,S-adenosylmethionine:tRNA ribosyltransferase-isomerase activity,0.333,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:47692,AH2 + neomycin C + S-adenosyl-L-methionine = 5'-deoxyadenosine + A + H(+) + L-methionine + neomycin B,0.333,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:49576,"GTP 3',8'-cyclase activity",0.333,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:56520,Fe-coproporphyrin III + 2 S-adenosyl-L-methionine = 2 5'-deoxyadenosine + 2 CO2 + heme b + 2 L-methionine,0.333,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:61976,glycyl-[protein] + reduced [flavodoxin] + S-adenosyl-L-methionine = 5'-deoxyadenosine + glycin-2-yl radical-[protein] + H(+) + L-methionine + semiquinone [flavodoxin],0.333,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:65492,[mycofactocin precursor peptide]-C-terminal glycyl-L-valyl-L-tyrosine + S-adenosyl-L-methionine = 5'-deoxyadenosine + [mycofactocin precursor peptide]-C-terminal glycyl-N-{[2-(4-hydroxyphenyl)ethenyl]-3-methylbutanamide} + CO2 + L-methionine,0.333,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:65500,"[mycofactocin precursor peptide]-C-terminal glycyl-N-{[2-(4-hydroxyphenyl)ethenyl]-3-methylbutanamide} + AH2 + S-adenosyl-L-methionine = 5'-deoxyadenosine + [mycofactocin precursor peptide]-C-terminal glycyl-N-{5-[(4-hydroxyphenyl)methyl]-4,4-dimethyl-2-oxopyrrolidin-3-yl}acetamide + A + H(+) + L-methionine",0.333,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:26361,2-iminoacetate synthase activity,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:33075,aminodeoxyfutalosine synthase activity,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:42632,adenosine(2503) in 23S rRNA + 2 reduced [2Fe-2S]-[ferredoxin] + 2 S-adenosyl-L-methionine = 5'-deoxyadenosine + 8-methyladenosine(2503) in 23S rRNA + L-methionine + 2 oxidized [2Fe-2S]-[ferredoxin] + S-adenosyl-L-homocysteine,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:42916,adenosine(2503) in 23S rRNA + 2 reduced [2Fe-2S]-[ferredoxin] + 2 S-adenosyl-L-methionine = 2-methyladenosine(2503) in 23S rRNA + 5'-deoxyadenosine + L-methionine + 2 oxidized [2Fe-2S]-[ferredoxin] + S-adenosyl-L-homocysteine,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:43332,adenosine(37) in tRNA + 2 reduced [2Fe-2S]-[ferredoxin] + 2 S-adenosyl-L-methionine = 2-methyladenosine(37) in tRNA + 5'-deoxyadenosine + L-methionine + 2 oxidized [2Fe-2S]-[ferredoxin] + S-adenosyl-L-homocysteine,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:49096,"H2O + Mg-protoporphyrin IX 13-monomethyl ester + 3 S-adenosyl-L-methionine = 3,8-divinyl protochlorophyllide a + 3 5'-deoxyadenosine + 4 H(+) + 3 L-methionine",0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:49100,H2O + Mg-protoporphyrin IX 13-monomethyl ester + S-adenosyl-L-methionine = 5'-deoxyadenosine + H(+) + L-methionine + Mg-13(1)-hydroxyprotoporphyrin 13-monomethyl ester,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:49164,a bacteriochlorophyllide c + H2O + S-adenosyl-L-methionine = 5'-deoxyadenosine + a 7(1)-hydroxybacteriochlorophyllide c + H(+) + L-methionine,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:52252,a bacteriochlorophyllide c + H2O + 2 S-adenosyl-L-methionine = 2 5'-deoxyadenosine + a bacteriochlorophyllide e + 2 H(+) + 2 L-methionine,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:52256,"a 7(1)-hydroxybacteriochlorophyllide c + H2O + S-adenosyl-L-methionine = 5'-deoxyadenosine + a 7(1),7(1)-dihydroxybacteriochlorophyllide c + H(+) + L-methionine",0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:55204,"5-amino-5-(4-hydroxybenzyl)-6-(D-ribitylimino)-5,6-dihydrouracil + S-adenosyl-L-methionine = 5'-deoxyadenosine + 7,8-didemethyl-8-hydroxy-5-deazariboflavin + H(+) + L-methionine + NH4(+)",0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:55812,a bacteriochlorophyllide d + H2O + 2 S-adenosyl-L-methionine = 2 5'-deoxyadenosine + a bacteriochlorophyllide f + 2 H(+) + 2 L-methionine,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:55816,a bacteriochlorophyllide d + H2O + S-adenosyl-L-methionine = 5'-deoxyadenosine + a 7(1)-hydroxybacteriochlorophyllide d + H(+) + L-methionine,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:55820,"a 7(1)-hydroxybacteriochlorophyllide d + H2O + S-adenosyl-L-methionine = 5'-deoxyadenosine + a 7(1),7(1)-dihydroxybacteriochlorophyllide d + H(+) + L-methionine",0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:63220,7-N-[(5S)-5-amino-5-carboxypentyl]formamidino-7-deazaguanosine(15) in tRNA + S-adenosyl-L-methionine = 5'-deoxyadenosine + archaeosine(15) in tRNA + 2 H(+) + L-1-piperideine-6-carboxylate + L-methionine,0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:72143,"AH2 + GTP + S-adenosyl-L-methionine = 3'-deoxy-3',4'-didehydro-GTP + 5'-deoxyadenosine + A + H(+) + H2O + L-methionine",0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:72147,"AH2 + S-adenosyl-L-methionine + UTP = 3'-deoxy-3',4'-didehydro-UTP + 5'-deoxyadenosine + A + H(+) + H2O + L-methionine",0.286,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:13341,a menaquinone + reduced [flavodoxin] + 2 S-adenosyl-L-methionine = 5'-deoxyadenosine + an 8-methylmenaquinone + 3 H(+) + L-methionine + oxidized [flavodoxin] + S-adenosyl-L-homocysteine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:15429,heme b + 2 reduced [flavodoxin] + 2 S-adenosyl-L-methionine = 5'-deoxyadenosine + anaerobilin + Fe(2+) + L-methionine + 2 oxidized [flavodoxin] + S-adenosyl-L-homocysteine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:22060,biotin synthase activity,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:24840,5-amino-1-(5-phospho-beta-D-ribosyl)imidazole + S-adenosyl-L-methionine = 4-amino-2-methyl-5-(phosphooxymethyl)pyrimidine + 5'-deoxyadenosine + CO + formate + 3 H(+) + L-methionine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:34707,alpha-D-ribose 1-methylphosphonate 5-phosphate C-P-lyase activity,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:36339,[sulfur carrier]-SH + AH2 + N(6)-dimethylallyladenosine(37) in tRNA + S-adenosyl-L-methionine = 2-thio-N(6)-dimethylallyladenosine(37) in tRNA + 5'-deoxyadenosine + [sulfur carrier]-H + A + H(+) + L-methionine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:36347,tRNA-4-demethylwyosine synthase activity,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:36351,AH2 + L-aspartate(89)-[ribosomal protein uS12]-methanesulfate + S-adenosyl-L-methionine = 3-methylsulfanyl-L-aspartate(89)-[ribosomal protein uS12]-hydrogen + 5'-deoxyadenosine + A + H(+) + L-methionine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:37071,[sulfur carrier]-SH + AH2 + N(6)-L-threonylcarbamoyladenosine(37) in tRNA + S-adenosyl-L-methionine = 2-sulfanyl-N(6)-L-threonylcarbamoyladenosine(37) in tRNA + 5'-deoxyadenosine + [sulfur carrier]-H + A + H(+) + L-methionine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:37431,"12,18-didecarboxysiroheme + 2 AH2 + 2 S-adenosyl-L-methionine = 2 5'-deoxyadenosine + 2 A + 2 acetate + Fe-coproporphyrin III + 2 H(+) + 2 L-methionine",0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:39647,"AH2 + dTDP-4-amino-4,6-dideoxy-alpha-D-glucose + S-adenosyl-L-methionine = 5'-deoxyadenosine + A + dTDP-3-dehydro-4,6-dideoxy-alpha-D-glucose + H(+) + L-methionine + NH4(+)",0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:49128,AH2 + N-acetyl-demethyl-L-phosphinothricin + 2 S-adenosyl-L-methionine = 5'-deoxyadenosine + A + 2 H(+) + L-methionine + N-acetyl-L-phosphinothricin + S-adenosyl-L-homocysteine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:55200,"5-amino-6-(D-ribitylamino)uracil + L-tyrosine + S-adenosyl-L-methionine = 2-iminoacetate + 5'-deoxyadenosine + 5-amino-5-(4-hydroxybenzyl)-6-(D-ribitylimino)-5,6-dihydrouracil + H(+) + L-methionine",0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:57700,a 2-demethylmenaquinone + reduced [flavodoxin] + 2 S-adenosyl-L-methionine = 5'-deoxyadenosine + a 2-demethyl-8-methylmenaquinone + 3 H(+) + L-methionine + oxidized [flavodoxin] + S-adenosyl-L-homocysteine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:59072,AH2 + cytidine 5'-{[hydroxy(2-hydroxyethyl)phosphonoyl]phosphate} + 2 S-adenosyl-L-methionine = 5'-deoxyadenosine + A + cytidine 5'-{[hydroxy(2-hydroxypropyl)phosphonoyl]phosphate} + 2 H(+) + L-methionine + S-adenosyl-L-homocysteine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:61592,H2O + L-cysteinyl-[sulfatase] + S-adenosyl-L-methionine = 3-oxo-L-alanyl-[sulfatase] + 5'-deoxyadenosine + 2 H(+) + hydrogen sulfide + L-methionine,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:65944,"AH2 + CTP + S-adenosyl-L-methionine = 3'-deoxy-3',4'-didehydro-CTP + 5'-deoxyadenosine + A + H(+) + H2O + L-methionine",0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:66028,protein-arginine C-methyltransferase activity,0.25,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:37067,[sulfur carrier]-SH + AH2 + N(6)-dimethylallyladenosine(37) in tRNA + 2 S-adenosyl-L-methionine = 2-methylsulfanyl-N(6)-dimethylallyladenosine(37) in tRNA + 5'-deoxyadenosine + [sulfur carrier]-H + A + 2 H(+) + L-methionine + S-adenosyl-L-homocysteine,0.222,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:37075,tRNA (N(6)-L-threonylcarbamoyladenosine(37)-C(2))-methylthiotransferase,0.222,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:37087,protein methylthiotransferase activity,0.222,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:61020,hydroperoxy icosatetraenoate dehydratase activity,0.222,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:16585,lipoate synthase activity,0.2,0,0
+BIOMD0000000190.xml,reaction,MAT,Methionine adenosyltransferase,metaid_0000070,RHEA:53504,5-amino-1-(5-phospho-beta-D-ribosyl)imidazole + AH2 + S-adenosyl-L-methionine = 5'-deoxyadenosine + 5-hydroxybenzimidazole + A + formate + 2 H(+) + L-methionine + NH4(+) + phosphate,0.2,0,0
+BIOMD0000000190.xml,reaction,VCoA,VCOA,metaid_0000071,RHEA:20289,acetyl-CoA hydrolase activity,0.6,0,0
+BIOMD0000000190.xml,reaction,VCoA,VCOA,metaid_0000071,RHEA:15081,acetate-CoA ligase (ADP-forming) activity,0.5,0,0
+BIOMD0000000190.xml,reaction,VCoA,VCOA,metaid_0000071,RHEA:23176,acetate-CoA ligase activity,0.5,0,0
+BIOMD0000000190.xml,reaction,VacCoA,VACCOA,metaid_0000072,RHEA:20289,acetyl-CoA hydrolase activity,0.6,0,0
+BIOMD0000000190.xml,reaction,VacCoA,VACCOA,metaid_0000072,RHEA:15081,acetate-CoA ligase (ADP-forming) activity,0.5,0,0
+BIOMD0000000190.xml,reaction,VacCoA,VACCOA,metaid_0000072,RHEA:23176,acetate-CoA ligase activity,0.5,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:72135,putrescine(out) = putrescine(in),1.0,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:28827,L-ornithine(out) + putrescine(in) = L-ornithine(in) + putrescine(out),0.5,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:28891,H(+)(in) + putrescine(in) = H(+)(out) + putrescine(out),0.5,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:71575,5-phosphomethyl-dUMP in DNA + putrescine = 5-N(alpha)-putrescinyl-dTMP in DNA + phosphate,0.5,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:18645,homospermidine synthase activity,0.333,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:69140,N-(4-aminobutyl)-3-aminopropanal = acrolein + putrescine,0.333,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:11236,homospermidine synthase (spermidine-specific) activity,0.25,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:13929,agmatinase activity,0.25,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:22964,ornithine decarboxylase activity,0.25,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:23412,acetylputrescine deacetylase activity,0.25,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:23816,2-oxoglutarate + putrescine = 4-aminobutanal + L-glutamate,0.25,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:30707,putrescine + pyruvate = 4-aminobutanal + L-alanine,0.25,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:33247,O2 + putrescine = 1-pyrroline + H2O2 + NH4(+),0.25,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:59048,D-ornithine + H(+) = CO2 + putrescine,0.25,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:12268,"butane-1,4-diamine:2-oxoglutarate aminotransferase activity",0.2,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:12436,putrescine N-hydroxycinnamoyltransferase activity,0.2,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:12721,spermidine synthase activity,0.2,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:15037,putrescine N-methyltransferase activity,0.2,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:18273,putrescine oxidase activity,0.2,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:21936,putrescine carbamoyltransferase activity,0.2,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:25181,diamine N-acetyltransferase activity,0.2,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:25808,spermidine:oxygen oxidoreductase (3-aminopropanal-forming) activity,0.2,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:25812,N1-acetylspermidine:oxygen oxidoreductase (3-acetamidopropanal-forming) activity,0.2,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:22284,N-carbamoylputrescine amidase activity,0.167,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:29995,ABC-type putrescine transporter activity,0.167,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:34111,carboxyspermidine dehydrogenase II activity,0.167,0,0
+BIOMD0000000190.xml,reaction,P_efflux,Putrescine efflux,metaid_0000073,RHEA:13633,glutamate-putrescine ligase activity,0.143,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:23928,acetylspermidine deacetylase activity,0.25,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:27578,(R)-N-tert-butylpiperazine-2-carboxamide + H2O = (R)-piperazine-2-carboxylate + tert-butylamine,0.25,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:51900,H2O + N(1)-acetylspermidine = acetate + spermidine,0.25,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:16133,H2O + N(1)-acetylspermine + O2 = 3-aminopropanal + H2O2 + N(1)-acetylspermidine,0.2,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:25812,N1-acetylspermidine:oxygen oxidoreductase (3-acetamidopropanal-forming) activity,0.2,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:25864,"H2O + N(1)-acetylspermidine + O2 = 4-acetamidobutanal + H2O2 + propane-1,3-diamine",0.2,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:25868,"N(1),N(12)-diacetylspermine:oxygen oxidoreductase (3-acetamidopropanal-forming) activity",0.2,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:25972,"N8-acetylspermidine:oxygen oxidoreductase (propane-1,3-diamine-forming) activity",0.2,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:26027,H2O + N(1)-acetylspermidine + O2 = 3-aminopropanal + H2O2 + N-acetylputrescine,0.2,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:28150,acetyl-CoA + spermidine = CoA + H(+) + N(1)-acetylspermidine,0.2,0,0
+BIOMD0000000190.xml,reaction,aD_efflux,aD efflux,metaid_0000074,RHEA:28270,acetyl-CoA + spermidine = CoA + H(+) + N(8)-acetylspermidine,0.2,0,0
