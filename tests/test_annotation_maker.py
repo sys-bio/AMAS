@@ -22,13 +22,21 @@ CANDIDATES = [ONE_CHEBI, TWO_CHEBI]
 CHEBI = 'chebi'
 
 ONE_ANNOTATION_ITEM = '<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>'
-# ONE_SCORE_ITEM = '<rdf:li rdf:resource="http://reproduciblebiomodels.org/amas/v1/by_name/0.20"/>'
 ONE_CONTAINER = ['<annotation>', '</annotation>']
 TWO_CONTAINER = ['<rdf:RDF>', '</rdf:RDF>']
 
 with open(os.path.join(cn.TEST_DIR, 'full_annotation_example.txt')) as file:
     lines = [line.rstrip() for line in file]
 FULL_ANNOTATION = '\n'.join(lines)
+
+with open(os.path.join(cn.TEST_DIR, 'existing_annotation_example.txt')) as file:
+    lines = [line.rstrip() for line in file]
+EXISTING_ANNOTATION = '\n'.join(lines)
+
+with open(os.path.join(cn.TEST_DIR, 'augmented_annotation_example.txt')) as file:
+    lines = [line.rstrip() for line in file]
+AUGMENTED_ANNOTATION = '\n'.join(lines)
+CHEBI_TO_AUGMENT = ['CHEBI:15414', 'CHEBI:00000']
 
 ONE_INSERTED = ['<annotation>', '  <rdf:RDF>', '  </rdf:RDF>', '</annotation>']
 TWO_INSERTED = ['rdf:RDF']
@@ -78,5 +86,14 @@ class TestAnnotationMaker(unittest.TestCase):
     self.assertEqual(two_ins,
                      ['<annotation>', '  rdf:RDF', '</annotation>'])
 
+  def testDivideExistingAnnotation(self):
+    res_dict = self.maker.divideExistingAnnotation(EXISTING_ANNOTATION)
+    container = res_dict['container']
+    items = res_dict['items']
+    self.assertEqual(container[0], '<annotation>')
+    self.assertEqual(items[0], '<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15414"/>')
 
+  def testAugmentAnnotation(self):
+    augmented_annotation = self.maker.augmentAnnotation(CHEBI_TO_AUGMENT, EXISTING_ANNOTATION)
+    self.assertEqual(augmented_annotation, AUGMENTED_ANNOTATION)
 

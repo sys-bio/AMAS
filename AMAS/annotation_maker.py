@@ -4,6 +4,7 @@ Create string annotations for
 AMAS recommendation.
 """
 
+import re
 
 RDF_TAG_ITEM = ['rdf:RDF',
                 'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"',
@@ -213,8 +214,74 @@ class AnnotationMaker(object):
            insert_to[start_loc:]
 
 
+  def divideExistingAnnotation(self,
+                               inp_str):
+    """
+    Divide existing string annotation
+    into an empty container and
+    items; 
+  
+    Parameters
+    ----------
+    inp_str: str
+  
+    Returns
+    -------
+    :dict
+        Dictionary of container,
+        and items to be augmented
+    """
+    exist_anot_list = inp_str.split('\n')
+    template_container = []
+    items = []
+    one_line = ''
+    while one_line.strip() != '<rdf:Bag>' and exist_anot_list:
+      one_line = exist_anot_list.pop(0)
+      template_container.append(one_line)
 
+    one_line = exist_anot_list.pop(0)
+    while one_line.strip() != '</rdf:Bag>' and exist_anot_list:
+      items.append(one_line.strip())
+      one_line = exist_anot_list.pop(0)
 
+    template_container.append(one_line)
+    while exist_anot_list:
+      one_line = exist_anot_list.pop(0)
+      template_container.append(one_line)  
+    res = {'container': template_container,
+           'items': items}
+    return res
+
+  def augmentAnnotation(self, 
+                        candidates,
+                        annotation):
+    """
+    Augment existing annotations
+    (meta id is supposed to be included
+    in the existing annotation)
+  
+    Parameters
+    ----------
+    candidates: str-list
+        List of candidates
+      
+    existing_annotation: str
+        Existing element annotation
+    """
+    annotation_dict = self.divideExistingAnnotation(annotation)
+    container = annotation_dict['container']
+    existing_items = annotation_dict['items']
+    existing_identifiers = []
+    for val in existing_items:
+      url = re.findall('"(.*?)"', val)[0]
+      existing_identifiers.append(url.split('/')[-1])
+    additional_identifiers = [val for val in candidates \
+                              if val not in existing_identifiers]
+    new_items = [self.createAnnotationItem(KNOWLEDGE_RESOURCE[self.element],one_cand) \
+                 for one_cand in additional_identifiers]
+    items = existing_items + new_items
+    res = self.insertList(container, items)
+    return '\n'.join(res)
 
 
 

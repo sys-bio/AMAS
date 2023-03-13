@@ -1,0 +1,13 @@
+<annotation>
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+    <rdf:Description rdf:about="#metaid_0000036">
+      <bqbiol:is>
+        <rdf:Bag>
+          <rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15414"/>
+          <rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00019"/>
+          <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:00000"/>
+        </rdf:Bag>
+      </bqbiol:is>
+    </rdf:Description>
+  </rdf:RDF>
+</annotation>
