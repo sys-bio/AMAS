@@ -6,6 +6,7 @@ import numpy as np
 import os
 import sys
 import unittest
+from unittest.mock import patch
 
 
 from AMAS import constants as cn
@@ -54,6 +55,14 @@ RESULT_MARKDOWN = '                      R_PFK (credibility score: 0.817)       
                   '+----+--------------+---------------+--------------------------------------+\n' + \
                   '|  2 | RHEA:13377   |         0.600 | phosphoglucokinase activity          |\n' + \
                   '+----+--------------+---------------+--------------------------------------+'
+
+RESULT_MARKDOWN2 = '                                        ODC (credibility score: 0.815)                                       \n' +\
+                   '+----+--------------+---------------+-----------------------------------------------------------------------+\n' +\
+                   '|    | annotation   |   match score | label                                                                 |\n' +\
+                   '+====+==============+===============+=======================================================================+\n' +\
+                   '|  1 | RHEA:28827   |         1.000 | L-ornithine(out) + putrescine(in) = L-ornithine(in) + putrescine(out) |\n' +\
+                   '+----+--------------+---------------+-----------------------------------------------------------------------+\n'
+
 
 #############################
 # Tests
@@ -201,10 +210,21 @@ class TestRecommender(unittest.TestCase):
     df1 = self.recom.autoSelectAnnotation(res1, min_threshold)
     self.assertEqual(df1.shape[0], 2)
     self.assertEqual(set(df1[cn.DF_MATCH_SCORE_COL]), {1.0})
-
     res2 = self.recom.getReactionRecommendation(pred_id=REACTION_SAMDC, get_df=True)
     df2 = self.recom.autoSelectAnnotation(res2, min_threshold)
     self.assertEqual(df2.shape[0], 0)
+
+  def testFilterDataFrameByThreshold(self):
+    df = self.recom.getDataFrameFromRecommendation(RESULT_RECOM)
+    res1 = self.recom.filterDataFrameByThreshold(df, min_score=0.6)
+    res2 = self.recom.filterDataFrameByThreshold(df, min_score=0.7)
+    self.assertEqual(list(np.unique(res1[cn.DF_MATCH_SCORE_COL])), [0.6])
+    self.assertEqual(list(np.unique(res2[cn.DF_MATCH_SCORE_COL])), [])
+
+  def testRecommendReaction(self):
+    with patch("builtins.print") as mock_print:
+        self.recom.recommendReaction(ids=['ODC'], min_score=0.6)  # Call the method that prints to stdout
+    mock_print.assert_called_once_with(RESULT_MARKDOWN2) 
 
   def testPrintSummary(self):
     pass
