@@ -2,10 +2,11 @@
 """
 Predicts annotations of species using a local XML file
 and the species ID. 
-Usage: recommend_species <filepath> <species_id_1> <species_id_2>.. etc.
+Usage: python recommend_species.py --model files/BIOMD0000000190.xml --min_score 0.6 --out_dir res
 """
 
-import  argparse
+import argparse
+import os
 from os.path import dirname, abspath
 import sys
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
@@ -15,20 +16,41 @@ from AMAS import recommender
 
 
 def main():
-  parser = argparse.ArgumentParser(description='SBML file (.XML) and one or more species IDs in the model.')
-  parser.add_argument('file_path', type=str, help='SBML file in the XML format')
+  parser = argparse.ArgumentParser(description='SBML file (.XML) and one or more species IDs in the model.') 
+  parser.add_argument('model', type=str, help='SBML model file in the XML format')
   # One or more species IDs can be given
-  parser.add_argument('species_id', type=str, help='ID of species in the model', nargs='+')
+  parser.add_argument('--species', type=str, help='ID of species in the model', nargs='*')
+  parser.add_argument('--min_score', type=float, help='Minimum threshold', nargs='?', default=0.0)
+  parser.add_argument('--method', type=str, help='Choose either "top" or "above". Default is "top".', nargs='?', default='top')
+  parser.add_argument('--out_dir', type=str, help='Path of directory to save files', nargs='?', default=os.getcwd())
   args = parser.parse_args()
-  recom = recommender.Recommender(libsbml_fpath=args.file_path)
-  # check if all species are included in the species
-  specs = args.species_id
+  recom = recommender.Recommender(libsbml_fpath=args.model)
+  one_fpath = args.model
+  specs = args.species
+  min_score = args.min_score
+  method = args.method
+  out_dir = args.out_dir
+
   try:
-    res_mkd = recom.getSpeciesListAnnotation(pred_ids=specs, get_markdown=True)
-    for one_mkd in res_mkd:
-      print(one_mkd)
+    recom = recommender.Recommender(libsbml_fpath=one_fpath)
+    recom.current_type = 'species'
+    # if nothing is given, predict all IDs
+    if specs is None:
+      specs = recom.getSpeciesIDs()
+    print("\nAnalyzing %d species...\n" % len(specs))
+    res = recom.getSpeciesListRecommendation(pred_ids=specs, get_df=True)
+    for idx, one_df in enumerate(res):
+      filt_df = recom.autoSelectAnnotation(df=one_df,
+                                           min_score=min_score,
+                                           method=method)
+      recom.updateSelection(specs[idx], filt_df)
+    # Create a new directory if it doesn't exist already
+    if not os.path.exists(out_dir):
+      os.mkdir(out_dir)
+    recom.saveToCSV(os.path.join(out_dir, 'species_recommendation.csv'))
+    recom.saveToSBML(os.path.join(out_dir, 'model_amas_species.xml'))
   except:
-  	raise ValueError("Please check species IDs.")
+  	raise ValueError("Please check arguments.")
 
 
 if __name__ == '__main__':

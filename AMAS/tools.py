@@ -11,8 +11,13 @@ def extractExistingSpeciesAnnotation(inp_model, qualifier=cn.CHEBI):
   """
   Get existing annotation of species
   that contains ChEBI terms
+
+  Parameters
+  ---------
+  qualifier: str
+      'chebi' or 'obo.chebi'?
   """
-  exist_raw = {val.getId():getQualifierFromString(val.getAnnotationString(), qualifier) \
+  exist_raw = {val.getId():getQualifierFromString(val.getAnnotationString(), [cn.CHEBI, cn.OBO_CHEBI]) \
                for val in inp_model.getListOfSpecies()}
   exist_filt = {val:exist_raw[val] for val in exist_raw.keys() \
                 if exist_raw[val]}
@@ -117,11 +122,13 @@ def getOntologyFromString(string_annotation,
 def getQualifierFromString(input_str, qualifier):
   """
   Parses string and returns an identifier. 
-  If not, return None
+  If not, return None.
+  Qualifier is allowed to be
+  either a string or a list of string. 
 
   Parameters
   ----------
-  str: string_annotation
+  str/list-str: (list of) string_annotation
 
   Returns
   -------
@@ -130,7 +137,12 @@ def getQualifierFromString(input_str, qualifier):
   """
   ontologies = getOntologyFromString(input_str)
   # To make sure it works, make it lower
-  qualifier_list = [val for val in ontologies if val[0]==qualifier.lower()]
+  if isinstance(qualifier, str):
+    qualifier_list = [val for val in ontologies if val[0].lower()==qualifier.lower()]
+  elif isinstance(qualifier, list):
+    lower_qualifiers = [q.lower() for q in qualifier]
+    qualifier_list = [val for val in ontologies \
+                      if val[0].lower() in lower_qualifiers]
   if qualifier_list:
     return [val[1] for val in qualifier_list]
   else:

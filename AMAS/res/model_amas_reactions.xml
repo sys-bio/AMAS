@@ -606,6 +606,8 @@
               <bqbiol:is>
                 <rdf:Bag>
                   <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:28827"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:22964"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:59048"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -657,14 +659,13 @@
       </reaction>
       <reaction metaid="metaid_0000063" id="SAMdc" name="S-adenosylmethionine decarboxylase" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000063">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/4.1.1.50"/>
-                  <rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R00178"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:15981"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -737,14 +738,13 @@
       </reaction>
       <reaction metaid="metaid_0000064" id="SSAT_for_S" name="Spermidine/Spermine N1-acetyltransferase for S" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000064">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/2.3.1.57"/>
-                  <rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R03910"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:33099"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -849,14 +849,14 @@
       </reaction>
       <reaction metaid="metaid_0000065" id="SSAT_for_D" name="Spermidine/spermine N1-acetyltransferase for D" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000065">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/2.3.1.57"/>
-                  <rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R03910"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:28150"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:28270"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -956,15 +956,13 @@
       </reaction>
       <reaction metaid="metaid_0000066" id="PAO_for_aD" name="Polyamine oxidase for aD" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000066">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/1.5.3.11"/>
-                  <rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R03899"/>
-                  <rdf:li rdf:resource="http://identifiers.org/reactome/REACT_1548.3"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:25812"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -1033,15 +1031,13 @@
       </reaction>
       <reaction metaid="metaid_0000067" id="PAO_for_aS" name="Polyamine oxidase for aS" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000067">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/1.5.3.11"/>
-                  <rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R03899"/>
-                  <rdf:li rdf:resource="http://identifiers.org/reactome/REACT_2231.4"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:25800"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -1109,14 +1105,13 @@
       </reaction>
       <reaction metaid="metaid_0000068" id="SpdS" name="Spermidine synthase" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000068">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/2.5.1.16"/>
-                  <rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R01920"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:12721"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -1195,14 +1190,15 @@
       </reaction>
       <reaction metaid="metaid_0000069" id="SpmS" name="Spermine synthase" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000069">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/2.5.1.22"/>
-                  <rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R02869"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:19973"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:30515"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:42876"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -1281,14 +1277,75 @@
       </reaction>
       <reaction metaid="metaid_0000070" id="MAT" name="Methionine adenosyltransferase" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000070">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/2.5.1.6"/>
-                  <rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R00177"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:13761"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:16661"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:28110"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:17609"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:21820"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:33083"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:34275"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:49104"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:49108"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:56836"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:67240"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:71551"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:15425"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:19225"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:21080"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:32155"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:47692"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:49576"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:56520"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:61976"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:65492"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:65500"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:26361"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:33075"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:42632"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:42916"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:43332"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:49096"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:49100"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:49164"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:52252"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:52256"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:55204"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:55812"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:55816"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:55820"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:63220"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:72143"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:72147"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:13341"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:15429"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:22060"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:24840"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:34707"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:36339"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:36347"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:36351"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:37071"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:37431"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:39647"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:49128"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:55200"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:57700"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:59072"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:61592"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:65944"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:66028"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:37067"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:37075"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:37087"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:61020"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:16585"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:53504"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -1339,13 +1396,15 @@
       </reaction>
       <reaction metaid="metaid_0000071" id="VCoA" name="VCOA" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000071">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/obo.go/GO:0046356"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:20289"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:15081"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:23176"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -1368,13 +1427,15 @@
       </reaction>
       <reaction metaid="metaid_0000072" id="VacCoA" name="VACCOA" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000072">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/obo.go/GO:0006085"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:20289"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:15081"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:23176"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -1397,13 +1458,39 @@
       </reaction>
       <reaction metaid="metaid_0000073" id="P_efflux" name="Putrescine efflux" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000073">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/obo.go/GO:0009447"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:72135"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:28827"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:28891"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:71575"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:18645"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:69140"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:11236"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:13929"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:22964"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:23412"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:23816"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:30707"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:33247"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:59048"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:12268"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:12436"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:12721"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:15037"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:18273"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:21936"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:25181"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:25808"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:25812"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:22284"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:29995"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:34111"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:13633"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
@@ -1425,6 +1512,27 @@
         </kineticLaw>
       </reaction>
       <reaction metaid="metaid_0000074" id="aD_efflux" name="aD efflux" reversible="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000074">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:23928"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:27578"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:51900"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:16133"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:25812"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:25864"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:25868"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:25972"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:26027"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:28150"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:28270"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
         <listOfReactants>
           <speciesReference metaid="_443395" species="aD"/>
         </listOfReactants>

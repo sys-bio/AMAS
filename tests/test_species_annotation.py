@@ -61,7 +61,6 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertTrue('CHEBI:49299' in one_pred_spec[cn.CHEBI])
     self.assertEqual(one_pred_spec[cn.FORMULA],  ['C6O12P2'])
 
-
   def testGetCountOfIndividualCharacters(self):
     one_res = self.spec_cl.getCountOfIndividualCharacters(DUMMY_ID)
     self.assertEqual(one_res['m'], 1)
@@ -87,12 +86,12 @@ class TestSpeciesAnnotation(unittest.TestCase):
   def testEvaluatePredictedSpeciesAnnotation(self):
     fdp_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=M_FDP_C)
     fdp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred_result=fdp_pred_spec)
-    self.assertTrue(fdp_score < 0.905)
-    self.assertTrue(fdp_score > 0.904)
+    self.assertTrue(fdp_score < 0.860)
+    self.assertTrue(fdp_score > 0.859)
     atp_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=M_ATP_C)
     atp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred_result=atp_pred_spec)
-    self.assertTrue(atp_score < 0.924)  
-    self.assertTrue(atp_score > 0.923)    
+    self.assertTrue(atp_score < 0.908)  
+    self.assertTrue(atp_score > 0.907)    
   
   def testUpdateSpeciesWithRecommendation(self):
     one_upd = self.spec_cl.updateSpeciesWithRecommendation(DUMMY_RECOMMENDATION)

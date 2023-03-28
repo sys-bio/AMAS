@@ -56,7 +56,8 @@ class ReactionAnnotation(object):
       document = reader.readSBML(libsbml_fpath)
       self.model = document.getModel()
       self.exist_annotation = tools.extractExistingReactionAnnotation(inp_model=self.model)
-      self.reaction_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+[k.species for k in val.getListOfProducts()])) \
+      self.reaction_components = {val.getId():list(set([k.species for k in val.getListOfReactants()]+\
+                                                       [k.species for k in val.getListOfProducts()])) \
                                   for val in self.model.getListOfReactions()}
     elif inp_tuple is not None:
       self.model = None
@@ -237,3 +238,5 @@ class ReactionAnnotation(object):
     : int
     """
     return len(inp_df.loc[inp_rhea, :].to_numpy().nonzero()[0])
+
+
