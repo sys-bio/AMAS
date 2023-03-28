@@ -56,13 +56,19 @@ RESULT_MARKDOWN = '                      R_PFK (credibility score: 0.817)       
                   '|  2 | RHEA:13377   |         0.600 | phosphoglucokinase activity          |\n' + \
                   '+----+--------------+---------------+--------------------------------------+'
 
-RESULT_MARKDOWN2 = '                                        ODC (credibility score: 0.815)                                       \n' +\
-                   '+----+--------------+---------------+-----------------------------------------------------------------------+\n' +\
-                   '|    | annotation   |   match score | label                                                                 |\n' +\
-                   '+====+==============+===============+=======================================================================+\n' +\
-                   '|  1 | RHEA:28827   |         1.000 | L-ornithine(out) + putrescine(in) = L-ornithine(in) + putrescine(out) |\n' +\
-                   '+----+--------------+---------------+-----------------------------------------------------------------------+\n'
+RESULT_MARKDOWN_ODC = '                                        ODC (credibility score: 0.815)                                       \n' +\
+                      '+----+--------------+---------------+-----------------------------------------------------------------------+\n' +\
+                      '|    | annotation   |   match score | label                                                                 |\n' +\
+                      '+====+==============+===============+=======================================================================+\n' +\
+                      '|  1 | RHEA:28827   |         1.000 | L-ornithine(out) + putrescine(in) = L-ornithine(in) + putrescine(out) |\n' +\
+                      '+----+--------------+---------------+-----------------------------------------------------------------------+\n'
 
+RESULT_MARKDOWN_A = '                  A (credibility score: 0.958)                  \n' +\
+                    '+----+--------------+---------------+--------------------------+\n' +\
+                    '|    | annotation   |   match score | label                    |\n' +\
+                    '+====+==============+===============+==========================+\n' +\
+                    '|  1 | CHEBI:15625  |         1.000 | S-adenosylmethioninamine |\n' +\
+                    '+----+--------------+---------------+--------------------------+\n'
 
 #############################
 # Tests
@@ -223,8 +229,17 @@ class TestRecommender(unittest.TestCase):
 
   def testRecommendReaction(self):
     with patch("builtins.print") as mock_print:
-        self.recom.recommendReaction(ids=['ODC'], min_score=0.6)  # Call the method that prints to stdout
-    mock_print.assert_called_once_with(RESULT_MARKDOWN2) 
+      self.recom.recommendReaction(ids=['ODC'], min_score=0.6)  
+    mock_print.assert_called_once_with(RESULT_MARKDOWN_ODC) 
+
+  def testRecommendSpecies(self):
+    with patch("builtins.print") as mock_print:
+      self.recom.recommendSpecies(ids=['A'])  
+    mock_print.assert_called_once_with(RESULT_MARKDOWN_A) 
+
+  def testUpdateCurrentElementType(self):
+    self.recom.updateCurrentElementType(element_type='species')
+    self.assertEqual(self.recom.current_type, 'species')
 
   def testPrintSummary(self):
     pass
