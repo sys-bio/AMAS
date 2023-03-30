@@ -248,7 +248,7 @@
             <rdf:Description rdf:about="#metaid_0000036">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:59789"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -285,11 +285,12 @@
       </species>
       <species metaid="metaid_0000039" id="S" name="Spermine" compartment="cytosol" initialConcentration="0.01">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000039">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:45725"/>
+                  <rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15746"/>
+                  <rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00750"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -298,11 +299,12 @@
       </species>
       <species metaid="metaid_0000040" id="D" name="Spermidine" compartment="cytosol" initialConcentration="0.01">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000040">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16610"/>
+                  <rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:16610"/>
+                  <rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00315"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -339,11 +341,12 @@
       </species>
       <species metaid="metaid_0000043" id="Met" name="Methionine" compartment="cytosol" initialConcentration="50" boundaryCondition="true" constant="true">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000043">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:64558"/>
+                  <rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:16643"/>
+                  <rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00073"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -352,11 +355,12 @@
       </species>
       <species metaid="metaid_0000044" id="ORN" name="L-Ornithine" compartment="cytosol" initialConcentration="300" boundaryCondition="true" constant="true">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000044">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:46911"/>
+                  <rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15729"/>
+                  <rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00077"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -365,11 +369,12 @@
       </species>
       <species metaid="metaid_0000045" id="AcCoA" name="Acetyl-CoA" compartment="cytosol" initialConcentration="39.5" boundaryCondition="true" constant="true">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000045">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15351"/>
+                  <rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15351"/>
+                  <rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00024"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -378,11 +383,12 @@
       </species>
       <species metaid="metaid_0000046" id="CoA" name="CoA" compartment="cytosol" initialConcentration="160" boundaryCondition="true" constant="true">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000046">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15346"/>
+                  <rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15346"/>
+                  <rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00010"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>

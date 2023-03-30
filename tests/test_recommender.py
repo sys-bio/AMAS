@@ -289,22 +289,33 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(new_df.loc[0, 'display name'], 'S-adenosyl-L-methionine')
     self.assertEqual(new_df.loc[0, 'annotation'], 'CHEBI:15414')
     self.assertEqual(new_df.loc[0, 'USE ANNOTATION'], 0)
-
     os.remove("test.csv")
 
-    # with patch("pandas.DataFrame.to_csv") as mock_to_csv:
-    #   with patch("builtins.open", mock_open()) as mock_file:
-    #     self.recom.saveToCSV("test.csv")  
-    # mock_to_csv.assert_called_once_with("test.csv")
-    # mock_file.assert_called_once_with("test.csv", "w")
-    # handle = mock_file()
-    # cols = "file,type,id,display name,meta id,annotation,annotation label,match score,existing,USE ANNOTATION\n"
-    # items = "BIOMD0000000190.xml,species,SAM,S-adenosyl-L-methionine,metaid_0000036,CHEBI:15414,S-adenosyl-L-methionine,1.0,1,0\n"
-    # test_string = cols + items 
-    # handle.write.assert_called_once_with(test_string)
+  def testSaveToSBML(self):
+    one_dict = {'annotation':['CHEBI:15414'],
+                'match score': [1.0],
+                'label': ['S-adenosyl-L-methionine']}
+    one_df = pd.DataFrame(one_dict)
+    one_df.index = [2]
+    one_df.index.name = 'SAM (cred. 0.974)'
+    self.recom.selection['species'] = {SPECIES_SAM: one_df}
+    self.recom.saveToSBML("test_sbml.xml")
+    recom2 = recommender.Recommender(libsbml_fpath='test_sbml.xml')
+    self.assertEqual(recom2.species.exist_annotation[SPECIES_SAM], ['CHEBI:15414'])
+    os.remove("test_sbml.xml")
 
   def testPrintSummary(self):
-    pass
+    with patch("builtins.print") as mock_print:
+      self.recom.printSummary(saved=['SAM', 'A'],
+                              element_type='species')
+    res_str1 = 'Annotation recommended for 2 species:\n[SAM, A]\n'
+    mock_print.assert_called_once_with(res_str1)
+    #
+    with patch("builtins.print") as mock_print:
+      self.recom.printSummary(saved=['ODC', 'SAMdc', 'SSAT_for_S'],
+                              element_type='reaction')
+    res_str2 = 'Annotation recommended for 3 reaction(s):\n[ODC, SAMdc, SSAT_for_S]\n'
+    mock_print.assert_called_once_with(res_str2)
 
   def testGetMatchScoreOfCHEBI(self):
     chebi_score = self.recom.getMatchScoreOfCHEBI(inp_id=SPECIES_SAM,
