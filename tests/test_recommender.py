@@ -4,9 +4,10 @@
 import libsbml
 import numpy as np
 import os
+import pandas as pd
 import sys
 import unittest
-from unittest.mock import patch
+from unittest.mock import mock_open, patch
 
 
 from AMAS import constants as cn
@@ -240,6 +241,67 @@ class TestRecommender(unittest.TestCase):
   def testUpdateCurrentElementType(self):
     self.recom.updateCurrentElementType(element_type='species')
     self.assertEqual(self.recom.current_type, 'species')
+
+  def testUpdateJustDisplayed(self):
+    exist_displayed = self.recom.just_displayed
+    self.assertEqual(exist_displayed, None)
+    df = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM,
+                                             get_df=True)
+    self.recom.updateJustDisplayed({SPECIES_SAM: df})
+    self.assertEqual({SPECIES_SAM: df}, self.recom.just_displayed)
+
+  def testSelectAnnotation(self):
+    df = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM,
+                                             get_df=True)
+    self.recom.updateJustDisplayed({SPECIES_SAM: df})
+    self.recom.updateCurrentElementType(element_type='species')
+    with patch("builtins.print") as mock_print:
+      self.recom.selectAnnotation((SPECIES_SAM, 1))
+    mock_print.assert_called_once_with("Selection updated.")
+    self.assertTrue(SPECIES_SAM in self.recom.selection['species'].keys())
+    filt_df = df.loc[[1], :]
+    res = self.recom.selection['species'][SPECIES_SAM]
+    # test if filt_df and res are equal
+    for one_col in res.columns:
+      self.assertEqual(res.loc[1, one_col], filt_df.loc[1, one_col])
+
+  def testDisplaySelection(self):
+    df = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM,
+                                             get_df=True)
+    self.recom.selection['species'] = {SPECIES_SAM: df}
+    with patch("builtins.print") as mock_print:
+      self.recom.displaySelection()
+    res_str = self.recom.getMarkdownFromRecommendation(df)+"\n"  
+    mock_print.assert_called_once_with(res_str)
+
+  def testSaveToCSV(self):
+    one_dict = {'annotation':['CHEBI:15414'],
+                'match score': [1.0],
+                'label': ['S-adenosyl-L-methionine']}
+    one_df = pd.DataFrame(one_dict)
+    one_df.index = [2]
+    one_df.index.name = 'SAM (cred. 0.974)'
+    self.recom.selection['species'] = {'SAM': one_df}
+    self.recom.saveToCSV("test.csv")
+    new_df = pd.read_csv("test.csv")
+    self.assertEqual(new_df.loc[0, 'file'], 'BIOMD0000000190.xml')
+    self.assertEqual(new_df.loc[0, 'type'], 'species')
+    self.assertEqual(new_df.loc[0, 'display name'], 'S-adenosyl-L-methionine')
+    self.assertEqual(new_df.loc[0, 'annotation'], 'CHEBI:15414')
+    self.assertEqual(new_df.loc[0, 'USE ANNOTATION'], 0)
+
+    os.remove("test.csv")
+
+    # with patch("pandas.DataFrame.to_csv") as mock_to_csv:
+    #   with patch("builtins.open", mock_open()) as mock_file:
+    #     self.recom.saveToCSV("test.csv")  
+    # mock_to_csv.assert_called_once_with("test.csv")
+    # mock_file.assert_called_once_with("test.csv", "w")
+    # handle = mock_file()
+    # cols = "file,type,id,display name,meta id,annotation,annotation label,match score,existing,USE ANNOTATION\n"
+    # items = "BIOMD0000000190.xml,species,SAM,S-adenosyl-L-methionine,metaid_0000036,CHEBI:15414,S-adenosyl-L-methionine,1.0,1,0\n"
+    # test_string = cols + items 
+    # handle.write.assert_called_once_with(test_string)
 
   def testPrintSummary(self):
     pass
