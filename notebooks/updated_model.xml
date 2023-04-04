@@ -606,6 +606,7 @@
               <bqbiol:is>
                 <rdf:Bag>
                   <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:28827"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:22964"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
@@ -1109,14 +1110,13 @@
       </reaction>
       <reaction metaid="metaid_0000068" id="SpdS" name="Spermidine synthase" reversible="false">
         <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000068">
-              <bqbiol:isVersionOf>
+              <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/ec-code/2.5.1.16"/>
-                  <rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R01920"/>
+                  <rdf:li rdf:resource="http://identifiers.org/rhea/RHEA:12721"/>
                 </rdf:Bag>
-              </bqbiol:isVersionOf>
+              </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
