@@ -17,7 +17,7 @@ INSTALL_REQUIRES = [
 def doSetup(install_requires):
   setup(
       name='AMAS-sb',
-      version='0.0.1',
+      version='0.0.2',
       author='Woosub Shin',
       author_email='woosubs@umich.edu',
       packages=find_packages(exclude=['tests', 'notebooks']),
@@ -28,6 +28,10 @@ def doSetup(install_requires):
       package_dir={'AMAS': 'AMAS'},
       install_requires=install_requires,
       include_package_data=True,
+      scripts=['AMAS/recommend_species.py',
+               'AMAS/recommend_reaction.py',
+               'AMAS/update_annotation.py'
+               ],
       classifiers=[
           'Development Status :: 3 - Alpha',
           'Intended Audience :: Developers',      # Define that your audience are developers

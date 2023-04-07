@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # update_annotation.py
 """
 Set annotation of a model file

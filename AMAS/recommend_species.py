@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # recommend_species.py
 """
 Predicts annotations of species using a local XML file

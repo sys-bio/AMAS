@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # recommend_reaction.py
 """
 Predicts annotations of reaction(s) using a local XML file
