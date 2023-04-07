@@ -2,7 +2,7 @@
 """
 Predicts annotations of species using a local XML file
 and the species ID. 
-Usage: python recommend_species.py --model files/BIOMD0000000190.xml --min_score 0.6 --out_dir res
+Usage: python recommend_species.py files/BIOMD0000000190.xml --min_score 0.6 --outpath res.csv
 """
 
 import argparse
@@ -22,14 +22,16 @@ def main():
   parser.add_argument('--species', type=str, help='ID of species in the model', nargs='*')
   parser.add_argument('--min_score', type=float, help='Minimum threshold', nargs='?', default=0.0)
   parser.add_argument('--method', type=str, help='Choose either "top" or "above". Default is "top".', nargs='?', default='top')
-  parser.add_argument('--out_dir', type=str, help='Path of directory to save files', nargs='?', default=os.getcwd())
+  parser.add_argument('--outpath', type=str, help='File path to save recommendation', nargs='?',
+                      default=os.path.join(os.getcwd(), 'species_rec.csv'))
+  # parser.add_argument('--out_dir', type=str, help='Path of directory to save files', nargs='?', default=os.getcwd())
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
   specs = args.species
   min_score = args.min_score
   method = args.method
-  out_dir = args.out_dir
+  outpath = args.outpath
 
   try:
     recom = recommender.Recommender(libsbml_fpath=one_fpath)
@@ -37,18 +39,21 @@ def main():
     # if nothing is given, predict all IDs
     if specs is None:
       specs = recom.getSpeciesIDs()
-    print("\nAnalyzing %d species...\n" % len(specs))
+    print("...\nAnalyzing %d species...\n" % len(specs))
     res = recom.getSpeciesListRecommendation(pred_ids=specs, get_df=True)
     for idx, one_df in enumerate(res):
       filt_df = recom.autoSelectAnnotation(df=one_df,
                                            min_score=min_score,
                                            method=method)
       recom.updateSelection(specs[idx], filt_df)
-    # Create a new directory if it doesn't exist already
-    if not os.path.exists(out_dir):
-      os.mkdir(out_dir)
-    recom.saveToCSV(os.path.join(out_dir, 'species_recommendation.csv'))
-    recom.saveToSBML(os.path.join(out_dir, 'model_amas_species.xml'))
+    # save file to csv
+    recom.saveToCSV(outpath)
+    print("Recommendations saved.\n")
+
+    # if not os.path.exists(out_dir):
+    #   os.mkdir(out_dir)
+    # recom.saveToCSV(os.path.join(out_dir, 'species_recommendation.csv'))
+    # recom.saveToSBML(os.path.join(out_dir, 'model_amas_species.xml'))
   except:
   	raise ValueError("Please check arguments.")
 

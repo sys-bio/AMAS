@@ -2,7 +2,7 @@
 """
 Predicts annotations of reaction(s) using a local XML file
 and the reaction ID. 
-Usage: python recommend_reaction.py --model files/BIOMD0000000190.xml --min_score 0.6 --out_dir res
+Usage: python recommend_reaction.py files/BIOMD0000000190.xml --min_score 0.6 --outpath res.csv
 """
 
 import argparse
@@ -21,15 +21,16 @@ def main():
   # One or more reaction IDs can be given
   parser.add_argument('--reaction', type=str, help='ID of reaction(s) in the model', nargs='*')
   parser.add_argument('--min_score', type=float, help='Minimum threshold', nargs='?', default=0.0)
-  parser.add_argument('--method', type=str, help='Choose either "best" or "all". Default is "best".', nargs='?', default='best')
-  parser.add_argument('--out_dir', type=str, help='Path of directory to save files', nargs='?', default=os.getcwd())
+  parser.add_argument('--method', type=str, help='Choose either "top" or "above". Default is "top".', nargs='?', default='top')
+  parser.add_argument('--outpath', type=str, help='File path to save recommendation', nargs='?',
+                      default=os.path.join(os.getcwd(), 'reaction_rec.csv'))
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
   reacts = args.reaction
   min_score = args.min_score
   method = args.method
-  out_dir = args.out_dir
+  outpath = args.outpath
   try:
     recom = recommender.Recommender(libsbml_fpath=one_fpath)
     recom.current_type = 'reaction'
@@ -43,11 +44,9 @@ def main():
                                            min_score=min_score,
                                            method=method)
       recom.updateSelection(reacts[idx], filt_df)
-    # Create a new directory if it doesn't exist already
-    if not os.path.exists(out_dir):
-      os.mkdir(out_dir)
-    recom.saveToCSV(os.path.join(out_dir, 'reaction_recommendation.csv'))
-    recom.saveToSBML(os.path.join(out_dir, 'model_amas_reactions.xml'))
+    # save file to csv
+    recom.saveToCSV(outpath)
+    print("Recommendations saved.\n")
   except:
     raise ValueError("Please check arguments.")
 

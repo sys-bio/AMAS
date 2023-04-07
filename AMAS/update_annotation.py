@@ -1,7 +1,7 @@
-# set_annotation.py
+# update_annotation.py
 """
 Set annotation of a model file
-Usage: python set_annotation.py files/BIOMD0000000190.xml --min_score 0.6 --out_dir res
+Usage: python update_annotation.py res.csv files/BIOMD0000000190.xml BIOMD0000000190_upd.xml
 """
 
 import argparse
@@ -18,7 +18,7 @@ from AMAS import annotation_maker as am
 
 def main():
   parser = argparse.ArgumentParser(description='Use user feedback file (.csv) to update model annotation')
-  parser.add_argument('csv_choice', type=str, help='CSV file with user choice')
+  parser.add_argument('csv_select', type=str, help='CSV file with user choice')
   parser.add_argument('infile', type=str, help='Path of model file to update annotation')
   parser.add_argument('outfile', type=str, help='File path to save updated model file')
   # csv file with user choice 
@@ -42,7 +42,7 @@ def main():
       model.getSpecies(one_id).setAnnotation(one_annotation)
 
   libsbml.writeSBMLToFile(document, args.outfile)
-  print("\nUpdated model file saved.\n")
+  print("...\nUpdated model file saved.\n")
 
 
 if __name__ == '__main__':
