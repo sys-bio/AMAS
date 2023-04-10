@@ -964,6 +964,7 @@ class Recommender(object):
     Parameters
     ----------
     fpath: str
+        Path to save file
     """
     model = self.sbml_document.getModel()
     ELEMENT_FUNC = {'species': model.getSpecies,

@@ -50,12 +50,7 @@ def main():
       recom.updateSelection(specs[idx], filt_df)
     # save file to csv
     recom.saveToCSV(outpath)
-    print("Recommendations saved.\n")
-
-    # if not os.path.exists(out_dir):
-    #   os.mkdir(out_dir)
-    # recom.saveToCSV(os.path.join(out_dir, 'species_recommendation.csv'))
-    # recom.saveToSBML(os.path.join(out_dir, 'model_amas_species.xml'))
+    print("Recommendations saved as:\n%s\n" % outpath)
   except:
   	raise ValueError("Please check arguments.")
 

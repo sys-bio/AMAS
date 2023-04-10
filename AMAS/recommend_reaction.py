@@ -39,7 +39,7 @@ def main():
     # if nothing is given, predict all IDs
     if reacts is None:
       reacts = recom.getReactionIDs()
-    print("\nAnalyzing %d reaction(s)...\n" % len(reacts))
+    print("...\nAnalyzing %d reaction(s)...\n" % len(reacts))
     res = recom.getReactionListRecommendation(pred_ids=reacts, get_df=True)
     for idx, one_df in enumerate(res):
       filt_df = recom.autoSelectAnnotation(df=one_df,
@@ -48,7 +48,7 @@ def main():
       recom.updateSelection(reacts[idx], filt_df)
     # save file to csv
     recom.saveToCSV(outpath)
-    print("Recommendations saved.\n")
+    print("Recommendations saved as:\n%s\n" % outpath)
   except:
     raise ValueError("Please check arguments.")
 

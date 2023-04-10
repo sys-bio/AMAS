@@ -25,8 +25,9 @@ def main():
   parser.add_argument('outfile', type=str, help='File path to save updated model file')
   # csv file with user choice 
   args = parser.parse_args()
-  user_csv = pd.read_csv(args.csv_choice)
+  user_csv = pd.read_csv(args.csv_select)
   chosen = user_csv[user_csv['USE ANNOTATION']==1]
+  outfile = args.outfile
 
   reader = libsbml.SBMLReader()
   document = reader.readSBML(args.infile)
@@ -41,9 +42,11 @@ def main():
     for one_id in uids:
       one_annotation = maker.getAnnotationString(list(df_type[df_type['id']==one_id]['annotation']),
                                                  meta_ids[one_id])
-      model.getSpecies(one_id).setAnnotation(one_annotation)
-
-  libsbml.writeSBMLToFile(document, args.outfile)
+      if one_type == 'species':
+        model.getSpecies(one_id).setAnnotation(one_annotation)
+      elif one_type == 'reaction':
+        model.getReaction(one_id).setAnnotation(one_annotation)
+  libsbml.writeSBMLToFile(document, outfile)
   print("...\nUpdated model file saved.\n")
 
 

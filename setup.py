@@ -30,7 +30,12 @@ def doSetup(install_requires):
       include_package_data=True,
       scripts=['AMAS/recommend_species.py',
                'AMAS/recommend_reaction.py',
-               'AMAS/update_annotation.py'
+               'AMAS.recommend_annotation.py',
+               'AMAS/update_annotation.py',
+               'AMAS/recommend_species',
+               'AMAS/recommend_reaction',
+               'AMAS/recommend_annotation',
+               'AMAS/update_annotation'
                ],
       classifiers=[
           'Development Status :: 3 - Alpha',
