@@ -918,16 +918,20 @@ class Recommender(object):
         annotations = list(one_edf['annotation'])
         match_scores = list(one_edf['match score'])
         labels = list(one_edf['label'])
-        # if there is existing annotation;
+        # if there is existing annotation among predicted candidates;
         if k in TYPE_EXISTING_ATTR[one_type].keys():
           existings = [1 if val in TYPE_EXISTING_ATTR[one_type][k] else 0 \
                        for idx, val in enumerate(one_edf['annotation'])]
+          upd_annotation = ['keep' if val in TYPE_EXISTING_ATTR[one_type][k] else 'ignore' \
+                            for idx, val in enumerate(one_edf['annotation'])]
           annotation2add = [val for val in TYPE_EXISTING_ATTR[one_type][k] \
                             if val not in list(one_edf['annotation'])]
-        # if there doesn't exist existing annotataion;
+        # if there doesn't exist existing annotataion among predicted candidates;
         else:
-          existings = [0]*len(annotations)
+          existings = [0] * len(annotations)
+          upd_annotation = ['ignore'] * len(annotations)
           annotation2add = []
+        # handling existing annotations that were not predicted
         for new_anot in annotation2add:
           annotations.append(new_anot)
           if one_type=='reaction':
@@ -937,18 +941,19 @@ class Recommender(object):
             match_scores.append(self.getMatchScoreOfCHEBI(k, new_anot))
             labels.append(cn.REF_CHEBI2LABEL[new_anot])
           existings.append(1)
+          existings.append('keep')
         new_edf = pd.DataFrame({'type': [one_type]*len(annotations),
                                 'id': [k]*len(annotations),
                                 'display name': [ELEMENT_FUNC[one_type](k).name]*len(annotations),
                                 'meta id': [ELEMENT_FUNC[one_type](k).meta_id]*len(annotations),
                                 'annotation': annotations,
                                 'annotation label': labels,
-                                'match score': match_scores,
-                                'existing': existings})
+                                cn.DF_MATCH_SCORE_COL: match_scores,
+                                'existing': existings,
+                                cn.DF_UPDATE_ANNOTATION_COL: upd_annotation})
         edfs.append(new_edf)
     res = pd.concat(edfs)
     res.insert(0, 'file', self.fname)
-    res["USE ANNOTATION"] = 0
     # Write result to csv
     res.to_csv(fpath, index=False) 
 
@@ -964,6 +969,7 @@ class Recommender(object):
     Parameters
     ----------
     fpath: str
+        Path to save file
     """
     model = self.sbml_document.getModel()
     ELEMENT_FUNC = {'species': model.getSpecies,

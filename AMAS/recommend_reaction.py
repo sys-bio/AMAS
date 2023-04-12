@@ -4,7 +4,7 @@
 """
 Predicts annotations of reaction(s) using a local XML file
 and the reaction ID. 
-Usage: python recommend_reaction.py files/BIOMD0000000190.xml --min_score 0.6 --outpath res.csv
+Usage: python recommend_reaction.py files/BIOMD0000000190.xml --min_score 0.6 --outfile res.csv
 """
 
 import argparse
@@ -24,7 +24,7 @@ def main():
   parser.add_argument('--reaction', type=str, help='ID of reaction(s) in the model', nargs='*')
   parser.add_argument('--min_score', type=float, help='Minimum threshold', nargs='?', default=0.0)
   parser.add_argument('--method', type=str, help='Choose either "top" or "above". Default is "top".', nargs='?', default='top')
-  parser.add_argument('--outpath', type=str, help='File path to save recommendation', nargs='?',
+  parser.add_argument('--outfile', type=str, help='File path to save recommendation', nargs='?',
                       default=os.path.join(os.getcwd(), 'reaction_rec.csv'))
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
@@ -32,14 +32,14 @@ def main():
   reacts = args.reaction
   min_score = args.min_score
   method = args.method
-  outpath = args.outpath
+  outfile = args.outfile
   try:
     recom = recommender.Recommender(libsbml_fpath=one_fpath)
     recom.current_type = 'reaction'
     # if nothing is given, predict all IDs
     if reacts is None:
       reacts = recom.getReactionIDs()
-    print("\nAnalyzing %d reaction(s)...\n" % len(reacts))
+    print("...\nAnalyzing %d reaction(s)...\n" % len(reacts))
     res = recom.getReactionListRecommendation(pred_ids=reacts, get_df=True)
     for idx, one_df in enumerate(res):
       filt_df = recom.autoSelectAnnotation(df=one_df,
@@ -47,8 +47,8 @@ def main():
                                            method=method)
       recom.updateSelection(reacts[idx], filt_df)
     # save file to csv
-    recom.saveToCSV(outpath)
-    print("Recommendations saved.\n")
+    recom.saveToCSV(outfile)
+    print("Recommendations saved as:\n%s\n" % os.path.abspath(outfile))
   except:
     raise ValueError("Please check arguments.")
 
