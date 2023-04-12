@@ -4,7 +4,7 @@
 """
 Predicts annotations of species using a local XML file
 and the species ID. 
-Usage: python recommend_species.py files/BIOMD0000000190.xml --min_score 0.6 --outpath res.csv
+Usage: python recommend_species.py files/BIOMD0000000190.xml --min_score 0.6 --outfile res.csv
 """
 
 import argparse
@@ -23,8 +23,12 @@ def main():
   # One or more species IDs can be given
   parser.add_argument('--species', type=str, help='ID of species in the model', nargs='*')
   parser.add_argument('--min_score', type=float, help='Minimum threshold', nargs='?', default=0.0)
-  parser.add_argument('--method', type=str, help='Choose either "top" or "above". Default is "top".', nargs='?', default='top')
-  parser.add_argument('--outpath', type=str, help='File path to save recommendation', nargs='?',
+  parser.add_argument('--method', type=str,
+                                  help='Choose either "top" or "above". "top" recommends ' +\
+                                       'the best annotations that are above the min_score, ' +\
+                                       'and "above" recommends all annotations that are above ' +\
+                                       'the min_score. Default is "top".', nargs='?', default='top')
+  parser.add_argument('--outfile', type=str, help='File path to save recommendation', nargs='?',
                       default=os.path.join(os.getcwd(), 'species_rec.csv'))
   # parser.add_argument('--out_dir', type=str, help='Path of directory to save files', nargs='?', default=os.getcwd())
   args = parser.parse_args()
@@ -33,7 +37,7 @@ def main():
   specs = args.species
   min_score = args.min_score
   method = args.method
-  outpath = args.outpath
+  outfile = args.outfile
 
   try:
     recom = recommender.Recommender(libsbml_fpath=one_fpath)
@@ -49,8 +53,8 @@ def main():
                                            method=method)
       recom.updateSelection(specs[idx], filt_df)
     # save file to csv
-    recom.saveToCSV(outpath)
-    print("Recommendations saved as:\n%s\n" % outpath)
+    recom.saveToCSV(outfile)
+    print("Recommendations saved as:\n%s\n" % os.path.abspath(outfile))
   except:
   	raise ValueError("Please check arguments.")
 

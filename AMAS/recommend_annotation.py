@@ -6,7 +6,7 @@ Predicts annotations of species and reactions using a local XML file
 and the reaction ID. 
 This is a combined version of recommend_species and recommend_reaction,
 but is more convenient because user will just get the updated XML file or whole recommendations. 
-Usage: python recommend_reaction.py files/BIOMD0000000190.xml --min_score 0.6 --annotate True --outpath res.csv 
+Usage: python recommend_reaction.py files/BIOMD0000000190.xml --min_score 0.6 --annotate True --outfile res.csv 
 """
 
 import argparse
@@ -24,8 +24,8 @@ def main():
   # One or more reaction IDs can be given
   parser.add_argument('--min_score', type=float, help='Minimum threshold', nargs='?', default=0.0)
   parser.add_argument('--method', type=str, help='Choose either "top" or "above". Default is "top".', nargs='?', default='top')
-  parser.add_argument('--save', type=str, help='If sbml, annotate the model; otherwise just save recommendations as csv', default=True)
-  parser.add_argument('--outpath', type=str, help='File path to save recommendation', nargs='?')
+  parser.add_argument('--save', type=str, help='If sbml, annotate the model; otherwise just save recommendations as csv', default='sbml')
+  parser.add_argument('--outfile', type=str, help='File path to save recommendation', nargs='?')
                       # default=os.path.join(os.getcwd(), 'updated_model.xml'))
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
@@ -33,12 +33,8 @@ def main():
   min_score = args.min_score
   method = args.method
   save = args.save
-  outpath = args.outpath
+  outfile = args.outfile
   try:
-    if outpath is None:
-      print("Outpath not provided")
-    else:
-      print("outpath value", type(outpath))
     recom = recommender.Recommender(libsbml_fpath=one_fpath)
     recom.current_type = 'species'
     specs = recom.getSpeciesIDs()
@@ -61,19 +57,19 @@ def main():
       recom.updateSelection(reacts[idx], filt_df)
     # save file
     if save.lower() == 'sbml':
-      if outpath is None:
+      if outfile is None:
         fin_path = os.path.join(os.getcwd(), 'updated_model.xml')
       else:
-        fin_path = outpath
+        fin_path = outfile
       recom.saveToSBML(fin_path)
-      print("Annotations updated and saved as:\n%s\n" % fin_path)
+      print("Annotations updated and saved as:\n%s\n" % os.path.abspath(fin_path))
     elif save.lower() == 'csv':
-      if outpath is None:
+      if outfile is None:
         fin_path = os.path.join(os.getcwd(), 'recommendations.csv')
       else:
-        fin_path = outpath
+        fin_path = outfile
       recom.saveToCSV(fin_path)
-      print("Recommendations saved as:\n%s\n" % fin_path)
+      print("Recommendations saved as:\n%s\n" % os.path.abspath(fin_path))
   except:
     raise ValueError("Please check arguments.")
 

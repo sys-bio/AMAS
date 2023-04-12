@@ -288,7 +288,7 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(new_df.loc[0, 'type'], 'species')
     self.assertEqual(new_df.loc[0, 'display name'], 'S-adenosyl-L-methionine')
     self.assertEqual(new_df.loc[0, 'annotation'], 'CHEBI:15414')
-    self.assertEqual(new_df.loc[0, 'USE ANNOTATION'], 0)
+    self.assertEqual(new_df.loc[0,  cn.DF_UPDATE_ANNOTATION_COL], 'keep')
     os.remove("test.csv")
 
   def testSaveToSBML(self):

@@ -20,8 +20,8 @@ from AMAS import annotation_maker as am
 
 def main():
   parser = argparse.ArgumentParser(description='Use user feedback file (.csv) to update model annotation')
-  parser.add_argument('csv_select', type=str, help='CSV file with user choice')
   parser.add_argument('infile', type=str, help='Path of model file to update annotation')
+  parser.add_argument('csv_select', type=str, help='CSV file with user choice')
   parser.add_argument('outfile', type=str, help='File path to save updated model file')
   # csv file with user choice 
   args = parser.parse_args()
@@ -47,7 +47,7 @@ def main():
       elif one_type == 'reaction':
         model.getReaction(one_id).setAnnotation(one_annotation)
   libsbml.writeSBMLToFile(document, outfile)
-  print("...\nUpdated model file saved.\n")
+  print("...\nUpdated model file saved as:\n%s\n" % os.path.abspath(outfile))
 
 
 if __name__ == '__main__':

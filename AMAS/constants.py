@@ -32,6 +32,7 @@ PRECISION = 'precision'
 
 # For resulting DataFrame
 DF_MATCH_SCORE_COL = 'match score'
+DF_UPDATE_ANNOTATION_COL = 'UPDATE ANNOTATION'
 
 # Tolerance to determine identical numerical values
 TOLERANCE = 0.00001
