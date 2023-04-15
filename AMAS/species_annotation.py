@@ -22,6 +22,7 @@ import os
 import pandas as pd
 import pickle
 import re
+import warnings
 
 
 with open(os.path.join(cn.REF_DIR, 'chebi_low_synonyms_comp.lzma'), 'rb') as f:
@@ -31,6 +32,8 @@ CHARCOUNT_COMB_DF = compress_pickle.load(os.path.join(cn.REF_DIR, 'charcount_df_
 CHARCOUNT_DF = CHARCOUNT_COMB_DF.iloc[:, :-2]
 CHEBI_DF = CHARCOUNT_COMB_DF.iloc[:, -2:]
 # A trained random forest model 
+# suppress warning to ignore warnings about new sklearn versions
+warnings.filterwarnings("ignore")
 SPECIES_RF = compress_pickle.load(os.path.join(cn.REF_DIR, 'species_rf_fitted.lzma'))
 
 

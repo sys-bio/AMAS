@@ -26,7 +26,8 @@ def main():
   # csv file with user choice 
   args = parser.parse_args()
   user_csv = pd.read_csv(args.csv_select)
-  chosen = user_csv[user_csv['USE ANNOTATION']==1]
+  # need to change; will take cells with values 'add/delete'
+  chosen = user_csv[user_csv['UPDATE ANNOTATION']==1]
   outfile = args.outfile
 
   reader = libsbml.SBMLReader()

@@ -23,6 +23,29 @@ def extractExistingSpeciesAnnotation(inp_model, qualifier=cn.CHEBI):
                 if exist_raw[val]}
   return exist_filt
 
+def extractMetaID(inp_str):
+  """
+  Extract the meta id from
+  the given annotation string, by searching for
+  two strings: '#metaid_' and '">'.
+  If none found, return an emtpy string
+
+  Parameters
+  ----------
+  inp_str: str
+      Annotation string
+
+  Returns
+  -------
+  :str
+      Extracted meta id
+  """
+  metaid_re = re.search('metaid_(.*)">', inp_str)
+  if metaid_re is None:
+    return ''
+  else:
+    return metaid_re.group(1)
+
 def extractExistingReactionAnnotation(inp_model):
   """
   Get existing annotation of reactions in Rhea

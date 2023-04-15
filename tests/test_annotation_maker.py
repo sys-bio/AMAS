@@ -36,7 +36,8 @@ EXISTING_ANNOTATION = '\n'.join(lines)
 with open(os.path.join(cn.TEST_DIR, 'augmented_annotation_example.txt')) as file:
     lines = [line.rstrip() for line in file]
 AUGMENTED_ANNOTATION = '\n'.join(lines)
-CHEBI_TO_AUGMENT = ['CHEBI:15414', 'CHEBI:00000']
+CHEBI_TO_ADD = ['CHEBI:15414', 'CHEBI:00000']
+TERMS_TO_DELETE = ['CHEBI:15414', 'C00019']
 
 ONE_INSERTED = ['<annotation>', '  <rdf:RDF>', '  </rdf:RDF>', '</annotation>']
 TWO_INSERTED = ['rdf:RDF']
@@ -93,7 +94,16 @@ class TestAnnotationMaker(unittest.TestCase):
     self.assertEqual(container[0], '<annotation>')
     self.assertEqual(items[0], '<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15414"/>')
 
-  def testAugmentAnnotation(self):
-    augmented_annotation = self.maker.augmentAnnotation(CHEBI_TO_AUGMENT, EXISTING_ANNOTATION)
-    self.assertEqual(augmented_annotation, AUGMENTED_ANNOTATION)
+  def testAddAnnotation(self):
+    added_annotation = self.maker.addAnnotation(CHEBI_TO_ADD, EXISTING_ANNOTATION)
+    self.assertEqual(added_annotation, AUGMENTED_ANNOTATION)
 
+  def testdeleteAnnotation(self):
+    self.assertTrue(ONE_CHEBI in EXISTING_ANNOTATION)
+    deleted_annotation1 = self.maker.deleteAnnotation([ONE_CHEBI],
+                                                      EXISTING_ANNOTATION)
+    self.assertTrue(ONE_CHEBI not in deleted_annotation1)
+    deleted_annotation2 = self.maker.deleteAnnotation(TERMS_TO_DELETE,
+                                                      EXISTING_ANNOTATION)
+    self.assertEqual(deleted_annotation2, '')
+    

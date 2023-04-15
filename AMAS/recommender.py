@@ -916,7 +916,7 @@ class Recommender(object):
       for k in list(type_selection.keys()):   
         one_edf = type_selection[k]
         annotations = list(one_edf['annotation'])
-        match_scores = list(one_edf['match score'])
+        match_scores = list(one_edf[cn.DF_MATCH_SCORE_COL])
         labels = list(one_edf['label'])
         # if there is existing annotation among predicted candidates;
         if k in TYPE_EXISTING_ATTR[one_type].keys():
@@ -941,7 +941,7 @@ class Recommender(object):
             match_scores.append(self.getMatchScoreOfCHEBI(k, new_anot))
             labels.append(cn.REF_CHEBI2LABEL[new_anot])
           existings.append(1)
-          existings.append('keep')
+          upd_annotation.append('keep')
         new_edf = pd.DataFrame({'type': [one_type]*len(annotations),
                                 'id': [k]*len(annotations),
                                 'display name': [ELEMENT_FUNC[one_type](k).name]*len(annotations),

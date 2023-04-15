@@ -110,8 +110,9 @@ class AnnotationMaker(object):
                           meta_id):
     """
     Get a string of annotations,
-    using a list of strings
+    using a list of strings.
     (of candidates)
+    Can replace a whole annotation. 
 
     Parameters
     ----------
@@ -227,13 +228,17 @@ class AnnotationMaker(object):
   
     Returns
     -------
-    :dict
+    :dict/None
         Dictionary of container,
         and items to be augmented
+        Return None if it cannot be divided
     """
-    exist_anot_list = inp_str.split('\n')
     template_container = []
     items = []
+    # check if it can be divided
+    if '<rdf:Bag>' not in inp_str:
+      return None
+    exist_anot_list = inp_str.split('\n')
     one_line = ''
     while one_line.strip() != '<rdf:Bag>' and exist_anot_list:
       one_line = exist_anot_list.pop(0)
@@ -252,36 +257,86 @@ class AnnotationMaker(object):
            'items': items}
     return res
 
-  def augmentAnnotation(self, 
-                        candidates,
-                        annotation):
+  def addAnnotation(self, 
+                    terms,
+                    annotation,
+                    meta_id=''):
     """
-    Augment existing annotations
+    Add terms to existing annotations
     (meta id is supposed to be included
     in the existing annotation)
   
     Parameters
     ----------
-    candidates: str-list
-        List of candidates
+    terms: str-list
+        List of terms to be added
       
-    existing_annotation: str
+    annotation: str
         Existing element annotation
+
+    meta_id: str
+        In case of creating a new annotation; 
+
+    Returns
+    -------
+    :str
     """
     annotation_dict = self.divideExistingAnnotation(annotation)
+    # TODO: if there is no existing annotations, create a new one
+    if annotation_dict is None:
+      pass
     container = annotation_dict['container']
     existing_items = annotation_dict['items']
     existing_identifiers = []
     for val in existing_items:
       url = re.findall('"(.*?)"', val)[0]
       existing_identifiers.append(url.split('/')[-1])
-    additional_identifiers = [val for val in candidates \
+    # duplicated terms will not be added
+    additional_identifiers = [val for val in terms \
                               if val not in existing_identifiers]
     new_items = [self.createAnnotationItem(KNOWLEDGE_RESOURCE[self.element],one_cand) \
                  for one_cand in additional_identifiers]
     items = existing_items + new_items
     res = self.insertList(container, items)
     return '\n'.join(res)
+
+  def deleteAnnotation(self,
+                       terms,
+                       annotation):
+    """
+    Remove entire annotation by 
+    returning a null string.
+
+    Parameters
+    ----------
+    terms: str-list
+        List of terms to be removed
+      
+    annotation: str
+        Existing element annotation
+
+    Returns
+    -------
+    :str
+    """
+    annotation_dict = self.divideExistingAnnotation(annotation)
+    # if cannot parse annotation, return the original annotation
+    if annotation_dict is None:
+      return annotation
+    container = annotation_dict['container']
+    exist_items = annotation_dict['items']
+    # finding remaining items
+    rem_items = []
+    for val in exist_items:
+      if all([k not in val for k in terms]):
+        rem_items.append(val)
+    if rem_items:
+      res = self.insertList(container, rem_items)
+      return '\n'.join(res)
+    # if all items were deleted, return an empty string
+    else:
+      return ''
+
 
 
 
