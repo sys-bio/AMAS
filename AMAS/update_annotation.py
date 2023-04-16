@@ -26,27 +26,33 @@ def main():
   # csv file with user choice 
   args = parser.parse_args()
   user_csv = pd.read_csv(args.csv_select)
-  # need to change; will take cells with values 'add/delete'
-  chosen = user_csv[user_csv['UPDATE ANNOTATION']==1]
+  # Only takes cells with values 'add' or 'delete'
+  chosen = user_csv[(user_csv['UPDATE ANNOTATION']=='add') |\
+                   (user_csv['UPDATE ANNOTATION']=='delete')]
   outfile = args.outfile
 
   reader = libsbml.SBMLReader()
   document = reader.readSBML(args.infile)
   model = document.getModel()
+  ELEMENT_FUNC = {'species': model.getSpecies,
+                  'reaction': model.getReaction}
 
   element_types = list(np.unique(chosen['type']))
   for one_type in element_types:
     maker = am.AnnotationMaker(one_type)
+    ACTION_FUNC = {'delete': maker.deleteAnnotation,
+                   'add': maker.addAnnotation}
     df_type = chosen[chosen['type']==one_type]
     uids = list(np.unique(df_type['id']))
     meta_ids = {val:list(df_type[df_type['id']==val]['meta id'])[0] for val in uids}
     for one_id in uids:
-      one_annotation = maker.getAnnotationString(list(df_type[df_type['id']==one_id]['annotation']),
-                                                 meta_ids[one_id])
-      if one_type == 'species':
-        model.getSpecies(one_id).setAnnotation(one_annotation)
-      elif one_type == 'reaction':
-        model.getReaction(one_id).setAnnotation(one_annotation)
+      orig_str = ELEMENT_FUNC[one_type](one_id).getAnnotationString()
+      df_id = df_type[df_type['id']==one_id]
+      dels = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='delete'].loc[:, 'annotation'])
+      adds = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='add'].loc[:, 'annotation'])
+      deled = maker.deleteAnnotation(dels, orig_str)
+      added = maker.addAnnotation(adds, deled, meta_ids[one_id])
+      ELEMENT_FUNC[one_type](one_id).setAnnotation(added)
   libsbml.writeSBMLToFile(document, outfile)
   print("...\nUpdated model file saved as:\n%s\n" % os.path.abspath(outfile))
 

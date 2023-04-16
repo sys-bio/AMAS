@@ -260,7 +260,7 @@ class AnnotationMaker(object):
   def addAnnotation(self, 
                     terms,
                     annotation,
-                    meta_id=''):
+                    meta_id=None):
     """
     Add terms to existing annotations
     (meta id is supposed to be included
@@ -275,7 +275,9 @@ class AnnotationMaker(object):
         Existing element annotation
 
     meta_id: str
-        In case of creating a new annotation; 
+        Optional argument; 
+        if not provided and is needed,
+        it'll extract appropriate one from annotation.
 
     Returns
     -------
@@ -284,7 +286,9 @@ class AnnotationMaker(object):
     annotation_dict = self.divideExistingAnnotation(annotation)
     # TODO: if there is no existing annotations, create a new one
     if annotation_dict is None:
-      pass
+      if meta_id is None: 
+        meta_id = tools.extractMetaID(annotation)
+      return self.getAnnotationString(terms, meta_id)
     container = annotation_dict['container']
     existing_items = annotation_dict['items']
     existing_identifiers = []
@@ -337,6 +341,28 @@ class AnnotationMaker(object):
     else:
       return ''
 
+  def extractMetaID(self,
+                    inp_str): 
+    """
+    Extract meta id from
+    the given annotation string, by searching for
+    two strings: '#metaid_' and '">'.
+    If none found, return an emtpy string
 
+    Parameters
+    ----------
+    inp_str: str
+        Annotation string
+
+    Returns
+    -------
+    :str
+        Extracted meta id
+    """
+    metaid_re = re.search('rdf:about="#(.*)">', inp_str)
+    if metaid_re is None:
+      return ''
+    else:
+      return metaid_re.group(1)
 
 

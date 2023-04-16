@@ -1,18 +1,14 @@
 # test_annotation_maker.py
 # unittest for AMAS.annotation_maker
 
-# import libsbml
-# import numpy as np
 import os
-# import sys
 import unittest
 
 
 from AMAS import annotation_maker as am
 from AMAS import constants as cn
-# from AMAS import recommender
-# from AMAS import species_annotation as sa
 # from AMAS import tools
+
 
 ONE_CHEBI = 'CHEBI:15414'
 ONE_CHEBI_SCORE = 1.00
@@ -41,6 +37,7 @@ TERMS_TO_DELETE = ['CHEBI:15414', 'C00019']
 
 ONE_INSERTED = ['<annotation>', '  <rdf:RDF>', '  </rdf:RDF>', '</annotation>']
 TWO_INSERTED = ['rdf:RDF']
+METAID_STRING = '<rdf:Description rdf:about="#metaid_0000036">'
 
 #############################
 # Tests
@@ -107,3 +104,8 @@ class TestAnnotationMaker(unittest.TestCase):
                                                       EXISTING_ANNOTATION)
     self.assertEqual(deleted_annotation2, '')
     
+  def testExtractMetaID(self):
+    metaid1 = self.maker.extractMetaID(inp_str=METAID_STRING)
+    self.assertEqual(metaid1, 'metaid_0000036')
+    metaid2 = self.maker.extractMetaID(inp_str='')
+    self.assertEqual(metaid2, '')

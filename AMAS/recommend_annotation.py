@@ -26,7 +26,6 @@ def main():
   parser.add_argument('--method', type=str, help='Choose either "top" or "above". Default is "top".', nargs='?', default='top')
   parser.add_argument('--save', type=str, help='If sbml, annotate the model; otherwise just save recommendations as csv', default='sbml')
   parser.add_argument('--outfile', type=str, help='File path to save recommendation', nargs='?')
-                      # default=os.path.join(os.getcwd(), 'updated_model.xml'))
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model

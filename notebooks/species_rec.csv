@@ -1,11 +1,11 @@
 file,type,id,display name,meta id,annotation,annotation label,match score,existing,UPDATE ANNOTATION
-BIOMD0000000190.xml,species,SAM,S-adenosyl-L-methionine,metaid_0000036,CHEBI:15414,S-adenosyl-L-methionine,1,1,keep
+BIOMD0000000190.xml,species,SAM,S-adenosyl-L-methionine,metaid_0000036,CHEBI:15414,S-adenosyl-L-methionine,1,1,delete
 BIOMD0000000190.xml,species,SAM,S-adenosyl-L-methionine,metaid_0000036,CHEBI:59789,S-adenosyl-L-methionine zwitterion,1,0,add
 BIOMD0000000190.xml,species,A,S-adenosylmethioninamine,metaid_0000037,CHEBI:15625,S-adenosylmethioninamine,1,1,delete
 BIOMD0000000190.xml,species,P,Putrescine,metaid_0000038,CHEBI:17148,putrescine,1,1,keep
 BIOMD0000000190.xml,species,P,Putrescine,metaid_0000038,CHEBI:326268,"1,4-butanediammonium",1,0,ignore
 BIOMD0000000190.xml,species,S,Spermine,metaid_0000039,CHEBI:15746,spermine,1,1,delete
-BIOMD0000000190.xml,species,S,Spermine,metaid_0000039,CHEBI:45725,spermine(4+),1,0,ignore
+BIOMD0000000190.xml,species,S,Spermine,metaid_0000039,CHEBI:45725,spermine(4+),1,0,add
 BIOMD0000000190.xml,species,D,Spermidine,metaid_0000040,CHEBI:57834,spermidine(3+),1,0,ignore
 BIOMD0000000190.xml,species,D,Spermidine,metaid_0000040,CHEBI:16610,spermidine,1,1,keep
 BIOMD0000000190.xml,species,aS,N1-Acetylspermine,metaid_0000041,CHEBI:17312,N(1)-acetylspermine,1,1,keep

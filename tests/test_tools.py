@@ -28,7 +28,6 @@ ATP = 'ATP'
 ATP_CHEBI = ['CHEBI:15422']
 REACTION_CREATINEKINASE = 'CreatineKinase'
 CREATINEKINASE_ANNOTATION = ['RHEA:17157']
-METAID_STRING = '<rdf:Description rdf:about="#metaid_0000036">'
 
 #############################
 # Tests
@@ -44,13 +43,6 @@ class TestFunctions(unittest.TestCase):
   def testExtractExistingSpeciesAnnotation(self):
     spec_annotation = tools.extractExistingSpeciesAnnotation(inp_model=self.model)
     self.assertTrue(spec_annotation[ATP], ATP_CHEBI)
-
-  def testExtractMetaID(self):
-    metaid1 = tools.extractMetaID(inp_str=METAID_STRING)
-    self.assertEqual(metaid1, '0000036')
-    metaid2 = tools.extractMetaID(inp_str='')
-    self.assertEqual(metaid2, '')
-
 
   def testExtractExistingReactionAnnotation(self):
     one_dict_rhea = tools.extractExistingReactionAnnotation(inp_model=self.model)
