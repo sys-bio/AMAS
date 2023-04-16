@@ -19,11 +19,11 @@ from AMAS import constants as cn
 from AMAS import annotation_maker as am
 
 def main():
-  parser = argparse.ArgumentParser(description='Use user feedback file (.csv) to update model annotation')
-  parser.add_argument('infile', type=str, help='Path of model file to update annotation')
-  parser.add_argument('csv_select', type=str, help='CSV file with user choice')
-  parser.add_argument('outfile', type=str, help='File path to save updated model file')
-  # csv file with user choice 
+  parser = argparse.ArgumentParser(description='Update annotations of a model using user\'s feedback file (.csv)')
+  parser.add_argument('infile', type=str, help='path of a model file (.xml) to update annotation')
+  parser.add_argument('csv_select', type=str, help='feedback file (.csv) with user choice')
+  parser.add_argument('outfile', type=str, help='file path to save model with updated annotations')
+  # csv file with user choice
   args = parser.parse_args()
   user_csv = pd.read_csv(args.csv_select)
   # Only takes cells with values 'add' or 'delete'

@@ -6,7 +6,7 @@ Predicts annotations of species and reactions using a local XML file
 and the reaction ID. 
 This is a combined version of recommend_species and recommend_reaction,
 but is more convenient because user will just get the updated XML file or whole recommendations. 
-Usage: python recommend_reaction.py files/BIOMD0000000190.xml --min_score 0.6 --annotate True --outfile res.csv 
+Usage: python recommend_reaction.py files/BIOMD0000000190.xml --min_score 0.6 --save csv --outfile res.csv 
 """
 
 import argparse
@@ -19,13 +19,26 @@ from AMAS import constants as cn
 from AMAS import recommender
 
 def main():
-  parser = argparse.ArgumentParser(description='SBML file (.XML) and one or more reaction IDs in the model.') 
-  parser.add_argument('model', type=str, help='SBML model file in the XML format')
+  parser = argparse.ArgumentParser(description='Recommend annotations of an SBML model (for both species and reactions) and save results') 
+  parser.add_argument('model', type=str, help='SBML model file (.xml)')
   # One or more reaction IDs can be given
-  parser.add_argument('--min_score', type=float, help='Minimum threshold', nargs='?', default=0.0)
-  parser.add_argument('--method', type=str, help='Choose either "top" or "above". Default is "top".', nargs='?', default='top')
-  parser.add_argument('--save', type=str, help='If sbml, annotate the model; otherwise just save recommendations as csv', default='sbml')
-  parser.add_argument('--outfile', type=str, help='File path to save recommendation', nargs='?')
+  parser.add_argument('--min_score', type=float, help='minimum match score threshold', nargs='?', default=0.0)
+  parser.add_argument('--method', type=str,
+                                  help='Choose either "top" or "above". "top" recommends ' +\
+                                       'the best candidates that are above the min_score, ' +\
+                                       'and "above" recommends all candidates that are above ' +\
+                                       'the min_score. Default is "top"',
+                                  nargs='?',
+                                  default='top')
+  parser.add_argument('--save', type=str, 
+                                help='Choose either "sbml" or "csv". ' +\
+                                     'If "sbml" is chosen, model will be automatically ' +\
+                                     'annotated with recommended candidates and saved. ' +\
+                                     'If "csv" is chosen, recommendations will be saved ' +\
+                                     'as a csv file. Default is "sbml"',
+                                nargs='?',
+                                default='sbml')
+  parser.add_argument('--outfile', type=str, help='path to save file.', nargs='?')
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
