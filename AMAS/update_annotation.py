@@ -7,6 +7,7 @@ Usage: python update_annotation.py res.csv files/BIOMD0000000190.xml BIOMD000000
 """
 
 import argparse
+import itertools
 import libsbml
 import numpy as np
 import os
@@ -53,7 +54,7 @@ def main():
       adds = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='add'].loc[:, 'annotation'])
       # if type is 'reaction', need to map rhea terms back to ec and kegg terms to delete them. 
       if one_type == 'reaction':
-        rhea_del_terms = list(set(itertools.chain*[cn.getAssociatedTermsToRhea(val) for val in dels]))
+        rhea_del_terms = list(set(itertools.chain(*[tools.getAssociatedTermsToRhea(val) for val in dels])))
         deled = maker.deleteAnnotation(rhea_del_terms, orig_str)
       else:
         deled = maker.deleteAnnotation(dels, orig_str)
