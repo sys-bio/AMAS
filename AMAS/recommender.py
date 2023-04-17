@@ -963,11 +963,20 @@ class Recommender(object):
       self.printSummary(saved_elements, one_type)
 
   def saveToSBML(self,
-                 fpath="model_amas_annotations.xml"):
+                 fpath='model_amas_annotations.xml',
+                 option='augment'):
     """
     Update and save model;
     How to distinguish species vs. reactions? 
-    by using self.current_element_type
+    by using self.current_element_type.
+
+    If option is 'augment',
+    it'll add candidate annotations to 
+    existing annotation string.
+    If option is 'replace',
+    create a new annotation string and
+    replace whatevers exists.
+    Default to 'augment'.  
   
     Call annotation maker;
   
@@ -975,6 +984,9 @@ class Recommender(object):
     ----------
     fpath: str
         Path to save file
+
+    option: str
+        Either 'augment' or 'replace'
     """
     model = self.sbml_document.getModel()
     ELEMENT_FUNC = {'species': model.getSpecies,
@@ -991,7 +1003,13 @@ class Recommender(object):
         df = sel2save[one_k]
         cands2save = list(df['annotation'])
         if cands2save:
-          annotation_str = maker.getAnnotationString(cands2save, meta_id)
+          if option == 'augment':
+            orig_annotation = one_element.getAnnotationString()
+            annotation_str = maker.addAnnotation(cands2save,
+                                                 orig_annotation,
+                                                 meta_id)
+          elif option == 'replace':
+            annotation_str = maker.getAnnotationString(cands2save, meta_id)
           one_element.setAnnotation(annotation_str)
           saved_elements[one_type].append(one_k)
         else:
