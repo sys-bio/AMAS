@@ -4,6 +4,7 @@ Create string annotations for
 AMAS recommendation.
 """
 
+import itertools
 import re
 
 RDF_TAG_ITEM = ['rdf:RDF',

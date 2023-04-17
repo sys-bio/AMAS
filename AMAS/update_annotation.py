@@ -17,6 +17,7 @@ sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 from AMAS import constants as cn
 from AMAS import annotation_maker as am
+from AMAS import tools
 
 def main():
   parser = argparse.ArgumentParser(description='Update annotations of a model using user\'s feedback file (.csv)')
@@ -50,7 +51,12 @@ def main():
       df_id = df_type[df_type['id']==one_id]
       dels = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='delete'].loc[:, 'annotation'])
       adds = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='add'].loc[:, 'annotation'])
-      deled = maker.deleteAnnotation(dels, orig_str)
+      # if type is 'reaction', need to map rhea terms back to ec and kegg terms to delete them. 
+      if one_type == 'reaction':
+        rhea_del_terms = list(set(itertools.chain*[cn.getAssociatedTermsToRhea(val) for val in dels]))
+        deled = maker.deleteAnnotation(rhea_del_terms, orig_str)
+      else:
+        deled = maker.deleteAnnotation(dels, orig_str)
       added = maker.addAnnotation(adds, deled, meta_ids[one_id])
       ELEMENT_FUNC[one_type](one_id).setAnnotation(added)
   libsbml.writeSBMLToFile(document, outfile)
