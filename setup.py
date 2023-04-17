@@ -17,7 +17,7 @@ INSTALL_REQUIRES = [
 def doSetup(install_requires):
   setup(
       name='AMAS-sb',
-      version='0.0.2',
+      version='0.0.3',
       author='Woosub Shin',
       author_email='woosubs@umich.edu',
       packages=find_packages(exclude=['tests', 'notebooks']),
@@ -35,11 +35,7 @@ def doSetup(install_requires):
                'AMAS/recommend_species',
                'AMAS/recommend_reaction',
                'AMAS/recommend_annotation',
-               'AMAS/update_annotation',
-               'AMAS/recommend_species.bat',
-               'AMAS/recommend_reaction.bat',
-               'AMAS/recommend_annotation.bat',
-               'AMAS/update_annotation.bat'
+               'AMAS/update_annotation'
                ],
       classifiers=[
           'Development Status :: 3 - Alpha',

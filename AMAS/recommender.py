@@ -956,6 +956,11 @@ class Recommender(object):
     res.insert(0, 'file', self.fname)
     # Write result to csv
     res.to_csv(fpath, index=False) 
+    # print summary; 
+    # Summary message
+    for one_type in ELEMENT_TYPES:
+      saved_elements = list(np.unique(res[res['type']==one_type]['id']))
+      self.printSummary(saved_elements, one_type)
 
   def saveToSBML(self,
                  fpath="model_amas_annotations.xml"):
@@ -1007,6 +1012,9 @@ class Recommender(object):
     ----------
     saved: list-str
         List of elements saved. 
+
+    element_type: str
+        'species' or 'reaction'
     """
     plural_str = {'species': '',
                   'reaction': '(s)'}
