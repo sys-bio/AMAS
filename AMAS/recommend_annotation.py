@@ -35,9 +35,9 @@ def main():
                                      'If "sbml" is chosen, model will be automatically ' +\
                                      'annotated with recommended candidates and saved. ' +\
                                      'If "csv" is chosen, recommendations will be saved ' +\
-                                     'as a csv file. Default is "sbml"',
+                                     'as a csv file. Default is "csv"',
                                 nargs='?',
-                                default='sbml')
+                                default='csv')
   parser.add_argument('--outfile', type=str, help='path to save file.', nargs='?')
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
