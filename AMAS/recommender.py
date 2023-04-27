@@ -669,7 +669,7 @@ class Recommender(object):
                                                          inp_reac_list=reactions,
                                                          update=True)
 
-  ### Below are methods that interacts with user; 
+  # Below are methods that interacts with user; 
   def autoSelectAnnotation(self, df, min_score=0.0, method='top'):
     """
     Choose annotations based on 
@@ -915,6 +915,8 @@ class Recommender(object):
       type_selection = self.selection[one_type]
       for k in list(type_selection.keys()):   
         one_edf = type_selection[k]
+        if one_edf.shape[0] == 0:
+          continue
         annotations = list(one_edf['annotation'])
         match_scores = list(one_edf[cn.DF_MATCH_SCORE_COL])
         labels = list(one_edf['label'])

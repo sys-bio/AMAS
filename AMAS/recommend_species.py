@@ -22,12 +22,12 @@ def main():
   parser.add_argument('model', type=str, help='SBML model file (.xml)')
   # One or more species IDs can be given
   parser.add_argument('--species', type=str, help='ID(s) of species to be recommended. If not provided, all species will be used', nargs='*')
-  parser.add_argument('--min_score', type=float, help='minimum match score threshold', nargs='?', default=0.0)
+  parser.add_argument('--cutoff', type=float, help='minimum match score cutoff', nargs='?', default=0.0)
   parser.add_argument('--method', type=str,
                                   help='Choose either "top" or "above". "top" recommends ' +\
-                                       'the best candidates that are above the min_score, ' +\
+                                       'the best candidates that are above the cutoff, ' +\
                                        'and "above" recommends all candidates that are above ' +\
-                                       'the min_score. Default is "top"',
+                                       'the cutoff. Default is "top"',
                                   nargs='?',
                                   default='top')
   parser.add_argument('--outfile', type=str, help='file path to save recommendation', nargs='?',
@@ -36,7 +36,7 @@ def main():
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
   specs = args.species
-  min_score = args.min_score
+  cutoff = args.cutoff
   method = args.method
   outfile = args.outfile
 
@@ -50,7 +50,7 @@ def main():
     res = recom.getSpeciesListRecommendation(pred_ids=specs, get_df=True)
     for idx, one_df in enumerate(res):
       filt_df = recom.autoSelectAnnotation(df=one_df,
-                                           min_score=min_score,
+                                           min_score=cutoff,
                                            method=method)
       recom.updateSelection(specs[idx], filt_df)
     # save file to csv

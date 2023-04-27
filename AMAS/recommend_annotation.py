@@ -6,7 +6,7 @@ Predicts annotations of species and reactions using a local XML file
 and the reaction ID. 
 This is a combined version of recommend_species and recommend_reaction,
 but is more convenient because user will just get the updated XML file or whole recommendations. 
-Usage: python recommend_reaction.py files/BIOMD0000000190.xml --min_score 0.6 --save csv --outfile res.csv 
+Usage: python recommend_reaction.py files/BIOMD0000000190.xml --cutoff 0.6 --save csv --outfile res.csv 
 """
 
 import argparse
@@ -22,12 +22,12 @@ def main():
   parser = argparse.ArgumentParser(description='Recommend annotations of an SBML model (for both species and reactions) and save results') 
   parser.add_argument('model', type=str, help='SBML model file (.xml)')
   # One or more reaction IDs can be given
-  parser.add_argument('--min_score', type=float, help='minimum match score threshold', nargs='?', default=0.0)
+  parser.add_argument('--cutoff', type=float, help='minimum match score cutoff', nargs='?', default=0.0)
   parser.add_argument('--method', type=str,
                                   help='Choose either "top" or "above". "top" recommends ' +\
-                                       'the best candidates that are above the min_score, ' +\
+                                       'the best candidates that are above the cutoff, ' +\
                                        'and "above" recommends all candidates that are above ' +\
-                                       'the min_score. Default is "top"',
+                                       'the cutoff. Default is "top"',
                                   nargs='?',
                                   default='top')
   parser.add_argument('--save', type=str, 
@@ -42,7 +42,7 @@ def main():
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
-  min_score = args.min_score
+  cutoff = args.cutoff
   method = args.method
   save = args.save
   outfile = args.outfile
@@ -54,7 +54,7 @@ def main():
     res_spec = recom.getSpeciesListRecommendation(pred_ids=specs, get_df=True)
     for idx, one_df in enumerate(res_spec):
       filt_df = recom.autoSelectAnnotation(df=one_df,
-                                           min_score=min_score,
+                                           min_score=cutoff,
                                            method=method)
       recom.updateSelection(specs[idx], filt_df)
 
@@ -64,7 +64,7 @@ def main():
     res_reac = recom.getReactionListRecommendation(pred_ids=reacts, get_df=True)
     for idx, one_df in enumerate(res_reac):
       filt_df = recom.autoSelectAnnotation(df=one_df,
-                                           min_score=min_score,
+                                           min_score=cutoff,
                                            method=method)
       recom.updateSelection(reacts[idx], filt_df)
     # save file
