@@ -46,44 +46,44 @@ def main():
   method = args.method
   save = args.save
   outfile = args.outfile
-  try:
-    recom = recommender.Recommender(libsbml_fpath=one_fpath)
-    recom.current_type = 'species'
-    specs = recom.getSpeciesIDs()
-    print("...\nAnalyzing %d species...\n" % len(specs))
-    res_spec = recom.getSpeciesListRecommendation(pred_ids=specs, get_df=True)
-    for idx, one_df in enumerate(res_spec):
-      filt_df = recom.autoSelectAnnotation(df=one_df,
-                                           min_score=cutoff,
-                                           method=method)
-      recom.updateSelection(specs[idx], filt_df)
+  # try:
+  recom = recommender.Recommender(libsbml_fpath=one_fpath)
+  recom.current_type = 'species'
+  specs = recom.getSpeciesIDs()
+  print("...\nAnalyzing %d species...\n" % len(specs))
+  res_spec = recom.getSpeciesListRecommendation(pred_ids=specs, get_df=True)
+  for idx, one_df in enumerate(res_spec):
+    filt_df = recom.autoSelectAnnotation(df=one_df,
+                                         min_score=cutoff,
+                                         method=method)
+    recom.updateSelection(specs[idx], filt_df)
 
-    recom.current_type = 'reaction'
-    reacts = recom.getReactionIDs()
-    print("...\nAnalyzing %d reaction(s)...\n" % len(reacts))
-    res_reac = recom.getReactionListRecommendation(pred_ids=reacts, get_df=True)
-    for idx, one_df in enumerate(res_reac):
-      filt_df = recom.autoSelectAnnotation(df=one_df,
-                                           min_score=cutoff,
-                                           method=method)
-      recom.updateSelection(reacts[idx], filt_df)
-    # save file
-    if save.lower() == 'sbml':
-      if outfile is None:
-        fin_path = os.path.join(os.getcwd(), 'updated_model.xml')
-      else:
-        fin_path = outfile
-      recom.saveToSBML(fin_path)
-      print("Annotations updated and saved as:\n%s\n" % os.path.abspath(fin_path))
-    elif save.lower() == 'csv':
-      if outfile is None:
-        fin_path = os.path.join(os.getcwd(), 'recommendations.csv')
-      else:
-        fin_path = outfile
-      recom.saveToCSV(fin_path)
-      print("Recommendations saved as:\n%s\n" % os.path.abspath(fin_path))
-  except:
-    raise ValueError("Please check arguments.")
+  recom.current_type = 'reaction'
+  reacts = recom.getReactionIDs()
+  print("...\nAnalyzing %d reaction(s)...\n" % len(reacts))
+  res_reac = recom.getReactionListRecommendation(pred_ids=reacts, get_df=True)
+  for idx, one_df in enumerate(res_reac):
+    filt_df = recom.autoSelectAnnotation(df=one_df,
+                                         min_score=cutoff,
+                                         method=method)
+    recom.updateSelection(reacts[idx], filt_df)
+  # save file
+  if save.lower() == 'sbml':
+    if outfile is None:
+      fin_path = os.path.join(os.getcwd(), 'updated_model.xml')
+    else:
+      fin_path = outfile
+    recom.saveToSBML(fin_path)
+    print("Annotations updated and saved as:\n%s\n" % os.path.abspath(fin_path))
+  elif save.lower() == 'csv':
+    if outfile is None:
+      fin_path = os.path.join(os.getcwd(), 'recommendations.csv')
+    else:
+      fin_path = outfile
+    recom.saveToCSV(fin_path)
+    print("Recommendations saved as:\n%s\n" % os.path.abspath(fin_path))
+  # except:
+  #   raise ValueError("Please check arguments.")
 
 
 if __name__ == '__main__':
