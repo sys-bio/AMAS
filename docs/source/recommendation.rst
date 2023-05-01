@@ -9,6 +9,7 @@ This section describes how ``AMAS`` can be used to get recommendations of annota
 To install the package, use:
 
 .. code-block:: console
+
    $ pip install AMAS-sb
 
 Currently, ``AMAS`` can run either as a command-line tool or as a regular Python package. Most of the time, you will need to provide an exsiting SBML model file (XML) to run it. 
