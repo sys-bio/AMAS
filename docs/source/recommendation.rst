@@ -40,5 +40,5 @@ In the above example, only recommendations for model elements with match score o
 Recommendations will be made in ChEBI identifiers for species and in Rhea for reactions. For species, the algorithm uses display name (if not provided, ID) to find the most similar items in ChEBI; for reactions, it uses each compoennt species and their predicted annotations for each reaction. Recommendations are saved as a table, as shown below: 
 
 .. image:: images/res_csv.png
-  :width: 400
+  :width: 800
 
