@@ -669,7 +669,7 @@ class Recommender(object):
                                                          inp_reac_list=reactions,
                                                          update=True)
 
-  ### Below are methods that interacts with user; 
+  # Below are methods that interacts with user; 
   def autoSelectAnnotation(self, df, min_score=0.0, method='top'):
     """
     Choose annotations based on 
@@ -915,8 +915,10 @@ class Recommender(object):
       type_selection = self.selection[one_type]
       for k in list(type_selection.keys()):   
         one_edf = type_selection[k]
+        if one_edf.shape[0] == 0:
+          continue
         annotations = list(one_edf['annotation'])
-        match_scores = list(one_edf['match score'])
+        match_scores = list(one_edf[cn.DF_MATCH_SCORE_COL])
         labels = list(one_edf['label'])
         # if there is existing annotation among predicted candidates;
         if k in TYPE_EXISTING_ATTR[one_type].keys():
@@ -941,7 +943,7 @@ class Recommender(object):
             match_scores.append(self.getMatchScoreOfCHEBI(k, new_anot))
             labels.append(cn.REF_CHEBI2LABEL[new_anot])
           existings.append(1)
-          existings.append('keep')
+          upd_annotation.append('keep')
         new_edf = pd.DataFrame({'type': [one_type]*len(annotations),
                                 'id': [k]*len(annotations),
                                 'display name': [ELEMENT_FUNC[one_type](k).name]*len(annotations),
@@ -956,13 +958,27 @@ class Recommender(object):
     res.insert(0, 'file', self.fname)
     # Write result to csv
     res.to_csv(fpath, index=False) 
+    # print summary; 
+    # Summary message
+    for one_type in ELEMENT_TYPES:
+      saved_elements = list(np.unique(res[res['type']==one_type]['id']))
+      self.printSummary(saved_elements, one_type)
 
   def saveToSBML(self,
-                 fpath="model_amas_annotations.xml"):
+                 fpath='model_amas_annotations.xml',
+                 option='augment'):
     """
     Update and save model;
     How to distinguish species vs. reactions? 
-    by using self.current_element_type
+    by using self.current_element_type.
+
+    If option is 'augment',
+    it'll add candidate annotations to 
+    existing annotation string.
+    If option is 'replace',
+    create a new annotation string and
+    replace whatevers exists.
+    Default to 'augment'.  
   
     Call annotation maker;
   
@@ -970,6 +986,9 @@ class Recommender(object):
     ----------
     fpath: str
         Path to save file
+
+    option: str
+        Either 'augment' or 'replace'
     """
     model = self.sbml_document.getModel()
     ELEMENT_FUNC = {'species': model.getSpecies,
@@ -986,7 +1005,13 @@ class Recommender(object):
         df = sel2save[one_k]
         cands2save = list(df['annotation'])
         if cands2save:
-          annotation_str = maker.getAnnotationString(cands2save, meta_id)
+          if option == 'augment':
+            orig_annotation = one_element.getAnnotationString()
+            annotation_str = maker.addAnnotation(cands2save,
+                                                 orig_annotation,
+                                                 meta_id)
+          elif option == 'replace':
+            annotation_str = maker.getAnnotationString(cands2save, meta_id)
           one_element.setAnnotation(annotation_str)
           saved_elements[one_type].append(one_k)
         else:
@@ -1007,6 +1032,9 @@ class Recommender(object):
     ----------
     saved: list-str
         List of elements saved. 
+
+    element_type: str
+        'species' or 'reaction'
     """
     plural_str = {'species': '',
                   'reaction': '(s)'}

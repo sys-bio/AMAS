@@ -61,3 +61,6 @@ with open(os.path.join(REF_DIR, 'mrhea2chebi_prime.lzma'), 'rb') as f:
   REF_RHEA2CHEBI = compress_pickle.load(f)
 with open(os.path.join(REF_DIR, 'rhea2label.lzma'), 'rb') as f:
   REF_RHEA2LABEL = compress_pickle.load(f)  
+with open(os.path.join(REF_DIR, 'mrhea2eckegg.lzma'), 'rb') as f:
+  REF_RHEA2ECKEGG = compress_pickle.load(f)  
+

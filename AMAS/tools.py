@@ -283,8 +283,25 @@ def updateDictKeyToList(inp_orig_dict, inp_new_dict):
       res_dict[one_k] = itm2add
   return res_dict
 
-
-
-
+def getAssociatedTermsToRhea(inp_rhea):
+  """
+  Get a list of associated terms 
+  of a rhea term. 
+  The resulting list will contain 
+  the original rhea term, 
+  associated EC & KEGG numbers. 
+  
+  Parameters
+  ----------
+  inp_rhea: str
+  
+  Returns
+  -------
+  : list-str
+  """
+  if inp_rhea in cn.REF_RHEA2ECKEGG.keys():
+    return cn.REF_RHEA2ECKEGG[inp_rhea] + [inp_rhea]
+  else:
+    return [inp_rhea]
 
   

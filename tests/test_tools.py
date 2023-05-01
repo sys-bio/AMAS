@@ -114,6 +114,10 @@ class TestFunctions(unittest.TestCase):
     self.assertEqual(precision2[DUMMY_A], 1.0)
     self.assertEqual(precision2[DUMMY_B], 0.0)
 
-
-
+  def testGetAssociatedTermsToRhea(self):
+    one_terms = tools.getAssociatedTermsToRhea('RHEA:21080')
+    self.assertTrue('RHEA:21080' in one_terms)
+    self.assertTrue('KEGG:R00177' in one_terms)
+    two_terms = tools.getAssociatedTermsToRhea('AA')
+    self.assertEqual(two_terms, ['AA'])
 
