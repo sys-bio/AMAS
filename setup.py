@@ -17,7 +17,7 @@ INSTALL_REQUIRES = [
 def doSetup(install_requires):
   setup(
       name='AMAS-sb',
-      version='0.0.5',
+      version='0.0.6',
       author='Woosub Shin',
       author_email='woosubs@umich.edu',
       packages=find_packages(exclude=['tests', 'notebooks']),

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# recommend_reaction.py
+# recommend_reactions.py
 """
 Predicts annotations of reaction(s) using a local XML file
 and the reaction ID. 
@@ -21,7 +21,7 @@ def main():
   parser = argparse.ArgumentParser(description='Recommend reaction annotations of an SBML model and save results') 
   parser.add_argument('model', type=str, help='SBML model file (.xml)')
   # One or more reaction IDs can be given
-  parser.add_argument('--reaction', type=str, help='ID(s) of reaction(s) to be recommended. ' +\
+  parser.add_argument('--reactions', type=str, help='ID(s) of reaction(s) to be recommended. ' +\
                                                    'If not provided, all reactions will be used', nargs='*')
   parser.add_argument('--reject', type=int, help='number of the components of each reaction to reject. ' +\
                                                  'Only reactions with components greater than this value ' +\
@@ -39,7 +39,7 @@ def main():
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
-  reacts = args.reaction
+  reacts = args.reactions
   reject = args.reject
   cutoff = args.cutoff
   method = args.method
