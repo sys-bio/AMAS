@@ -21,11 +21,12 @@ def main():
   parser = argparse.ArgumentParser(description='Recommend species annotations of an SBML model and save results') 
   parser.add_argument('model', type=str, help='SBML model file (.xml)')
   # One or more species IDs can be given
-  parser.add_argument('--species', type=str, help='ID(s) of species to be recommended. If not provided, all species will be used', nargs='*')
-  parser.add_argument('--reject', type=int, help='length of the name of each species to reject. ' +\
-                                                 'Only species with names greater than this value ' +\
-                                                 'will be used. Default is zero', nargs='?', default=0)
-  parser.add_argument('--cutoff', type=float, help='minimum match score cutoff', nargs='?', default=0.0)
+  parser.add_argument('--species', type=str, help='ID(s) of species to be recommended. ' +\
+                                                  'If not provided, all species will be used', nargs='*')
+  parser.add_argument('--min_len', type=int, help='Minimum length of species names to be used for prediction. ' +\
+                                                  'Species with shorter names than this value ' +\
+                                                  'will be ignored. Default is zero', nargs='?', default=0)
+  parser.add_argument('--cutoff', type=float, help='Match score cutoff', nargs='?', default=0.0)
   parser.add_argument('--method', type=str,
                                   help='Choose either "top" or "above". "top" recommends ' +\
                                        'the best candidates that are above the cutoff, ' +\
@@ -33,13 +34,13 @@ def main():
                                        'the cutoff. Default is "top"',
                                   nargs='?',
                                   default='top')
-  parser.add_argument('--outfile', type=str, help='file path to save recommendation', nargs='?',
+  parser.add_argument('--outfile', type=str, help='File path to save recommendation.', nargs='?',
                       default=os.path.join(os.getcwd(), 'species_rec.csv'))
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
   specs = args.species
-  reject = args.reject
+  min_len = args.min_len
   cutoff = args.cutoff
   method = args.method
   outfile = args.outfile
@@ -50,8 +51,8 @@ def main():
   if specs is None:
     specs = recom.getSpeciesIDs()
   print("...\nAnalyzing %d species...\n" % len(specs))
-  # remove only those with name length greater than 'reject'
-  filt_specs = [val for val in specs if len(recom.species.getNameToUse(val)) > reject]
+  # choosing species with at least 'min_len' names
+  filt_specs = [val for val in specs if len(recom.species.getNameToUse(val)) >= min_len]
   # stops if all elements were removed by filtering...
   if len(filt_specs) == 0:
     print("No element found after the element filter.")
