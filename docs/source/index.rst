@@ -8,7 +8,7 @@ AMAS: Automatic Model Annotation System
 
 ``AMAS`` (Automatic Model Annotation System) predicts and recommends annotations of systems biology models. Current version predicts annotations of species and reactions in SBML models, and the algorithm can be tested using BioModels or BiGG models.
 
-Check out the :doc:`recommendation` section for more information. 
+Check out the sections below for more information. 
 
 
 Overview
@@ -20,4 +20,5 @@ AMAS is a collection of methods to predict and recommend annotations for SBML mo
    :maxdepth: 2
    :caption: Contents:
 
-   recommendation
+   basics
+   recom

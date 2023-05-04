@@ -19,26 +19,27 @@ from AMAS import constants as cn
 from AMAS import recommender
 
 def main():
-  parser = argparse.ArgumentParser(description='Recommend annotations of an SBML model (for both species and reactions) and save results') 
-  parser.add_argument('model', type=str, help='SBML model file (.xml)')
+  parser = argparse.ArgumentParser(description='Recommend annotations of an SBML model ' +\
+                                               '(for both species and reactions) and save results.') 
+  parser.add_argument('model', type=str, help='SBML model file (.xml).')
   # One or more reaction IDs can be given
-  parser.add_argument('--cutoff', type=float, help='minimum match score cutoff', nargs='?', default=0.0)
+  parser.add_argument('--cutoff', type=float, help='Match score cutoff.', nargs='?', default=0.0)
   parser.add_argument('--method', type=str,
-                                  help='Choose either "top" or "above". "top" recommends ' +\
+                                  help='Either "top" or "above". "top" recommends ' +\
                                        'the best candidates that are above the cutoff, ' +\
                                        'and "above" recommends all candidates that are above ' +\
-                                       'the cutoff. Default is "top"',
+                                       'the cutoff. Default is "top".',
                                   nargs='?',
                                   default='top')
   parser.add_argument('--save', type=str, 
-                                help='Choose either "sbml" or "csv". ' +\
+                                help='Either "sbml" or "csv". ' +\
                                      'If "sbml" is chosen, model will be automatically ' +\
                                      'annotated with recommended candidates and saved. ' +\
                                      'If "csv" is chosen, recommendations will be saved ' +\
-                                     'as a csv file. Default is "csv"',
+                                     'as a csv file. Default is "csv".',
                                 nargs='?',
                                 default='csv')
-  parser.add_argument('--outfile', type=str, help='path to save file.', nargs='?')
+  parser.add_argument('--outfile', type=str, help='Path to save an output file.', nargs='?')
   args = parser.parse_args()
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
