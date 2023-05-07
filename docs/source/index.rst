@@ -13,7 +13,7 @@ Check out the sections below for more information.
 
 Overview
 ========
-AMAS is a collection of methods to predict and recommend annotations for SBML model elements. Current version focuses on predicting species and reaction annotations of metabolic models, such as that can be found in BiGG and BioModels repositories. Algorithm uses CHEBI for species annotations, and Rhea for reaction annotations.
+AMAS is a collection of methods to predict and recommend annotations for SBML model elements. Current version focuses on predicting species and reaction annotations of metabolic models, such as that can be found in BiGG and BioModels repositories. Algorithm uses ChEBI for species annotations, and Rhea for reaction annotations.
 
 
 .. toctree::
@@ -22,4 +22,4 @@ AMAS is a collection of methods to predict and recommend annotations for SBML mo
 
    basics
    recom
-   update
+   upd
