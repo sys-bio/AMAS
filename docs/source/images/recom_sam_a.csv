@@ -1,0 +1,4 @@
+file,type,id,display name,meta id,annotation,annotation label,match score,existing,UPDATE ANNOTATION
+BIOMD0000000190.xml,species,SAM,S-adenosyl-L-methionine,metaid_0000036,CHEBI:59789,S-adenosyl-L-methionine zwitterion,1.0,0,ignore
+BIOMD0000000190.xml,species,SAM,S-adenosyl-L-methionine,metaid_0000036,CHEBI:15414,S-adenosyl-L-methionine,1.0,1,keep
+BIOMD0000000190.xml,species,A,S-adenosylmethioninamine,metaid_0000037,CHEBI:15625,S-adenosylmethioninamine,1.0,1,keep

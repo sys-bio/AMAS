@@ -38,7 +38,6 @@ def main():
   model = document.getModel()
   ELEMENT_FUNC = {'species': model.getSpecies,
                   'reaction': model.getReaction}
-
   element_types = list(np.unique(chosen['type']))
   for one_type in element_types:
     maker = am.AnnotationMaker(one_type)
@@ -47,16 +46,20 @@ def main():
     df_type = chosen[chosen['type']==one_type]
     uids = list(np.unique(df_type['id']))
     meta_ids = {val:list(df_type[df_type['id']==val]['meta id'])[0] for val in uids}
+    # going through one id at a time
     for one_id in uids:
       orig_str = ELEMENT_FUNC[one_type](one_id).getAnnotationString()
       df_id = df_type[df_type['id']==one_id]
       dels = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='delete'].loc[:, 'annotation'])
-      adds = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='add'].loc[:, 'annotation'])
-      # if type is 'reaction', need to map rhea terms back to ec and kegg terms to delete them. 
+      adds_raw = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='add'].loc[:, 'annotation'])
+      # existing annotations to be kept 
+      keeps = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='keep'].loc[:, 'annotation'])
+      adds = list(set(adds_raw + keeps))
+      # if type is 'reaction', need to map rhea terms back to ec/kegg terms to delete them. 
       if one_type == 'reaction':
         rhea_del_terms = list(set(itertools.chain(*[tools.getAssociatedTermsToRhea(val) for val in dels])))
         deled = maker.deleteAnnotation(rhea_del_terms, orig_str)
-      else:
+      elif one_type == 'species':
         deled = maker.deleteAnnotation(dels, orig_str)
       added = maker.addAnnotation(adds, deled, meta_ids[one_id])
       ELEMENT_FUNC[one_type](one_id).setAnnotation(added)
