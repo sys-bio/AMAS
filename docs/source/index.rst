@@ -22,3 +22,4 @@ AMAS is a collection of methods to predict and recommend annotations for SBML mo
 
    basics
    recom
+   update
