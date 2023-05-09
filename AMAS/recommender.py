@@ -341,6 +341,7 @@ class Recommender(object):
   def getReactionRecommendation(self, pred_id,
                                 use_exist_species_annotation=False,
                                 update=True,
+                                spec_res=None,
                                 spec_method='cdist',
                                 get_df=False):
     """
@@ -354,8 +355,12 @@ class Recommender(object):
         A single ID of reaction to annotate
     use_exist_speices_annotation: bool
         If True, use existing species annotation
+    spec_res: list-cn.Recommendation
+        If provided, species will not be predicted
+        for remaining species
     spec_method: str
-        If 'cdist' Cosine Similarity
+        Method to use if to directly predict species annotation;
+        if 'cdist' Cosine Similarity
         if 'edist' Edit distance
     get_df: bool
         If True, return a pandas DataFrame.
@@ -373,11 +378,14 @@ class Recommender(object):
     else:
       pred_formulas = {}
     remaining_species = [val for val in specs2predict if val not in pred_formulas.keys()]
-
     if len(remaining_species) > 0:
-      spec_results = self.getSpeciesListRecommendation(pred_ids=remaining_species,
-                                                   update=True,
-                                                   method=spec_method)
+      if spec_res:
+        spec_results = [val for val in spec_res if val.id in remaining_species]
+      else:
+        # not updating as it is a temporary prediction (and not for user)
+        spec_results = self.getSpeciesListRecommendation(pred_ids=remaining_species,
+                                                         update=False,
+                                                         method=spec_method)
       for one_recom in spec_results:
         chebis = [val[0] for val in one_recom.candidates]
         forms = list(set([cn.REF_CHEBI2FORMULA[k] \
@@ -448,6 +456,7 @@ class Recommender(object):
   def getReactionListRecommendation(self, pred_ids,
                                     use_exist_species_annotation=False,
                                     update=True,
+                                    spec_res=None,
                                     spec_method='cdist',
                                     get_df=False):
     """
@@ -461,8 +470,15 @@ class Recommender(object):
     ----------
     pred_ids: str-list
         For now, it only accommodates calling by reaction IDs.
+    use_exist_species_annotation: tool
+        If True, search existing annotation for species
+        and predict the remaining species
+    spec_res: list-cn.Recommendation
+        If provided, species will not be predicted
+        for remaining species
     spec_method: str
-        If 'cdist' Cosine Similarity
+        Method to use if to directly predict species annotation;
+        if 'cdist' Cosine Similarity
         if 'edist' Edit distance
     get_df: bool
         If True, return a list of pandas DataFrames.
@@ -485,9 +501,13 @@ class Recommender(object):
     remaining_species = [val for val in specs_to_annotate if val not in pred_formulas.keys()]
     # Get annotation of collected species
     if len(remaining_species) > 0:
-      spec_results = self.getSpeciesListRecommendation(pred_ids=remaining_species,
-                                                       update=True,
-                                                       method=spec_method)
+      if spec_res:
+        spec_results = [val for val in spec_res if val.id in remaining_species]
+      else:
+        # not updating as it is a temporary prediction (and not for user)
+        spec_results = self.getSpeciesListRecommendation(pred_ids=remaining_species,
+                                                         update=False,
+                                                         method=spec_method)
       for one_recom in spec_results:
         chebis = [val[0] for val in one_recom.candidates]
         forms = list(set([cn.REF_CHEBI2FORMULA[k] \
@@ -629,45 +649,48 @@ class Recommender(object):
     precision = tools.getPrecision(ref=refs, pred=preds, mean=model_mean)
     return {cn.RECALL: recall, cn.PRECISION: precision}
 
-  def updateAnnotationsByIteration(self, reactions=None):
-    """
-    Update both species and reaction annotations
-    (i.e., 1. candidates/formula for species,
-           2. candidates for reactions)
+  # def updateAnnotationsByIteration(self, reactions=None):
+  #   """
+  #   Update both species and reaction annotations
+  #   (i.e., 1. candidates/formula for species,
+  #          2. candidates for reactions)
 
-    Method just needs to have predicted
-    both species & reaction annotations.
+  #   Method just needs to have predicted
+  #   both species & reaction annotations.
 
-    Method will use all reactions 
-    whose annotations were predicted. 
+  #   Method will use all reactions 
+  #   whose annotations were predicted. 
 
-    Parameters
-    ----------
+  #   Parameters
+  #   ----------
+  #   reactions: str-list
+  #       List of reaction IDs
 
-    Returns
-    -------
-    """
-    if reactions is None:
-      reactions = list(self.reactions.candidates.keys())
+  #   Returns
+  #   -------
+  #   """
+  #   if reactions is None:
+  #     reactions = list(self.reactions.candidates.keys())
 
-    anot_iter = it.Iterator(cur_spec_formula=self.species.formula,
-                            reaction_cl=self.reactions,
-                            reactions_to_update=reactions)
-    chebi2upd = anot_iter.match() 
-    for one_k in chebi2upd.keys():
-      one_chebi_list = chebi2upd[one_k]
-      # Update candidates, using the max-match score of the previous prediction
-      max_match_score = np.max([val[1] for val in self.species.candidates[one_k]])
-      self.species.candidates[one_k] = [(val, max_match_score) for val in one_chebi_list]
-      # Update self.species.formula
-      self.species.formula[one_k] = [cn.REF_CHEBI2FORMULA[val] \
-                                     for val in one_chebi_list \
-                                     if val in cn.REF_CHEBI2FORMULA.keys()]
-    #
-    # Update self.reactions.candidates by re-predicting reaction annotations (w. update)
-    new_pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=self.species.formula,
-                                                         inp_reac_list=reactions,
-                                                         update=True)
+  #   anot_iter = it.Iterator(cur_spec_formula=self.species.formula,
+  #                           reaction_cl=self.reactions,
+  #                           reactions_to_update=reactions)
+  #   chebi2upd = anot_iter.match() 
+  #   for one_k in chebi2upd.keys():
+  #     one_chebi_list = chebi2upd[one_k]
+  #     # Update candidates, using the max-match score of the previous prediction
+  #     max_match_score = np.max([val[1] for val in self.species.candidates[one_k]])
+  #     self.species.candidates[one_k] = [(val, max_match_score) for val in one_chebi_list]
+  #     # Update self.species.formula
+  #     self.species.formula[one_k] = [cn.REF_CHEBI2FORMULA[val] \
+  #                                    for val in one_chebi_list \
+  #                                    if val in cn.REF_CHEBI2FORMULA.keys()]
+  #   #
+  #   # Update self.reactions.candidates by re-predicting reaction annotations (w. update)
+  #   new_pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=self.species.formula,
+  #                                                        inp_reac_list=reactions,
+  #                                                        update=True)
+  #   # Return should be species & reaction recommendations. df; 
 
   # Below are methods that interacts with user; 
   def autoSelectAnnotation(self, df, min_score=0.0, method='top'):
@@ -908,6 +931,8 @@ class Recommender(object):
                           'reaction': self.reactions.exist_annotation}
     ELEMENT_FUNC = {'species': model.getSpecies,
                     'reaction': model.getReaction}
+    TYPE_LABEL = {'species': cn.REF_CHEBI2LABEL,
+                  'reaction': cn.REF_RHEA2LABEL}
     pd.set_option('display.max_colwidth', 255)
     # edf: element_df
     edfs = []    
@@ -926,9 +951,13 @@ class Recommender(object):
                        for idx, val in enumerate(one_edf['annotation'])]
           upd_annotation = ['keep' if val in TYPE_EXISTING_ATTR[one_type][k] else 'ignore' \
                             for idx, val in enumerate(one_edf['annotation'])]
-          annotation2add = [val for val in TYPE_EXISTING_ATTR[one_type][k] \
-                            if val not in list(one_edf['annotation'])]
-        # if there doesn't exist existing annotataion among predicted candidates;
+          annotation2add_raw = [val for val in TYPE_EXISTING_ATTR[one_type][k] \
+                                if val not in list(one_edf['annotation'])]
+          # only use existing annotation that exists in the label dictionaries
+          annotation2add = [val for val in annotation2add_raw \
+                            if val in TYPE_LABEL[one_type].keys()]
+
+        # if there doesn't exist existing annotation among predicted candidates;
         else:
           existings = [0] * len(annotations)
           upd_annotation = ['ignore'] * len(annotations)
@@ -1047,7 +1076,6 @@ class Recommender(object):
            plural_str[element_type],
            ', '.join(saved))) 
     
-
   def getMatchScoreOfCHEBI(self, inp_id, inp_chebi):
     """
     Calculate match score of a species (by ID)
