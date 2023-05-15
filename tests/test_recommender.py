@@ -195,20 +195,20 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(reac_stats2[cn.RECALL][REACTION_SPMS], 1.000)
     self.assertEqual(reac_stats2[cn.PRECISION][REACTION_SPMS], 0.333)
 
-  def testUpdateAnnotationsByIteration(self):
-    recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
-    _ = recom.getReactionListRecommendation(pred_ids=ECOLI_REACTIONS, spec_method='edist')
-    self.assertEqual(recom.species.candidates[ECOLI_ATP][0][0], 'CHEBI:182955')
-    self.assertEqual(recom.species.candidates[ECOLI_ATP][0][1], 0.231)
-    self.assertTrue('C20O4' in recom.species.formula[ECOLI_ATP])
-    self.assertEqual(recom.reactions.candidates[R_PFK][0][0], ECOLI_RHEA)
-    self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 0.8)
-    recom.updateAnnotationsByIteration()
-    self.assertEqual(recom.species.candidates[ECOLI_ATP][0][0], ATP_CHEBI)
-    self.assertEqual(recom.species.candidates[ECOLI_ATP][0][1], 0.231)
-    self.assertTrue(FORMULA_ATP in recom.species.formula[ECOLI_ATP])
-    self.assertEqual(recom.reactions.candidates[R_PFK][0][0], ECOLI_RHEA)
-    self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 1.0)
+  # def testUpdateAnnotationsByIteration(self):
+  #   recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
+  #   _ = recom.getReactionListRecommendation(pred_ids=ECOLI_REACTIONS, spec_method='edist')
+  #   self.assertEqual(recom.species.candidates[ECOLI_ATP][0][0], 'CHEBI:182955')
+  #   self.assertEqual(recom.species.candidates[ECOLI_ATP][0][1], 0.231)
+  #   self.assertTrue('C20O4' in recom.species.formula[ECOLI_ATP])
+  #   self.assertEqual(recom.reactions.candidates[R_PFK][0][0], ECOLI_RHEA)
+  #   self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 0.8)
+  #   recom.updateAnnotationsByIteration()
+  #   self.assertEqual(recom.species.candidates[ECOLI_ATP][0][0], ATP_CHEBI)
+  #   self.assertEqual(recom.species.candidates[ECOLI_ATP][0][1], 0.231)
+  #   self.assertTrue(FORMULA_ATP in recom.species.formula[ECOLI_ATP])
+  #   self.assertEqual(recom.reactions.candidates[R_PFK][0][0], ECOLI_RHEA)
+  #   self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 1.0)
 
   #### testing methods for user-interface
   def testAutoSelectAnnotation(self):

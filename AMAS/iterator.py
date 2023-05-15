@@ -25,8 +25,8 @@ import os
 
 from AMAS import constants as cn
 from AMAS import tools
-from AMAS import species_annotation as sa
-from AMAS import reaction_annotation as ra
+# from AMAS import species_annotation as sa
+# from AMAS import reaction_annotation as ra
 
 
 # Keys when evaluating match results. 

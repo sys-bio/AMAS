@@ -16,7 +16,11 @@ import sys
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 from AMAS import constants as cn
+from AMAS import iterator as it
+from AMAS import species_annotation as sa
+from AMAS import reaction_annotation as ra
 from AMAS import recommender
+
 
 def main():
   parser = argparse.ArgumentParser(description='Recommend annotations of an SBML model ' +\
@@ -24,6 +28,11 @@ def main():
   parser.add_argument('model', type=str, help='SBML model file (.xml).')
   # One or more reaction IDs can be given
   parser.add_argument('--cutoff', type=float, help='Match score cutoff.', nargs='?', default=0.0)
+  parser.add_argument('--optimize', type=str, help='Whether to optimize or not. ' +\
+                                                   'If y or yes is given, predictions will be ' +\
+                                                   'optimized. N or no will not optimize predictions.',
+                                              nargs='?',
+                                              default='no')
   parser.add_argument('--method', type=str,
                                   help='Either "top" or "above". "top" recommends ' +\
                                        'the best candidates that are above the cutoff, ' +\
@@ -44,30 +53,78 @@ def main():
   recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
   cutoff = args.cutoff
+  optim_raw = args.optimize
+  if optim_raw.lower() in ['y', 'yes']:
+    optim = True
+  else:
+    optim = False
   method = args.method
   save = args.save
   outfile = args.outfile
-  # try:
+  #
   recom = recommender.Recommender(libsbml_fpath=one_fpath)
-  recom.current_type = 'species'
+  
   specs = recom.getSpeciesIDs()
   print("...\nAnalyzing %d species...\n" % len(specs))
-  res_spec = recom.getSpeciesListRecommendation(pred_ids=specs, get_df=True)
-  for idx, one_df in enumerate(res_spec):
-    filt_df = recom.autoSelectAnnotation(df=one_df,
-                                         min_score=cutoff,
-                                         method=method)
-    recom.updateSelection(specs[idx], filt_df)
-
-  recom.current_type = 'reaction'
+  res_spec = recom.getSpeciesListRecommendation(pred_ids=specs)
   reacts = recom.getReactionIDs()
   print("...\nAnalyzing %d reaction(s)...\n" % len(reacts))
-  res_reac = recom.getReactionListRecommendation(pred_ids=reacts, get_df=True)
-  for idx, one_df in enumerate(res_reac):
-    filt_df = recom.autoSelectAnnotation(df=one_df,
-                                         min_score=cutoff,
-                                         method=method)
-    recom.updateSelection(reacts[idx], filt_df)
+  res_reac = recom.getReactionListRecommendation(pred_ids=reacts,
+                                                 spec_res=res_spec)
+  if optim:
+    print("Optimizing predictions...\n")
+    anot_iter = it.Iterator(cur_spec_formula=recom.species.formula,
+                            reaction_cl=recom.reactions,
+                            reactions_to_update=reacts)
+    res_iter = anot_iter.match()
+    recoms_tobe_added = []
+    for one_spec in res_iter.keys():
+      pred_reacs = [val.id for val in res_reac]
+      reacs_using_one_spec = [val for val in pred_reacs \
+                              if one_spec in recom.reactions.reaction_components[val]]
+      filt_res_reac = [val for val in res_reac if val.id in reacs_using_one_spec]
+      # match score of reactions using that species
+      adj_match_score = np.mean(list(itertools.chain(*[[cand[1] for cand in val.candidates] \
+                        for val in filt_res_reac])))
+      # credibility
+      cands = res_iter[one_spec]
+      adj_formulas = list(set([cn.REF_CHEBI2FORMULA[k] \
+                               for k in cands if k in cn.REF_CHEBI2FORMULA.keys()]))
+      adj_cred = sa.SPECIES_RF.predict_proba([[len(recom.species.getNameToUse(one_spec)),
+                                               len(cands),
+                                               adj_match_score,
+                                               len(adj_formulas)]])[0][1]
+      urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in cands]
+      labels = [cn.REF_CHEBI2LABEL[val] for val in cands]
+      adj_recom = cn.Recommendation(one_spec,
+                                    np.round(adj_cred, cn.ROUND_DIGITS),
+                                    [(val, adj_match_score) for val in cands],
+                                    urls,
+                                    labels)
+      recoms_tobe_added.append(adj_recom)
+    fin_spec_recom = recoms_tobe_added + \
+                      [val for val in res_spec if val.id not in res_iter.keys()]
+    fin_reac_recom = recom.getReactionListRecommendation(pred_ids=reacts,
+                                                         spec_res=fin_spec_recom)
+  else:
+    fin_spec_recom = res_spec
+    fin_reac_recom = res_reac
+
+  RECOM_DICT = {'species': fin_spec_recom,
+                'reaction': fin_reac_recom}
+  for one_k in RECOM_DICT:
+    recom.current_type = one_k
+    for one_recom in RECOM_DICT[one_k]:
+      filt_df = recom.autoSelectAnnotation(df=recom.getDataFrameFromRecommendation(one_recom),
+                                           min_score=cutoff,
+                                           method=method)
+      recom.updateSelection(one_recom.id, filt_df)  
+  # recom.current_type = 'reaction'
+  # for idx, one_df in enumerate(res_reac):
+  #   filt_df = recom.autoSelectAnnotation(df=one_df,
+  #                                        min_score=cutoff,
+  #                                        method=method)
+  #   recom.updateSelection(reacts[idx], filt_df)
   # save file
   if save.lower() == 'sbml':
     if outfile is None:
@@ -83,8 +140,6 @@ def main():
       fin_path = outfile
     recom.saveToCSV(fin_path)
     print("Recommendations saved as:\n%s\n" % os.path.abspath(fin_path))
-  # except:
-  #   raise ValueError("Please check arguments.")
 
 
 if __name__ == '__main__':
