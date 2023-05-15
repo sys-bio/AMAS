@@ -6,14 +6,14 @@
 AMAS: Automatic Model Annotation System
 =======================================
 
-``AMAS`` (Automatic Model Annotation System) predicts and recommends annotations of systems biology models. Current version predicts annotations of species and reactions in SBML models, and the algorithm can be tested using BioModels or BiGG models.
-
-Check out the sections below for more information. 
+``AMAS`` (Automatic Model Annotation System) predicts and recommends annotations of systems biology models. The current version of ``AMAS`` recommends species and reaction annotations in SBML models. The algorithm was developed and tested using curated models from `BioModels <https://www.ebi.ac.uk/biomodels/>`_ and `BiGG <http://bigg.ucsd.edu/>`_.
 
 
 Overview
 ========
-AMAS is a collection of methods to predict and recommend annotations for SBML model elements. Current version focuses on predicting species and reaction annotations of metabolic models, such as that can be found in BiGG and BioModels repositories. Algorithm uses ChEBI for species annotations, and Rhea for reaction annotations.
+``AMAS`` provides a collection of command-line methods to obtain annotations and update SBML model files. There are four commands: ``recommend_annotation``, ``recommend_speces``, ``recommend_reactions``, and ``update_annotation``. Annotations are recommended in `ChEBI <https://www.ebi.ac.uk/chebi/>`_ terms for species and in `Rhea <https://www.rhea-db.org/>`_ terms for reactions. 
+
+Please check out the contents below for more information on the commands and how to use them. 
 
 
 .. toctree::
@@ -23,3 +23,5 @@ AMAS is a collection of methods to predict and recommend annotations for SBML mo
    basics
    recom
    upd
+   tbls
+
