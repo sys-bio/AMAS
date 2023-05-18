@@ -23,11 +23,11 @@ from AMAS import tools
 def main():
   parser = argparse.ArgumentParser(description='Update annotations of a model using user\'s feedback file (.csv)')
   parser.add_argument('infile', type=str, help='path of a model file (.xml) to update annotation')
-  parser.add_argument('csv_select', type=str, help='feedback file (.csv) with user choice')
+  parser.add_argument('feedback', type=str, help='path of the file (.csv) containing user\'s feedback')
   parser.add_argument('outfile', type=str, help='file path to save model with updated annotations')
   # csv file with user choice
   args = parser.parse_args()
-  user_csv = pd.read_csv(args.csv_select)
+  user_csv = pd.read_csv(args.feedback)
   # Only takes cells with values 'add' or 'delete'
   chosen = user_csv[(user_csv['UPDATE ANNOTATION']=='add') |\
                    (user_csv['UPDATE ANNOTATION']=='delete')]
