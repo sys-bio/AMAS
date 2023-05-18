@@ -18,19 +18,19 @@ This section summarizes arguments for the commands described in the other sectio
      - string
      - SBML model file
      - N/A
-   * - \\-\\-cutoff
+   * - \-\-cutoff
      - float (0.0 - 1.0)
      - match score cutoff
      - 0.0
-   * - \\-\\-method
+   * - \-\-method
      - string (*top* or *above*)
      - mode of selection
      - *top*
-   * - \\-\\-save
+   * - \-\-save
      - string (*sbml* or *csv*)
      - type of file to be saved
      - *csv*
-   * - \\-\\-outfile
+   * - \-\-outfile
      - string 
      - path to save file
      - upated model.xml / recommendations.csv
@@ -48,23 +48,23 @@ This section summarizes arguments for the commands described in the other sectio
      - string
      - SBML model file
      - N/A
-   * - \\-\\-species
+   * - \-\-species
      - string (one or more)
      - list of species IDs
      - all existing species
-   * - \\-\\-reject
+   * - \-\-reject
      - integer
      - element filter
      - 0
-   * - \\-\\-cutoff
+   * - \-\-cutoff
      - float (0.0 - 1.0)
      - match score cutoff
      - 0.0
-   * - \\-\\-method
+   * - \-\-method
      - string (*top* or *above*)
      - mode of selection
      - *top*
-   * - \\-\\-outfile
+   * - \-\-outfile
      - string 
      - path to save file
      - species_rec.csv
@@ -82,23 +82,23 @@ This section summarizes arguments for the commands described in the other sectio
      - string
      - SBML model file
      - N/A
-   * - \\-\\-reactions
+   * - \-\-reactions
      - string (one or more)
      - list of reaction IDs
      - all existing reactions
-   * - \\-\\-reject
+   * - \-\-reject
      - integer
      - element filter
      - 0
-   * - \\-\\-cutoff
+   * - \-\-cutoff
      - float (0.0 - 1.0)
      - match score cutoff
      - 0.0
-   * - \\-\\-method
+   * - \-\-method
      - string (*top* or *above*)
      - mode of selection
      - *top*
-   * - \\-\\-outfile
+   * - \-\-outfile
      - string 
      - path to save file
      - reaction_rec.csv
