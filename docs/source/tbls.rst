@@ -4,7 +4,7 @@ Command-line Arguments
 ======================
 
 
-This section summarizes arguments for the commands described in the other sections. 
+This section summarizes arguments for the commands described in the other sections. Arguments with two dashes (``--``) indicate that they are optional arguments. All arguments of ``update_annotation`` are positional (i.e., required). 
 
 .. list-table:: Arguments for ``recommend_annotation``
    :widths: 35 50 50 50 
@@ -22,6 +22,10 @@ This section summarizes arguments for the commands described in the other sectio
      - float (0.0 - 1.0)
      - match score cutoff
      - 0.0
+   * - \-\-optimize
+     - string (*y, yes*)
+     - optimize predictions
+     - *no*
    * - \-\-method
      - string (*top* or *above*)
      - mode of selection
@@ -116,7 +120,7 @@ This section summarizes arguments for the commands described in the other sectio
      - string
      - path of the original model file
      - N/A
-   * - csv_select
+   * - feedback
      - string
      - file with feedback (*UPDATE ANNOTATION*)
      - N/A
