@@ -37,7 +37,7 @@ This section summarizes arguments for the commands described in the other sectio
    * - \-\-outfile
      - string 
      - path to save file
-     - upated model.xml / recommendations.csv
+     - *upated model.xml* / *recommendations.csv*
 
 
 .. list-table:: Arguments for ``recommend_species``
@@ -71,7 +71,7 @@ This section summarizes arguments for the commands described in the other sectio
    * - \-\-outfile
      - string 
      - path to save file
-     - species_rec.csv
+     - *species_rec.csv*
 
 
 .. list-table:: Arguments for ``recommend_reactions``
@@ -105,7 +105,7 @@ This section summarizes arguments for the commands described in the other sectio
    * - \-\-outfile
      - string 
      - path to save file
-     - reaction_rec.csv
+     - *reaction_rec.csv*
 
 
 .. list-table:: Arguments for ``update_annotation``

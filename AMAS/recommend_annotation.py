@@ -10,6 +10,8 @@ Usage: python recommend_reaction.py files/BIOMD0000000190.xml --cutoff 0.6 --sav
 """
 
 import argparse
+import itertools
+import numpy as np
 import os
 from os.path import dirname, abspath
 import sys
