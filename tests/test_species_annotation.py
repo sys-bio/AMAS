@@ -51,6 +51,22 @@ class TestSpeciesAnnotation(unittest.TestCase):
 
   def setUp(self):
     self.spec_cl = sa.SpeciesAnnotation(libsbml_fpath = E_COLI_PATH)
+
+  def testGetOneEScore(self):
+    res = self.spec_cl.getOneEScore('a', 'ab')
+    self.assertEqual(res, 0.5)
+
+  def testGetEScores(self):
+    res = self.spec_cl.getEScores('hydrogen')
+    chebis = [k[0] for k in res]
+    vals = [k[1] for k in res]
+    # checking the list is correctly sorted (max -> min)
+    self.assertEqual(vals[0], np.max(vals))
+    self.assertEqual(vals[-1], np.min(vals))
+    # cheking hydrogen is indeed at the top
+    self.assertTrue('CHEBI:18276' in chebis[:2])
+    self.assertTrue('CHEBI:49637' in chebis[:2])
+
     
   def testPredictAnnotationByEditDistance(self):
     one_spec_name = self.spec_cl.model.getSpecies(M_FDP_C).name.lower()

@@ -89,7 +89,54 @@ class SpeciesAnnotation(object):
     # Once created, each will be {species_ID: float/str-list}
     self.candidates = dict()
     self.formula = dict()
+
+  def getOneEScore(self, one_s, two_s):
+    """
+    Compute the eScore 
+    of a pair of two strings using
+    the formula below:
+    1.0 - (editdistance(one_s, two_s) / max(len(one_s, two_s)))
+  
+    Values should be between 0.0 and 1.0.
+  
+    Parameters
+    ----------
+    one_s: str
+    two_s: str
+  
+    Returns
+    -------
+    : float (0.0-1.0)
+    """
+    edist = editdistance.eval(one_s, two_s)/ max(len(one_s), len(two_s))
+    escore = 1.0 - edist
+    return escore
+
+  def getEScores(self, inp_str):
+    """
+    Compute the eScores
+    of a query string with
+    all possible ChEBI terms. 
+    A sorted list of tuples 
+    (CHEBI:XXXXX, eScore)
+    will be returned.
+  
+    Parameters
+    ----------
+    inp_str: str
+  
+    Returns
+    -------
+    :list-tuple
+    """
+    escores = [(one_k, np.max([self.getOneEScore(inp_str.lower(), val) \
+                               for val in CHEBI_LOW_SYNONYMS[one_k]])) \
+                for one_k in CHEBI_LOW_SYNONYMS.keys() \
+                if one_k in cn.REF_CHEBI2FORMULA.keys()]
+    escores.sort(key=operator.itemgetter(1), reverse=True)
+    return escores
       
+  # TODO: remove and replace with eScore calculations      
   def predictAnnotationByEditDistance(self, inp_str):
     """
     Predict annotation using the argument string 
@@ -348,7 +395,8 @@ class SpeciesAnnotation(object):
     None
     """
     info2upd_candidates = {k:[(val, 1.0) for val in inp_dict[k]] for k in inp_dict.keys()}
-    info2upd_formula = {k:[cn.REF_CHEBI2FORMULA[chebi] for chebi in inp_dict[k]] for k in inp_dict.keys()}
+    info2upd_formula = {k:[cn.REF_CHEBI2FORMULA[chebi] \
+                       for chebi in inp_dict[k]] for k in inp_dict.keys()}
     self.candidates.update(info2upd_candidates)
     self.formula.update(info2upd_formula)
 
