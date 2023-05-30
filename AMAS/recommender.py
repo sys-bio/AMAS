@@ -169,15 +169,20 @@ class Recommender(object):
   def getSpeciesRecommendation(self,
                                pred_str=None,
                                pred_id=None,
-                               update=True,
                                method='cdist',
+                               mssc='top',
+                               cutoff=0.0,
+                               update=True,
                                get_df=False):
+
     """
     Predict annotations of species using
     the provided string or ID.
     If pred_str is given, directly use the string;
     if pred_id is given, determine the appropriate
     name using the species ID. 
+    Algorithmically, it is a special case of 
+    self.getSpeciesListRecommendation.
 
     Parameters
     ----------
@@ -185,15 +190,23 @@ class Recommender(object):
         Species name to predict annotation with
     pred_id: str
         ID of species (search for name using it)
-    update: bool
-        If true, update existing species annotations
-        (i.e., replace or create new entries)
-        in self.species.candidates and self.species.formula
-    methood: str
+    method: str
         One of ['cdist', 'edist']
         'cdist' represents Cosine Similarity
         'edist' represents Edit Distance.
         Default method id 'cdist'
+    mssc: match score selection criteria
+        'top' will recommend candidates with
+        the highest match score above cutoff
+        'above' will recommend all candidates with
+        match scores above cutoff
+    cutoff: float
+        Cutoff value; only candidates with match score
+        at or above the cutoff will be recommended.
+    update: bool
+        If true, update existing species annotations
+        (i.e., replace or create new entries)
+        in self.species.candidates and self.species.formula
     get_df: bool
         If true, return a pandas.DataFrame.
         If False, return a cn.Recommendation
@@ -201,37 +214,22 @@ class Recommender(object):
     Returns
     -------
     cn.Recommendation (namedtuple) / str
-
     """
-    if method == 'edist':
-      if pred_str:
-        name_to_use = pred_str
-        given_id = pred_str
-      elif pred_id:
-        name_to_use = self.species.getNameToUse(inp_id=pred_id)
-        given_id = pred_id
-      pred_res = self.species.predictAnnotationByEditDistance(name_to_use)  
-    elif method == 'cdist':
-      if pred_str: 
-        given_id = pred_str
-      elif pred_id:
-        given_id = pred_id
-      pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=[given_id])[given_id]
-    #
-    pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res)
-    urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[cn.CHEBI]]
-    labels = [cn.REF_CHEBI2LABEL[val] for val in pred_res[cn.CHEBI]]
-    result = cn.Recommendation(given_id,
-                               np.round(pred_score, cn.ROUND_DIGITS),
-                               pred_res[cn.MATCH_SCORE],
-                               urls,
-                               labels)
-    if update:
-      _ = self.species.updateSpeciesWithRecommendation(result)
-    if get_df:
-      return self.getDataFrameFromRecommendation(rec=result)
-    else:
-      return result
+    if pred_str:
+      result = self.getSpeciesListRecommendation(pred_strs=[pred_str],
+                                                 method=method,
+                                                 mssc=mssc,
+                                                 cutoff=cutoff,
+                                                 update=update,
+                                                 get_df=get_df)
+    elif pred_id:
+      result = self.getSpeciesListRecommendation(pred_ids=[pred_id],
+                                                 method=method,
+                                                 mssc=mssc,
+                                                 cutoff=cutoff,
+                                                 update=update,
+                                                 get_df=get_df)  
+    return result[0]    
 
   def getSpeciesIDs(self, pattern=None, regex=False):
     """
@@ -270,11 +268,44 @@ class Recommender(object):
       else:
         return None
 
+  def applyMSSC(self,
+                pred,
+                mssc,
+                cutoff):
+    """
+    Apply MSSC to a predicted results. 
+    If cutoff is too high, 
+    return an empty list.
+  
+    Parameters
+    ----------
+    pred: list-tuple
+        [(CHEBI:XXXXX, 1.0), etc.]
+    mssc: string
+    cutoff: float
+  
+    Returns
+    -------
+    filt: list-tuple
+        [(CHEBI:XXXXX, 1.0), etc.]
+    """
+    filt_pred = [val for val in pred if val[1]>=cutoff]
+    if not filt_pred:
+      return []
+    if mssc == 'top':
+      max_val = np.max([val[1] for val in filt_pred])
+      res_pred = [val for val in filt_pred if val[1]==max_val]
+    elif mssc == 'above':
+      res_pred = filt_pred
+    return res_pred
+
   def getSpeciesListRecommendation(self,
                                    pred_strs=None,
                                    pred_ids=None,
-                                   update=True,
                                    method='cdist',
+                                   mssc='top',
+                                   cutoff=0.0,
+                                   update=True,
                                    get_df=False):
     """
     Get annotation of multiple species,
@@ -289,15 +320,23 @@ class Recommender(object):
     pred_ids: str-list
         :Species IDs to predict annotations with
          (model info should have been already loaded)
-    update: bool
-        :If true, update the current annotations
-        (i.e., replace or create new entries)
-        in self.species.candidates and self.species.formula
-    methood: str
+    method: str
         One of ['cdist', 'edist']
         'cdist' represents Cosine Similarity
         'edist' represents Edit Distance.
         Default method id 'cdist'
+    mssc: match score selection criteria
+        'top' will recommend candidates with
+        the highest match score above cutoff
+        'above' will recommend all candidates with
+        match scores above cutoff
+    cutoff: float
+        Cutoff value; only candidates with match score
+        at or above the cutoff will be recommended.
+    update: bool
+        :If true, update the current annotations
+        (i.e., replace or create new entries)
+        in self.species.candidates and self.species.formula
     get_df: bool
         If True, return a list of pandas.DataFrame.
         If False, return a list of cn.Recommendation
@@ -306,37 +345,40 @@ class Recommender(object):
     -------
     list-Recommendation (list-namedtuple) / list-str
     """
-    if method == 'edist':
-      if pred_strs:
-        return [self.getSpeciesRecommendation(pred_str=val, update=update, method='edist') \
-                for val in pred_strs]
-      elif pred_ids:
-        return [self.getSpeciesRecommendation(pred_id=val, update=update, method='edist') \
-                for val in pred_ids]
-    elif method == 'cdist':
-      if pred_strs: 
-        pred_res = self.species.predictAnnotationByCosineSimilarity(inp_strs=pred_strs)
-      elif pred_ids: 
-        pred_res = self.species.predictAnnotationByCosineSimilarity(inp_ids=pred_ids)
-      result = []
-      for one_k in pred_res.keys():
-        pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred_result=pred_res[one_k])
-        urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in pred_res[one_k][cn.CHEBI]]
-        labels = [cn.REF_CHEBI2LABEL[val] for val in pred_res[one_k][cn.CHEBI]]
-        res_recom = cn.Recommendation(one_k,
-                                      np.round(pred_score, cn.ROUND_DIGITS),
-                                      pred_res[one_k][cn.MATCH_SCORE],
-                                      urls,
-                                      labels)
-        result.append(res_recom)
-        if update:
-          _ = self.species.updateSpeciesWithRecommendation(res_recom)
+    scoring_methods = {'edist': self.species.getEScores,
+                       'cdist': self.species.getCScores} 
+    if pred_strs: 
+      ids_dict = {k:k for k in pred_strs}
+      inp_strs = pred_strs
+    elif pred_ids:
+      ids_dict = {k:self.species.getNameToUse(inp_id=k) \
+                  for k in pred_ids}
+      inp_strs = [ids_dict[k] for k in ids_dict.keys()]
+    pred_res = scoring_methods[method](inp_strs)
+    # convert {name_used:[]} to {id:[]} and apply mssc
+    conv_res = {k:self.applyMSSC(pred_res[ids_dict[k]], mssc, cutoff) \
+                for k in ids_dict.keys()}
+
+    result = []
+    for spec in conv_res.keys():
+      pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred=conv_res[spec],
+                                                                   name_used=ids_dict[spec])
+      urls = [cn.CHEBI_DEFAULT_URL + val[0][6:] for val in conv_res[spec]]
+      labels = [cn.REF_CHEBI2LABEL[val[0]] for val in conv_res[spec]]
+      one_recom = cn.Recommendation(spec,
+                                    np.round(pred_score, cn.ROUND_DIGITS),
+                                    [(val[0], np.round(val[1], cn.ROUND_DIGITS)) \
+                                     for val in conv_res[spec]],
+                                    urls,
+                                    labels)
+      result.append(one_recom)
+      if update:
+         _ = self.species.updateSpeciesWithRecommendation(one_recom)
     if get_df:
       return [self.getDataFrameFromRecommendation(rec=val) \
               for val in result]
     else:
       return result
-
 
   def getReactionRecommendation(self, pred_id,
                                 use_exist_species_annotation=False,
@@ -574,7 +616,10 @@ class Recommender(object):
     return species_tuple, reaction_tuple
 
 
-  def getSpeciesStatistics(self, model_mean=True):
+  def getSpeciesStatistics(self,
+                           mssc='top',
+                           cutoff=0.0,
+                           model_mean=True):
     """
     Get recall and precision 
     of species in a model, for both species and
@@ -587,6 +632,15 @@ class Recommender(object):
 
     Parameters
     ----------
+    mssc: str
+        match score selection criteria
+        'top' will recommend candidates with
+        the highest match score above cutoff
+        'above' will recommend all candidates with
+        match scores above cutoff
+    cutoff: float
+        Cutoff value; only candidates with match score
+        at or above the cutoff will be recommended.
     model_mean: bool
       If True, get single float values for recall/precision.
       If False, get a dictionary for recall/precision. 
@@ -604,8 +658,14 @@ class Recommender(object):
     specs2eval = list(refs.keys())
     if len(specs2eval) == 0:
       return None
-    preds_comb = self.species.predictAnnotationByCosineSimilarity(inp_ids=specs2eval)
-    preds = {val:preds_comb[val][cn.FORMULA] for val in preds_comb.keys()}
+    preds_comb = self.getSpeciesListRecommendation(pred_ids=specs2eval,
+                                                   mssc=mssc,
+                                                   cutoff=cutoff)
+    chebi_preds = {val.id:[k[0] for k in val.candidates] \
+                   for val in preds_comb}
+    preds = {k:[cn.REF_CHEBI2FORMULA[val] for val in chebi_preds[k] \
+                if val in cn.REF_CHEBI2FORMULA.keys()] \
+             for k in chebi_preds.keys()}
     recall = tools.getRecall(ref=refs, pred=preds, mean=model_mean)
     precision = tools.getPrecision(ref=refs, pred=preds, mean=model_mean)
     return {cn.RECALL: recall, cn.PRECISION: precision}

@@ -90,6 +90,51 @@ class SpeciesAnnotation(object):
     self.candidates = dict()
     self.formula = dict()
 
+  def getCScores(self,
+                 inp_strs,
+                 ref_df=CHARCOUNT_DF,
+                 chebi_df=CHEBI_DF):
+    """
+    Compute the eScores
+    of query strings with
+    all possible ChEBI terms. 
+    A sorted list of tuples 
+    (CHEBI:XXXXX, eScore)
+    will be returned.
+    Only unique strings 
+    will be calculated to avoid
+    cases such as {'a': 'a',
+                   'a': 'b'}.
+  
+    Parameters
+    ----------
+    inp_strs: list-str
+        List of strings
+    ref_df: DataFrame
+        Reference database
+    chebi_df: DataFrame
+        ChEBI information sharing the index with ref_df 
+  
+    Returns
+    -------
+    :dict
+        {one_str: [(CHEBI:XXXXX, 1.0), ...]}
+    """
+    unq_strs = list(set(inp_strs))
+    one_query, name_used = self.prepareCounterQuery(specs=unq_strs,
+                                                    ref_cols=ref_df.columns,
+                                                    use_id=False) 
+    multi_mat = ref_df.dot(one_query)
+    # cn.CHEBI == 'chebi'
+    multi_mat[cn.CHEBI] = chebi_df[cn.CHEBI]
+    cscores = dict()
+    for spec in unq_strs:
+      df_max = multi_mat.groupby(cn.CHEBI).max(spec)
+      spec_cscore = list(zip(df_max.index, df_max[spec]))
+      spec_cscore.sort(key=operator.itemgetter(1), reverse=True)
+      cscores[spec] = spec_cscore
+    return cscores
+
   def getOneEScore(self, one_s, two_s):
     """
     Compute the eScore 
@@ -112,69 +157,77 @@ class SpeciesAnnotation(object):
     escore = 1.0 - edist
     return escore
 
-  def getEScores(self, inp_str):
+  def getEScores(self, inp_strs):
     """
     Compute the eScores
-    of a query string with
+    of a list of query strings with
     all possible ChEBI terms. 
     A sorted list of tuples 
     (CHEBI:XXXXX, eScore)
     will be returned.
+    Only unique strings
+    will be calculated. 
   
     Parameters
     ----------
-    inp_str: str
+    inp_strs: str
+        List of strings
   
     Returns
     -------
-    :list-tuple
+    :dict
+        {one_str: [(CHEBI:XXXXX, 1.0), ...]}
     """
-    escores = [(one_k, np.max([self.getOneEScore(inp_str.lower(), val) \
+    unq_strs = list(set(inp_strs))
+    escores = dict()
+    for spec in unq_strs:
+      spec_escore = [(one_k, np.max([self.getOneEScore(spec.lower(), val) \
                                for val in CHEBI_LOW_SYNONYMS[one_k]])) \
-                for one_k in CHEBI_LOW_SYNONYMS.keys() \
-                if one_k in cn.REF_CHEBI2FORMULA.keys()]
-    escores.sort(key=operator.itemgetter(1), reverse=True)
+                     for one_k in CHEBI_LOW_SYNONYMS.keys() \
+                     if one_k in cn.REF_CHEBI2FORMULA.keys()]
+      spec_escore.sort(key=operator.itemgetter(1), reverse=True)
+      escores[spec] = spec_escore
     return escores
-      
+
   # TODO: remove and replace with eScore calculations      
-  def predictAnnotationByEditDistance(self, inp_str):
-    """
-    Predict annotation using the argument string 
-    and Levenshtein edit distance method. 
+  # def predictAnnotationByEditDistance(self, inp_str):
+  #   """
+  #   Predict annotation using the argument string 
+  #   and Levenshtein edit distance method. 
 
-    Parameters
-    ----------
-    inp_str: str
-        String to predict CHEBI annotation
+  #   Parameters
+  #   ----------
+  #   inp_str: str
+  #       String to predict CHEBI annotation
 
-    Returns
-    -------
-    dict
-        {'name_used': str,
-         'chebi': [list-ChEBI],
-         'match_score': [(ChEBI, float)],
-         'formula': [list-formula]} 
-    """
-    one_result = dict()
-    # For now, choose the terms that are included in the CHEBI-formula mapping reference
-    dist_dict_min = {one_k:np.min([editdistance.eval(inp_str.lower(), val) for val in CHEBI_LOW_SYNONYMS[one_k]]) \
-                     for one_k in CHEBI_LOW_SYNONYMS.keys() if one_k in cn.REF_CHEBI2FORMULA.keys()}
-    min_min_dist = np.min([dist_dict_min[val] for val in dist_dict_min.keys()])
-    min_min_chebis = [one_k for one_k in dist_dict_min.keys() \
-                      if dist_dict_min[one_k]==min_min_dist and one_k in cn.REF_CHEBI2FORMULA.keys()]
-    # Results are sorted based on match_score (average of 1 - (editdistance/len_synonyms)
-    res_tuple = [(one_chebi,
-                  np.round(np.max([1.0-editdistance.eval(inp_str.lower(), val)/len(val) \
-                                    for val in CHEBI_LOW_SYNONYMS[one_chebi]]), cn.ROUND_DIGITS)) \
-                 for one_chebi in min_min_chebis] 
-    res_tuple.sort(key=operator.itemgetter(1), reverse=True)
-    #  CHEBI part is added, because we want a sorted list after computing res_tuple
-    one_result[cn.NAME_USED] = inp_str
-    one_result[cn.CHEBI] = [val[0] for val in res_tuple]
-    one_result[cn.MATCH_SCORE] = res_tuple
-    min_min_formula = list(set([cn.REF_CHEBI2FORMULA[val] for val in min_min_chebis]))
-    one_result[cn.FORMULA] = min_min_formula
-    return one_result
+  #   Returns
+  #   -------
+  #   dict
+  #       {'name_used': str,
+  #        'chebi': [list-ChEBI],
+  #        'match_score': [(ChEBI, float)],
+  #        'formula': [list-formula]} 
+  #   """
+  #   one_result = dict()
+  #   # For now, choose the terms that are included in the CHEBI-formula mapping reference
+  #   dist_dict_min = {one_k:np.min([editdistance.eval(inp_str.lower(), val) for val in CHEBI_LOW_SYNONYMS[one_k]]) \
+  #                    for one_k in CHEBI_LOW_SYNONYMS.keys() if one_k in cn.REF_CHEBI2FORMULA.keys()}
+  #   min_min_dist = np.min([dist_dict_min[val] for val in dist_dict_min.keys()])
+  #   min_min_chebis = [one_k for one_k in dist_dict_min.keys() \
+  #                     if dist_dict_min[one_k]==min_min_dist and one_k in cn.REF_CHEBI2FORMULA.keys()]
+  #   # Results are sorted based on match_score (average of 1 - (editdistance/len_synonyms)
+  #   res_tuple = [(one_chebi,
+  #                 np.round(np.max([1.0-editdistance.eval(inp_str.lower(), val)/len(val) \
+  #                                   for val in CHEBI_LOW_SYNONYMS[one_chebi]]), cn.ROUND_DIGITS)) \
+  #                for one_chebi in min_min_chebis] 
+  #   res_tuple.sort(key=operator.itemgetter(1), reverse=True)
+  #   #  CHEBI part is added, because we want a sorted list after computing res_tuple
+  #   one_result[cn.NAME_USED] = inp_str
+  #   one_result[cn.CHEBI] = [val[0] for val in res_tuple]
+  #   one_result[cn.MATCH_SCORE] = res_tuple
+  #   min_min_formula = list(set([cn.REF_CHEBI2FORMULA[val] for val in min_min_chebis]))
+  #   one_result[cn.FORMULA] = min_min_formula
+  #   return one_result
 
   # Methods to use Cosine Similarity
   def getCountOfIndividualCharacters(self, inp_str):
@@ -321,7 +374,8 @@ class SpeciesAnnotation(object):
     return res_name
 
   def evaluatePredictedSpeciesAnnotation(self,
-                                         pred_result=None,
+                                         pred,
+                                         name_used,
                                          fitted_model=SPECIES_RF):
     """
     Predict the probability of 
@@ -330,24 +384,29 @@ class SpeciesAnnotation(object):
     
     Parameters
     ---------
-    pred_result: dict 
-        Result of prediction of one species.
-        {'name_used':str, 'chebi':[str-chebi],
-         'match_score': [chebi_tuples],
-         'formula': [str-formula]}
-
+    pred: list-str 
+        Result (items) of getEScores() or getCScores().
+        ['CHEBI:XXXXX', 1.0), etc..]
+    name_used: str
+        Actual string used to predict annotations
 
     Returns
     -------
     : float
     """
-    name_length = len(pred_result[cn.NAME_USED])
-    num_candidates = len(pred_result[cn.CHEBI])
-    match_score = np.mean([val[1] for val in pred_result[cn.MATCH_SCORE]])
-    num_formulas = len(pred_result[cn.FORMULA])
+    name_length = len(name_used)
+    num_candidates = len(pred)
+    mean_match_score = np.mean([val[1] for val in pred])
+    formulas = list(set([cn.REF_CHEBI2FORMULA[val[0]] for val in pred \
+                         if val[0] in cn.REF_CHEBI2FORMULA.keys()]))
+    num_formulas = len(formulas)
+    # name_length = len(pred_result[cn.NAME_USED])
+    # num_candidates = len(pred_result[cn.CHEBI])
+    # match_score = np.mean([val[1] for val in pred_result[cn.MATCH_SCORE]])
+    # num_formulas = len(pred_result[cn.FORMULA])
     proba_correct = fitted_model.predict_proba([[name_length,
                                                  num_candidates,
-                                                 match_score,
+                                                 mean_match_score,
                                                  num_formulas]])[0][1]
     return proba_correct
 
@@ -363,7 +422,7 @@ class SpeciesAnnotation(object):
   
     Parameters
     ----------
-    inp_recom: Recommendation
+    inp_recom: cn.Recommendation
        A namedtuple. Created by recom.getSpeciesAnnotation
   
     Returns
