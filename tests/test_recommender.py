@@ -129,17 +129,17 @@ class TestRecommender(unittest.TestCase):
 
   def testApplyMSSC(self):
     dummy = [('CHEBI:15414', 0.9),('CHEBI:59789', 0.5)]
-    self.assertEqual(self.recom.applyMSSC(dummy_res, mssc='top', cutoff=2.0),
+    self.assertEqual(self.recom.applyMSSC(dummy, mssc='top', cutoff=2.0),
                      [])
-    self.assertEqual(self.recom.applyMSSC(dummy_res, mssc='above', cutoff=2.0),
+    self.assertEqual(self.recom.applyMSSC(dummy, mssc='above', cutoff=2.0),
                      [])
-    self.assertEqual(self.recom.applyMSSC(dummy_res, mssc='top', cutoff=0.8),
+    self.assertEqual(self.recom.applyMSSC(dummy, mssc='top', cutoff=0.8),
                      [('CHEBI:15414', 0.9)])
-    self.assertEqual(self.recom.applyMSSC(dummy_res, mssc='above', cutoff=0.8),
+    self.assertEqual(self.recom.applyMSSC(dummy, mssc='above', cutoff=0.8),
                      [('CHEBI:15414', 0.9)])
-    self.assertEqual(self.recom.applyMSSC(dummy_res, mssc='top', cutoff=0.3),
+    self.assertEqual(self.recom.applyMSSC(dummy, mssc='top', cutoff=0.3),
                      [('CHEBI:15414', 0.9)])
-    self.assertEqual(self.recom.applyMSSC(dummy_res, mssc='above', cutoff=0.3),
+    self.assertEqual(self.recom.applyMSSC(dummy, mssc='above', cutoff=0.3),
                      dummy)
 
   def testGetSpeciesListRecommendation(self):

@@ -671,7 +671,10 @@ class Recommender(object):
     return {cn.RECALL: recall, cn.PRECISION: precision}
 
 
-  def getReactionStatistics(self, model_mean=True):
+  def getReactionStatistics(self,
+                            model_mean=True,
+                            mssc='top',
+                            cutoff=0.0):
     """
     Get recall and precision 
     of reactions in a model, for both species and
@@ -684,6 +687,15 @@ class Recommender(object):
 
     Parameters
     ----------
+    mssc: str
+        match score selection criteria
+        'top' will recommend candidates with
+        the highest match score above cutoff
+        'above' will recommend all candidates with
+        match scores above cutoff
+    cutoff: float
+        Cutoff value; only candidates with match score
+        at or above the cutoff will be recommended.
     model_mean: bool
       If True, get single float values for recall/precision.
       If False, get a dictionary for recall/precision. 
@@ -700,8 +712,17 @@ class Recommender(object):
     if len(refs) == 0:
       return None
     specs2pred = list(set(itertools.chain(*([self.reactions.reaction_components[val] for val in refs.keys()]))))
-    spec_preds_comb = self.species.predictAnnotationByCosineSimilarity(inp_ids=specs2pred)
-    specs_predicted = {val:spec_preds_comb[val][cn.FORMULA] for val in spec_preds_comb.keys()}
+    ## Use mssc top, cutoff 0.0. 
+    preds_comb = self.getSpeciesListRecommendation(pred_ids=specs2pred,
+                                                   mssc='top',
+                                                   cutoff=0.0)
+    chebi_preds = {val.id:[k[0] for k in val.candidates] \
+                   for val in preds_comb}
+    specs_predicted = {k:[cn.REF_CHEBI2FORMULA[val] for val in chebi_preds[k] \
+                       if val in cn.REF_CHEBI2FORMULA.keys()] \
+                       for k in chebi_preds.keys()}
+    # spec_preds_comb = self.species.predictAnnotationByCosineSimilarity(inp_ids=specs2pred)
+    # specs_predicted = {val:spec_preds_comb[val][cn.FORMULA] for val in spec_preds_comb.keys()}
     preds = self.reactions.predictAnnotation(inp_spec_dict=specs_predicted,
                                              inp_reac_list=refs.keys(),
                                              update=True)[cn.CANDIDATES]

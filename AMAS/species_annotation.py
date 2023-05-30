@@ -400,10 +400,6 @@ class SpeciesAnnotation(object):
     formulas = list(set([cn.REF_CHEBI2FORMULA[val[0]] for val in pred \
                          if val[0] in cn.REF_CHEBI2FORMULA.keys()]))
     num_formulas = len(formulas)
-    # name_length = len(pred_result[cn.NAME_USED])
-    # num_candidates = len(pred_result[cn.CHEBI])
-    # match_score = np.mean([val[1] for val in pred_result[cn.MATCH_SCORE]])
-    # num_formulas = len(pred_result[cn.FORMULA])
     proba_correct = fitted_model.predict_proba([[name_length,
                                                  num_candidates,
                                                  mean_match_score,
