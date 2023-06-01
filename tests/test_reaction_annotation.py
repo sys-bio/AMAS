@@ -52,15 +52,26 @@ class TestReactionAnnotation(unittest.TestCase):
     two_comps = self.reac_cl.getReactionComponents(one_r)
     self.assertEqual(COMPONENTS, set(two_comps))
 
+  def testGetRScores(self):
+    specs = {'M_f6p_c': ['C6O9P'],
+             'M_fdp_c': ['C6O12P2'],
+             'M_atp_c': ['C30N4O29P3'],
+             'M_h_c': ['H', 'C6N3O2', 'C6N3O', '[3He]', 'C12N6O3'],
+             'M_adp_c': ['C30O8P', 'C39O8P']}
+    res = self.reac_cl.getRScores(spec_dict=specs,
+                                  reacs=[R_PFK])[R_PFK]
+    res_vals = [val[1] for val in res]
+    self.assertEqual(res_vals[0], np.max(res_vals))
+    self.assertEqual(res_vals[-1], np.min(res_vals))
+
   def testPredictAnnotation(self):
     match_scores_dict = self.pred_reaction[cn.MATCH_SCORE]
     self.assertTrue(ONE_CANDIDATE in [val[0] for val in match_scores_dict[R_PFK]])
     self.assertTrue(0.6 in [val[1] for val in match_scores_dict[R_PFK]])
 
-  def testEvaluatePredictedReactionAnnotation(self):
-    one_eval = self.reac_cl.evaluatePredictedReactionAnnotation(pred_result=self.pred_reaction)
-    self.assertEqual(np.round(one_eval[R_PFK], cn.ROUND_DIGITS), 0.811)
-
+  # def testEvaluatePredictedReactionAnnotation(self):
+  #   one_eval = self.reac_cl.evaluatePredictedReactionAnnotation(pred_result=self.pred_reaction)
+  #   self.assertEqual(np.round(one_eval[R_PFK], cn.ROUND_DIGITS), 0.811)
 
   def testGetRheaElementNum(self):
     num_elements = self.reac_cl.getRheaElementNum(inp_rhea=ONE_CANDIDATE)

@@ -97,7 +97,58 @@ class ReactionAnnotation(object):
     products = [val.species for val in one_reaction.getListOfProducts()]
     r_components = list(set(reactants + products))
     return r_components
+  
+  def getRScores(self,
+                 spec_dict,
+                 reacs=None,
+                 ref_mat=REF_MAT):
+    """
+    Get a sorted list of
+    Rhea-rScore tuples.
+    [(RHEA:XXXXX, 1.0), etc.]
+  
+    Parameters
+    ----------
+    dict: inp_spec_dict
+        Dictionoary, {species id: formula(str-list)}
+    reacs: str-list
+        IDs of reactions to predict annotatinos.
+    ref_mat: pd.DataFrame
+        Reference matrix
+      
+    Returns
+    -------
+    :dict
+        {one_str: [(Rhea:XXXXX, 1.0), ...]}
+    """
+    # get dictionary of reaction ID: species component
+    r2pred_spec_formulas = dict()
+    for one_rid in reacs:
+      r2pred_spec_formulas[one_rid] = {spec:spec_dict[spec] \
+                                       for spec in self.reaction_components[one_rid]}
+    # prepare query df for prediction
+    query_df = pd.DataFrame(0, 
+                            index=ref_mat.columns,
+                            columns=reacs)
+    for one_rid in reacs:
+      one_set_species = r2pred_spec_formulas[one_rid]
+      # for each species element of the select reaction
+      for spec_key in one_set_species.keys():
+        one_spec = one_set_species[spec_key]
+        # For each one_rid, set the values 1.0
+        query_df.loc[[val for val in one_spec if val in query_df.index], one_rid] = 1
+    multi_mat = ref_mat.dot(query_df)
+    ref_rowsum = ref_mat.sum(1)
+    # divided by the number of elements of the reference
+    div_mat = multi_mat.divide(ref_rowsum, axis=0)
+    rscores = dict()
+    for reac in reacs:
+      reac_rscore = list(zip(div_mat.index, div_mat[reac]))
+      reac_rscore.sort(key=operator.itemgetter(1), reverse=True)
+      rscores[reac] = reac_rscore    
+    return rscores
 
+  # remove and replace
   def predictAnnotation(self,
                         inp_spec_dict,
                         inp_reac_list=None,
@@ -179,48 +230,48 @@ class ReactionAnnotation(object):
             'query_df': query_df}
 
 
-  # Develop a method to evaluate results using fitted model
-  def evaluatePredictedReactionAnnotation(self, pred_result,
-                                          fitted_model=REACTION_RF):
-    """
-    Evaluate the quality of annotation;
-    for each individual species.
-    pred_result includes predicted results,
-    a result of self.predictAnnotation().
-    All informaton needed for prediction 
-    is supposed to come from inp_dict, 
-    not the stored reaction class itself.
+  # # Develop a method to evaluate results using fitted model
+  # def evaluatePredictedReactionAnnotation(self, pred_result,
+  #                                         fitted_model=REACTION_RF):
+  #   """
+  #   Evaluate the quality of annotation;
+  #   for each individual species.
+  #   pred_result includes predicted results,
+  #   a result of self.predictAnnotation().
+  #   All informaton needed for prediction 
+  #   is supposed to come from inp_dict, 
+  #   not the stored reaction class itself.
   
-    Parameters
-    ---------
-    pred_result: dict
-        {'candidates': {reactionID: [candidates in RHEA]},
-         'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
-         'query_df': query_df}
+  #   Parameters
+  #   ---------
+  #   pred_result: dict
+  #       {'candidates': {reactionID: [candidates in RHEA]},
+  #        'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
+  #        'query_df': query_df}
 
-    Returns
-    -------  
-    dict {reaction_id: probability-of-prediction-including-correct-value}
-        Information of how algorithm is confident about the result
-    """
-    candidates_dict = pred_result[cn.CANDIDATES]
-    match_score_dict = pred_result[cn.MATCH_SCORE]
-    mean_rheas_num_dict = {one_k: np.mean([self.getRheaElementNum(val) \
-                                           for val in candidates_dict[one_k]]) \
-                           for one_k in candidates_dict.keys()}
-    num_reac_comp_dict = {one_k: len(self.reaction_components[one_k]) \
-                          for one_k in candidates_dict.keys()}
-    num_candidates = {one_k: len(candidates_dict[one_k]) \
-                          for one_k in candidates_dict.keys()}
-    mean_match_scores = {one_k: np.mean([val[1] for val in match_score_dict[one_k]]) \
-                          for one_k in candidates_dict.keys()}
-    df2pred = pd.DataFrame([mean_rheas_num_dict,
-                            num_reac_comp_dict,
-                            num_candidates,
-                            mean_match_scores]).T
-    cred_pred = fitted_model.predict_proba(df2pred)
-    prob_1_dict = {val: cred_pred[idx][1] for idx, val in enumerate(df2pred.index)}
-    return prob_1_dict
+  #   Returns
+  #   -------  
+  #   dict {reaction_id: probability-of-prediction-including-correct-value}
+  #       Information of how algorithm is confident about the result
+  #   """
+  #   candidates_dict = pred_result[cn.CANDIDATES]
+  #   match_score_dict = pred_result[cn.MATCH_SCORE]
+  #   mean_rheas_num_dict = {one_k: np.mean([self.getRheaElementNum(val) \
+  #                                          for val in candidates_dict[one_k]]) \
+  #                          for one_k in candidates_dict.keys()}
+  #   num_reac_comp_dict = {one_k: len(self.reaction_components[one_k]) \
+  #                         for one_k in candidates_dict.keys()}
+  #   num_candidates = {one_k: len(candidates_dict[one_k]) \
+  #                         for one_k in candidates_dict.keys()}
+  #   mean_match_scores = {one_k: np.mean([val[1] for val in match_score_dict[one_k]]) \
+  #                         for one_k in candidates_dict.keys()}
+  #   df2pred = pd.DataFrame([mean_rheas_num_dict,
+  #                           num_reac_comp_dict,
+  #                           num_candidates,
+  #                           mean_match_scores]).T
+  #   cred_pred = fitted_model.predict_proba(df2pred)
+  #   prob_1_dict = {val: cred_pred[idx][1] for idx, val in enumerate(df2pred.index)}
+  #   return prob_1_dict
 
   def getRheaElementNum(self,
                         inp_rhea,

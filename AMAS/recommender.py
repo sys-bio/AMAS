@@ -65,32 +65,32 @@ class Recommender(object):
     self.just_displayed = None
     self.selection = {val:dict() for val in ELEMENT_TYPES}
 
-  def filterRecommendationByThreshold(self, rec, thresh):
-    """
-    Filter a single recommendation 
-    based on the threshold value.
-    If none meets the criteria,
-    returns None (or something else?)
+  # def filterRecommendationByThreshold(self, rec, thresh):
+  #   """
+  #   Filter a single recommendation 
+  #   based on the threshold value.
+  #   If none meets the criteria,
+  #   returns None (or something else?)
 
-    Parameters
-    ----------
-    rec: cn.Recommdnation
-    thresh: float (0.0-1.0)
+  #   Parameters
+  #   ----------
+  #   rec: cn.Recommdnation
+  #   thresh: float (0.0-1.0)
 
-    Returns
-    -------
-    cn.Recommendation/None
-    """
-    thresh_index = np.sum([val[1]>=thresh for val in rec.candidates])
-    if thresh_index > 0:
-      filt_recom = cn.Recommendation(rec.id,
-                                     rec.credibility,
-                                     rec.candidates[:thresh_index],
-                                     rec.urls[:thresh_index],
-                                     rec.labels[:thresh_index])
-      return filt_recom
-    else:
-      return None
+  #   Returns
+  #   -------
+  #   cn.Recommendation/None
+  #   """
+  #   thresh_index = np.sum([val[1]>=thresh for val in rec.candidates])
+  #   if thresh_index > 0:
+  #     filt_recom = cn.Recommendation(rec.id,
+  #                                    # rec.credibility,
+  #                                    rec.candidates[:thresh_index],
+  #                                    rec.urls[:thresh_index],
+  #                                    rec.labels[:thresh_index])
+  #     return filt_recom
+  #   else:
+  #     return None
 
 
   def getDataFrameFromRecommendation(self,
@@ -120,7 +120,8 @@ class Recommender(object):
                        cn.DF_MATCH_SCORE_COL:match_scores,
                        'label':labels},
                        index=[1+val for val in list(range(len(cands)))])
-    df.index.name = '%s (cred. %.3f)' % (rec.id ,rec.credibility)
+    # df.index.name = '%s (cred. %.3f)' % (rec.id ,rec.credibility)
+    df.index.name = rec.id
     if show_url:
       urls = rec.urls
       df['url'] = urls
@@ -150,18 +151,19 @@ class Recommender(object):
       df = copy.deepcopy(rec)
       idx_name = df.index.name.split(' ')
       rec_id = idx_name[0]
-      rec_credibility = float(idx_name[-1][:-1])
+      # rec_credibility = float(idx_name[-1][:-1])
     else:
       df = self.getDataFrameFromRecommendation(rec, show_url)
       rec_id = rec.id
-      rec_credibility = rec.credibility
+      # rec_credibility = rec.credibility
     # In markdown, title is shown separately,
     # so index name with element ID is removed; 
     df.index.name=None
     df_str = df.to_markdown(tablefmt="grid", floatfmt=".03f", index=True)
     # Centering and adding the title 
     len_first_line = len(df_str.split('\n')[0])
-    title_line = "%s (credibility score: %.03f)" % (rec_id,  rec_credibility)
+    title_line = rec_id
+    # title_line = "%s (credibility score: %.03f)" % (rec_id,  rec_credibility)
     title_line = title_line.center(len_first_line)
     df_str = title_line + '\n' + df_str
     return df_str
@@ -361,12 +363,9 @@ class Recommender(object):
 
     result = []
     for spec in conv_res.keys():
-      pred_score = self.species.evaluatePredictedSpeciesAnnotation(pred=conv_res[spec],
-                                                                   name_used=ids_dict[spec])
       urls = [cn.CHEBI_DEFAULT_URL + val[0][6:] for val in conv_res[spec]]
       labels = [cn.REF_CHEBI2LABEL[val[0]] for val in conv_res[spec]]
       one_recom = cn.Recommendation(spec,
-                                    np.round(pred_score, cn.ROUND_DIGITS),
                                     [(val[0], np.round(val[1], cn.ROUND_DIGITS)) \
                                      for val in conv_res[spec]],
                                     urls,
@@ -382,9 +381,11 @@ class Recommender(object):
 
   def getReactionRecommendation(self, pred_id,
                                 use_exist_species_annotation=False,
-                                update=True,
                                 spec_res=None,
                                 spec_method='cdist',
+                                mssc='top',
+                                cutoff=0.0,                                
+                                update=True,
                                 get_df=False):
     """
     Predict annotations of reactions using
@@ -404,6 +405,18 @@ class Recommender(object):
         Method to use if to directly predict species annotation;
         if 'cdist' Cosine Similarity
         if 'edist' Edit distance
+    mssc: match score selection criteria
+        'top' will recommend candidates with
+        the highest match score above cutoff
+        'above' will recommend all candidates with
+        match scores above cutoff
+    cutoff: float
+        Cutoff value; only candidates with match score
+        at or above the cutoff will be recommended.
+    update: bool
+        If true, update existing species annotations
+        (i.e., replace or create new entries)
+        in self.reactions.candidates
     get_df: bool
         If True, return a pandas DataFrame.
         If False, return a cn.Recommendation
@@ -412,42 +425,16 @@ class Recommender(object):
     -------
     Recommendation (namedtuple) / str
     """
-    specs2predict = self.reactions.reaction_components[pred_id] 
-    if use_exist_species_annotation:
-      pred_formulas = {val:self.species.exist_annotation_formula[val] \
-                       for val in specs2predict \
-                       if val in self.species.exist_annotation_formula.keys()}
-    else:
-      pred_formulas = {}
-    remaining_species = [val for val in specs2predict if val not in pred_formulas.keys()]
-    if len(remaining_species) > 0:
-      if spec_res:
-        spec_results = [val for val in spec_res if val.id in remaining_species]
-      else:
-        # not updating as it is a temporary prediction (and not for user)
-        spec_results = self.getSpeciesListRecommendation(pred_ids=remaining_species,
-                                                         update=False,
-                                                         method=spec_method)
-      for one_recom in spec_results:
-        chebis = [val[0] for val in one_recom.candidates]
-        forms = list(set([cn.REF_CHEBI2FORMULA[k] \
-                 for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
-        pred_formulas[one_recom.id] = forms
-    pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
-                                                     inp_reac_list=[pred_id],
-                                                     update=update)
-    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_result=pred_reaction)
-    urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_reaction[cn.MATCH_SCORE][pred_id]]
-    labels = [cn.REF_RHEA2LABEL[val[0]] for val in pred_reaction[cn.MATCH_SCORE][pred_id]]
-    result = cn.Recommendation(pred_id,
-                               np.round(pred_score[pred_id], cn.ROUND_DIGITS),
-                               pred_reaction[cn.MATCH_SCORE][pred_id],
-                               urls,
-                               labels)
-    if get_df:
-      return self.getDataFrameFromRecommendation(rec=result)
-    else:
-      return result
+    result = self.getReactionListRecommendation(pred_ids=[pred_id],
+                                                use_exist_species_annotation=use_exist_species_annotation,
+                                                spec_res=spec_res,
+                                                spec_method=spec_method,
+                                                mssc=mssc,
+                                                cutoff=cutoff,
+                                                update=update,
+                                                get_df=get_df)
+    return result[0]
+
 
   def getReactionIDs(self, pattern=None, by_species=False, regex=False):
     """
@@ -497,9 +484,11 @@ class Recommender(object):
 
   def getReactionListRecommendation(self, pred_ids,
                                     use_exist_species_annotation=False,
-                                    update=True,
                                     spec_res=None,
                                     spec_method='cdist',
+                                    mssc='top',
+                                    cutoff=0.0,
+                                    update=True,
                                     get_df=False):
     """
     Get annotation of multiple reactions.
@@ -522,6 +511,18 @@ class Recommender(object):
         Method to use if to directly predict species annotation;
         if 'cdist' Cosine Similarity
         if 'edist' Edit distance
+    mssc: match score selection criteria
+        'top' will recommend candidates with
+        the highest match score above cutoff
+        'above' will recommend all candidates with
+        match scores above cutoff
+    cutoff: float
+        Cutoff value; only candidates with match score
+        at or above the cutoff will be recommended.
+    update: bool
+        If true, update existing species annotations
+        (i.e., replace or create new entries)
+        in self.reactions.candidates
     get_df: bool
         If True, return a list of pandas DataFrames.
         If False, return a list of cn.Recommendation
@@ -533,7 +534,6 @@ class Recommender(object):
     # First, collect all species IDs to annotate
     specs_to_annotate = list(set(itertools.chain(*[self.reactions.reaction_components[val] \
                                                    for val in pred_ids])))
-
     if use_exist_species_annotation:
       pred_formulas = {val:self.species.exist_annotation_formula[val] \
                        for val in specs_to_annotate \
@@ -546,7 +546,7 @@ class Recommender(object):
       if spec_res:
         spec_results = [val for val in spec_res if val.id in remaining_species]
       else:
-        # not updating as it is a temporary prediction (and not for user)
+        # No updates; use MSSC Top, cutoff 0.0. 
         spec_results = self.getSpeciesListRecommendation(pred_ids=remaining_species,
                                                          update=False,
                                                          method=spec_method)
@@ -556,22 +556,40 @@ class Recommender(object):
                  for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
         pred_formulas[one_recom.id] = forms
     # Predict reaction annotations. 
-    pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
-                                                     inp_reac_list=pred_ids,
-                                                     update=update)
-    pred_score = self.reactions.evaluatePredictedReactionAnnotation(pred_result=pred_reaction)
-    urls = {k:[cn.RHEA_DEFAULT_URL+val[0][5:] \
-            for val in pred_reaction[cn.MATCH_SCORE][k]] \
-            for k in pred_ids}
-    labels = {k:[cn.REF_RHEA2LABEL[val[0]] \
-              for val in pred_reaction[cn.MATCH_SCORE][k]] \
-              for k in pred_ids}
-    result = [cn.Recommendation(k,
-                                np.round(pred_score[k], cn.ROUND_DIGITS),
-                                pred_reaction[cn.MATCH_SCORE][k],
-                                urls[k],
-                                labels[k]) \
-              for k in pred_score.keys()]
+    pred_res = self.reactions.getRScores(spec_dict=pred_formulas,
+                                         reacs=pred_ids)
+    # convert {name_used:[]} to {id:[]} and apply mssc
+    conv_res = {k:self.applyMSSC(pred_res[k], mssc, cutoff) \
+                for k in pred_ids}
+    result = []
+    for reac in conv_res.keys():
+      urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in conv_res[reac]]
+      labels = [cn.REF_RHEA2LABEL[val[0]] for val in conv_res[reac]]
+      one_recom = cn.Recommendation(reac,
+                                    [(val[0], np.round(val[1], cn.ROUND_DIGITS)) \
+                                     for val in conv_res[reac]],
+                                    urls,
+                                    labels)
+      result.append(one_recom)
+    if update:
+      self.reactions.candidates = conv_res
+    # pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
+    #                                                  inp_reac_list=pred_ids,
+    #                                                  update=update)
+    # urls = {k:[cn.RHEA_DEFAULT_URL+val[0][5:] \
+    #         for val in pred_reaction[cn.MATCH_SCORE][k]] \
+    #         for k in pred_ids}
+    # labels = {k:[cn.REF_RHEA2LABEL[val[0]] \
+    #           for val in pred_reaction[cn.MATCH_SCORE][k]] \
+    #           for k in pred_ids}
+    # result = [cn.Recommendation(k,
+    #                             pred_reaction[cn.MATCH_SCORE][k],
+    #                             urls[k],
+    #                             labels[k]) \
+    #           for k in pred_score.keys()]
+    # if update:
+    #   self.reactions.candidates = pred_match_score
+    #   self.reactions.query_df = query_df
     if get_df:
       return [self.getDataFrameFromRecommendation(rec=val) \
               for val in result]
@@ -774,43 +792,43 @@ class Recommender(object):
   #   # Return should be species & reaction recommendations. df; 
 
   # Below are methods that interacts with user; 
-  def autoSelectAnnotation(self, df, min_score=0.0, method='top'):
-    """
-    Choose annotations based on 
-    the set threshold; 
-    (1) if None meets the threshold, return an empty frame
-    (2) if multiple meet the threshold,
-        (a) if method is 'best':
-            (i) find the highest match score among them
-            (ii) return all above match score == highest_match_score
-        (b) if method is 'all':
-            (i) return all that is at or above min_score
+  # def autoSelectAnnotation(self, df, min_score=0.0, method='top'):
+  #   """
+  #   Choose annotations based on 
+  #   the set threshold; 
+  #   (1) if None meets the threshold, return an empty frame
+  #   (2) if multiple meet the threshold,
+  #       (a) if method is 'best':
+  #           (i) find the highest match score among them
+  #           (ii) return all above match score == highest_match_score
+  #       (b) if method is 'all':
+  #           (i) return all that is at or above min_score
       
-    Parameters
-    ----------
-    df: pandas.DataFrame
+  #   Parameters
+  #   ----------
+  #   df: pandas.DataFrame
   
-    min_score: float (0.0-1.0)
+  #   min_score: float (0.0-1.0)
   
-    Returns
-    -------
-    pandas.DataFrame
-      if nothing matched,
-      an empty dataframe is returned
-    """ 
-    scores = df[cn.DF_MATCH_SCORE_COL]
-    # max_score: highest match score that exists
-    # min_score: threshold
-    max_score = np.max(scores)
-    if max_score < min_score:
-      # this will create an empty dataframe
-      filt_idx = scores[scores>=min_score].index
-    elif method=='top':
-      filt_idx = scores[scores==max_score].index
-    else:
-      filt_idx = scores[scores>=min_score].index
-    filt_df = df.loc[filt_idx, :]  
-    return filt_df
+  #   Returns
+  #   -------
+  #   pandas.DataFrame
+  #     if nothing matched,
+  #     an empty dataframe is returned
+  #   """ 
+  #   scores = df[cn.DF_MATCH_SCORE_COL]
+  #   # max_score: highest match score that exists
+  #   # min_score: threshold
+  #   max_score = np.max(scores)
+  #   if max_score < min_score:
+  #     # this will create an empty dataframe
+  #     filt_idx = scores[scores>=min_score].index
+  #   elif method=='top':
+  #     filt_idx = scores[scores==max_score].index
+  #   else:
+  #     filt_idx = scores[scores>=min_score].index
+  #   filt_df = df.loc[filt_idx, :]  
+  #   return filt_df
 
   def filterDataFrameByThreshold(self, df, min_score):
     """
@@ -835,7 +853,10 @@ class Recommender(object):
     filt_df = df.loc[filt_idx, :]
     return filt_df
 
-  def recommendReaction(self, ids=None, min_score=0.0):
+  def recommendReaction(self,
+                        ids=None,
+                        mssc='top',
+                        cutoff=0.0):
     """
     Recommend one or more ids of species
     and returns a single dataframe or
@@ -845,9 +866,13 @@ class Recommender(object):
     ----------
     ids: str/list-str
         If None, recommend all reactionos.
-  
-    min_score: threshold for cutoff
-        If None given, returns all values; 
+
+    mssc: str
+        match score selection criteria.
+        'top' or 'above'
+
+    cutoff: float
+        MSSC cutoff
 
     Returns
     -------
@@ -861,10 +886,12 @@ class Recommender(object):
     else:
       reaction_list = ids
     res = self.getReactionListRecommendation(pred_ids=reaction_list,
+                                             mssc=mssc,
+                                             cutoff=cutoff,
                                              get_df=True)
     res_dict = {val:res[idx] for idx, val in enumerate(reaction_list)}
     for k in res_dict.keys():
-      filt_df = self.filterDataFrameByThreshold(res_dict[k], min_score)
+      filt_df = self.filterDataFrameByThreshold(res_dict[k], cutoff)
       print(self.getMarkdownFromRecommendation(filt_df)+"\n")
     self.updateJustDisplayed(res_dict)
     return None

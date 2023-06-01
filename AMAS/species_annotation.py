@@ -373,38 +373,38 @@ class SpeciesAnnotation(object):
       res_name = inp_id
     return res_name
 
-  def evaluatePredictedSpeciesAnnotation(self,
-                                         pred,
-                                         name_used,
-                                         fitted_model=SPECIES_RF):
-    """
-    Predict the probability of 
-    the candidate set including the 'true'
-    annotation. 
+  # def evaluatePredictedSpeciesAnnotation(self,
+  #                                        pred,
+  #                                        name_used,
+  #                                        fitted_model=SPECIES_RF):
+  #   """
+  #   Predict the probability of 
+  #   the candidate set including the 'true'
+  #   annotation. 
     
-    Parameters
-    ---------
-    pred: list-str 
-        Result (items) of getEScores() or getCScores().
-        ['CHEBI:XXXXX', 1.0), etc..]
-    name_used: str
-        Actual string used to predict annotations
+  #   Parameters
+  #   ---------
+  #   pred: list-str 
+  #       Result (items) of getEScores() or getCScores().
+  #       ['CHEBI:XXXXX', 1.0), etc..]
+  #   name_used: str
+  #       Actual string used to predict annotations
 
-    Returns
-    -------
-    : float
-    """
-    name_length = len(name_used)
-    num_candidates = len(pred)
-    mean_match_score = np.mean([val[1] for val in pred])
-    formulas = list(set([cn.REF_CHEBI2FORMULA[val[0]] for val in pred \
-                         if val[0] in cn.REF_CHEBI2FORMULA.keys()]))
-    num_formulas = len(formulas)
-    proba_correct = fitted_model.predict_proba([[name_length,
-                                                 num_candidates,
-                                                 mean_match_score,
-                                                 num_formulas]])[0][1]
-    return proba_correct
+  #   Returns
+  #   -------
+  #   : float
+  #   """
+  #   name_length = len(name_used)
+  #   num_candidates = len(pred)
+  #   mean_match_score = np.mean([val[1] for val in pred])
+  #   formulas = list(set([cn.REF_CHEBI2FORMULA[val[0]] for val in pred \
+  #                        if val[0] in cn.REF_CHEBI2FORMULA.keys()]))
+  #   num_formulas = len(formulas)
+  #   proba_correct = fitted_model.predict_proba([[name_length,
+  #                                                num_candidates,
+  #                                                mean_match_score,
+  #                                                num_formulas]])[0][1]
+  #   return proba_correct
 
 
   def updateSpeciesWithRecommendation(self, inp_recom):

@@ -29,7 +29,7 @@ ATP_CHEBI = 'CHEBI:30616'
 GLUCOSE_CHEBI = 'CHEBI:17634'
 ATP_FORMULA = 'C10N5O13P3'
 DUMMY_RECOMMENDATION = cn.Recommendation('M_glc__D_e',
-                                         0.967,
+                                         # 0.967,
                                          [('CHEBI:4167', 1.0), ('CHEBI:17634', 1.0), ('CHEBI:42758', 1.0)],
                                          ['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A4167',
                                           'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A17634',
@@ -109,17 +109,17 @@ class TestSpeciesAnnotation(unittest.TestCase):
   def testGetNameToUse(self):
     self.assertEqual(self.spec_cl.getNameToUse(M_GLUCOSE), D_GLUCOSE)
 
-  def testEvaluatePredictedSpeciesAnnotation(self):
-    fdp_pred_spec = self.spec_cl.getEScores(inp_strs=[M_FDP_C])[M_FDP_C][:17]
-    fdp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred=fdp_pred_spec,
-                                                                name_used=self.spec_cl.getNameToUse(M_FDP_C))
-    self.assertTrue(fdp_score < 0.906)
-    self.assertTrue(fdp_score > 0.905)
-    atp_pred_spec = self.spec_cl.getEScores(inp_strs=[M_ATP_C])[M_ATP_C][:2]
-    atp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred=atp_pred_spec,
-                                                                name_used=self.spec_cl.getNameToUse(M_ATP_C))
-    self.assertTrue(atp_score < 0.973)     
-    self.assertTrue(atp_score > 0.972)    
+  # def testEvaluatePredictedSpeciesAnnotation(self):
+  #   fdp_pred_spec = self.spec_cl.getEScores(inp_strs=[M_FDP_C])[M_FDP_C][:17]
+  #   fdp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred=fdp_pred_spec,
+  #                                                               name_used=self.spec_cl.getNameToUse(M_FDP_C))
+  #   self.assertTrue(fdp_score < 0.906)
+  #   self.assertTrue(fdp_score > 0.905)
+  #   atp_pred_spec = self.spec_cl.getEScores(inp_strs=[M_ATP_C])[M_ATP_C][:2]
+  #   atp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred=atp_pred_spec,
+  #                                                               name_used=self.spec_cl.getNameToUse(M_ATP_C))
+  #   self.assertTrue(atp_score < 0.973)     
+  #   self.assertTrue(atp_score > 0.972)    
   
   def testUpdateSpeciesWithRecommendation(self):
     one_upd = self.spec_cl.updateSpeciesWithRecommendation(DUMMY_RECOMMENDATION)
