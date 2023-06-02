@@ -23,8 +23,8 @@ ONE_SPEC_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414'
 TWO_SPEC_CAND = ('CHEBI:15729', 1.0)
 TWO_SPEC_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15729'
 
-ONE_REAC_CAND = ('RHEA:11584', 1.0)
-ONE_REAC_URL = 'https://www.rhea-db.org/rhea/11584'
+ONE_REAC_CAND = ('RHEA:22964', 1.0)
+ONE_REAC_URL = 'https://www.rhea-db.org/rhea/22964'
 
 SPECIES_SAM = 'SAM'
 SPECIES_SAM_NAME = 'S-adenosyl-L-methionine'
@@ -57,12 +57,12 @@ RESULT_MARKDOWN = '                                   R_PFK                     
                   '|  2 | RHEA:13377   |         0.600 | phosphoglucokinase activity          |\n' + \
                   '+----+--------------+---------------+--------------------------------------+'
 
-RESULT_MARKDOWN_SAMdc = '                                              SAMdc                                              \n' +\
-                        '+----+--------------+---------------+-----------------------------------------------------------+\n' +\
-                        '|    | annotation   |   match score | label                                                     |\n' +\
-                        '+====+==============+===============+===========================================================+\n' +\
-                        '|  1 | RHEA:28274   |         1.000 | (S)-S-adenosyl-L-methionine = (R)-S-adenosyl-L-methionine |\n' +\
-                        '+----+--------------+---------------+-----------------------------------------------------------+\n'
+RESULT_MARKDOWN_SAMdc = '                                      SAMdc                                      \n' +\
+                        '+----+--------------+---------------+-------------------------------------------+\n' +\
+                        '|    | annotation   |   match score | label                                     |\n' +\
+                        '+====+==============+===============+===========================================+\n' +\
+                        '|  1 | RHEA:15981   |         1.000 | adenosylmethionine decarboxylase activity |\n' +\
+                        '+----+--------------+---------------+-------------------------------------------+\n'
 
 RESULT_MARKDOWN_A = '                               A                                \n' +\
                     '+----+--------------+---------------+--------------------------+\n' +\

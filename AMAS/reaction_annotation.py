@@ -138,9 +138,10 @@ class ReactionAnnotation(object):
         # For each one_rid, set the values 1.0
         query_df.loc[[val for val in one_spec if val in query_df.index], one_rid] = 1
     multi_mat = ref_mat.dot(query_df)
-    ref_rowsum = ref_mat.sum(1)
-    # divided by the number of elements of the reference
-    div_mat = multi_mat.divide(ref_rowsum, axis=0)
+    # ref_rowsum = ref_mat.sum(1)
+    query_colsum = query_df.sum(0)
+    # divided by the number of elements of the QUERY
+    div_mat = multi_mat.divide(query_colsum, axis=1)
     rscores = dict()
     for reac in reacs:
       reac_rscore = list(zip(div_mat.index, div_mat[reac]))
