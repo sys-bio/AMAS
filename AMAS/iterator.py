@@ -187,16 +187,24 @@ class Iterator(object):
     : dict
     """
     cur_spec_formulas.update(inp_spec2formula_dict)
-    new_pred_res = self.reactions.predictAnnotation(inp_spec_dict = cur_spec_formulas,
-                                                    inp_reac_list = list(self.r2upd))
-    old_pred_res = self.reactions.predictAnnotation(inp_spec_dict = self.orig_spec_formula,
-                                                    inp_reac_list = list(self.r2upd))
+    new_pred_res = self.reactions.getRScores(spec_dict=cur_spec_formulas,
+                                             reacs=list(self.r2upd),
+                                             mssc='top',
+                                             cutoff=0.0)
+    old_pred_res = self.reactions.getRScores(spec_dict=self.orig_spec_formula,
+                                             reacs=list(self.r2upd),
+                                             mssc='top',
+                                             cutoff=0.0)
     # since candidates are already sorted, 
     # just check the match score (index '1') of the very first candidate tuple (index '0')
-    new_pred_val = np.mean([new_pred_res[cn.MATCH_SCORE][k][0][1] \
-                           for k in new_pred_res[cn.MATCH_SCORE].keys()])
-    old_pred_val = np.mean([old_pred_res[cn.MATCH_SCORE][k][0][1] \
-                           for k in old_pred_res[cn.MATCH_SCORE].keys()])
+    new_pred_val = np.mean([new_pred_res[k][0][1] \
+                           for k in new_pred_res.keys()])
+    old_pred_val = np.mean([old_pred_res[k][0][1] \
+                           for k in old_pred_res.keys()])    
+    # new_pred_val = np.mean([new_pred_res[cn.MATCH_SCORE][k][0][1] \
+    #                        for k in new_pred_res[cn.MATCH_SCORE].keys()])
+    # old_pred_val = np.mean([old_pred_res[cn.MATCH_SCORE][k][0][1] \
+    #                        for k in old_pred_res[cn.MATCH_SCORE].keys()])
     return {NEW_SCORE: new_pred_val,
             OLD_SCORE: old_pred_val,
             INCREASED: new_pred_val>old_pred_val}

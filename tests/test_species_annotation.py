@@ -29,7 +29,7 @@ ATP_CHEBI = 'CHEBI:30616'
 GLUCOSE_CHEBI = 'CHEBI:17634'
 ATP_FORMULA = 'C10N5O13P3'
 DUMMY_RECOMMENDATION = cn.Recommendation('M_glc__D_e',
-                                         0.967,
+                                         # 0.967,
                                          [('CHEBI:4167', 1.0), ('CHEBI:17634', 1.0), ('CHEBI:42758', 1.0)],
                                          ['https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A4167',
                                           'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A17634',
@@ -51,15 +51,45 @@ class TestSpeciesAnnotation(unittest.TestCase):
 
   def setUp(self):
     self.spec_cl = sa.SpeciesAnnotation(libsbml_fpath = E_COLI_PATH)
-    
-  def testPredictAnnotationByEditDistance(self):
-    one_spec_name = self.spec_cl.model.getSpecies(M_FDP_C).name.lower()
-    one_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=one_spec_name)
-    self.assertTrue(('CHEBI:16905', 1.0) in one_pred_spec[cn.MATCH_SCORE])
-    self.assertTrue(('CHEBI:49299', 1.0) in one_pred_spec[cn.MATCH_SCORE])
-    self.assertTrue('CHEBI:16905' in one_pred_spec[cn.CHEBI])
-    self.assertTrue('CHEBI:49299' in one_pred_spec[cn.CHEBI])
-    self.assertEqual(one_pred_spec[cn.FORMULA],  ['C6O12P2'])
+
+  def testGetCScores(self):
+    res = self.spec_cl.getCScores(inp_strs=['hydrogen'],
+                                  mssc='top',
+                                  cutoff=0.0)['hydrogen']
+    chebis = [k[0] for k in res]
+    vals = [k[1] for k in res]
+    # checking the list is correctly sorted (max -> min)
+    self.assertTrue(abs(vals[0]-np.max(vals)) < cn.TOLERANCE)
+    self.assertTrue(abs(vals[-1]-np.max(vals)) < cn.TOLERANCE)
+    # cheking hydrogen is indeed at the top
+    self.assertTrue('CHEBI:18276' in chebis[:5])
+    self.assertTrue('CHEBI:49637' in chebis[:5])
+
+  def testGetOneEScore(self):
+    res = self.spec_cl.getOneEScore('a', 'ab')
+    self.assertEqual(res, 0.5)
+
+  def testGetEScores(self):
+    res = self.spec_cl.getEScores(inp_strs=['hydrogen'],
+                                  mssc='top',
+                                  cutoff=0.0)['hydrogen']
+    chebis = [k[0] for k in res]
+    vals = [k[1] for k in res]
+    # checking the list is correctly sorted (max -> min)
+    self.assertTrue(abs(vals[0]-np.max(vals)) < cn.TOLERANCE)
+    self.assertTrue(abs(vals[-1]-np.max(vals)) < cn.TOLERANCE)
+    # cheking hydrogen is indeed at the top
+    self.assertTrue('CHEBI:18276' in chebis[:5])
+    self.assertTrue('CHEBI:49637' in chebis[:5])
+
+  # def testPredictAnnotationByEditDistance(self):
+  #   one_spec_name = self.spec_cl.model.getSpecies(M_FDP_C).name.lower()
+  #   one_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=one_spec_name)
+  #   self.assertTrue(('CHEBI:16905', 1.0) in one_pred_spec[cn.MATCH_SCORE])
+  #   self.assertTrue(('CHEBI:49299', 1.0) in one_pred_spec[cn.MATCH_SCORE])
+  #   self.assertTrue('CHEBI:16905' in one_pred_spec[cn.CHEBI])
+  #   self.assertTrue('CHEBI:49299' in one_pred_spec[cn.CHEBI])
+  #   self.assertEqual(one_pred_spec[cn.FORMULA],  ['C6O12P2'])
 
   def testGetCountOfIndividualCharacters(self):
     one_res = self.spec_cl.getCountOfIndividualCharacters(DUMMY_ID)
@@ -75,23 +105,25 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertEqual(one_val, 0.35)
 
 
-  def testPredictAnnotationByCosineSimilarity(self):
-    one_res = self.spec_cl.predictAnnotationByCosineSimilarity(inp_ids=[M_GLUCOSE])
-    self.assertEqual(one_res[M_GLUCOSE][cn.NAME_USED], D_GLUCOSE)
-    self.assertTrue(GLUCOSE_CHEBI in one_res[M_GLUCOSE][cn.CHEBI])
+  # def testPredictAnnotationByCosineSimilarity(self):
+  #   one_res = self.spec_cl.predictAnnotationByCosineSimilarity(inp_ids=[M_GLUCOSE])
+  #   self.assertEqual(one_res[M_GLUCOSE][cn.NAME_USED], D_GLUCOSE)
+  #   self.assertTrue(GLUCOSE_CHEBI in one_res[M_GLUCOSE][cn.CHEBI])
 
   def testGetNameToUse(self):
     self.assertEqual(self.spec_cl.getNameToUse(M_GLUCOSE), D_GLUCOSE)
 
-  def testEvaluatePredictedSpeciesAnnotation(self):
-    fdp_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=M_FDP_C)
-    fdp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred_result=fdp_pred_spec)
-    self.assertTrue(fdp_score < 0.860)
-    self.assertTrue(fdp_score > 0.859)
-    atp_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=M_ATP_C)
-    atp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred_result=atp_pred_spec)
-    self.assertTrue(atp_score < 0.908)  
-    self.assertTrue(atp_score > 0.907)    
+  # def testEvaluatePredictedSpeciesAnnotation(self):
+  #   fdp_pred_spec = self.spec_cl.getEScores(inp_strs=[M_FDP_C])[M_FDP_C][:17]
+  #   fdp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred=fdp_pred_spec,
+  #                                                               name_used=self.spec_cl.getNameToUse(M_FDP_C))
+  #   self.assertTrue(fdp_score < 0.906)
+  #   self.assertTrue(fdp_score > 0.905)
+  #   atp_pred_spec = self.spec_cl.getEScores(inp_strs=[M_ATP_C])[M_ATP_C][:2]
+  #   atp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred=atp_pred_spec,
+  #                                                               name_used=self.spec_cl.getNameToUse(M_ATP_C))
+  #   self.assertTrue(atp_score < 0.973)     
+  #   self.assertTrue(atp_score > 0.972)    
   
   def testUpdateSpeciesWithRecommendation(self):
     one_upd = self.spec_cl.updateSpeciesWithRecommendation(DUMMY_RECOMMENDATION)

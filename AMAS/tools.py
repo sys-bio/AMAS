@@ -6,6 +6,35 @@ import itertools
 import numpy as np
 import re
 
+def applyMSSC(pred,
+              mssc,
+              cutoff):
+  """
+  Apply MSSC to a predicted results. 
+  If cutoff is too high, 
+  return an empty list.
+
+  Parameters
+  ----------
+  pred: list-tuple
+      [(CHEBI:XXXXX, 1.0), etc.]
+  mssc: string
+  cutoff: float
+
+  Returns
+  -------
+  filt: list-tuple
+      [(CHEBI:XXXXX, 1.0), etc.]
+  """
+  filt_pred = [val for val in pred if val[1]>=cutoff]
+  if not filt_pred:
+    return []
+  if mssc == 'top':
+    max_val = np.max([val[1] for val in filt_pred])
+    res_pred = [val for val in filt_pred if val[1]==max_val]
+  elif mssc == 'above':
+    res_pred = filt_pred
+  return res_pred
 
 def extractExistingSpeciesAnnotation(inp_model, qualifier=cn.CHEBI):
   """

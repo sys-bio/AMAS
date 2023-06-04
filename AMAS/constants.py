@@ -45,7 +45,7 @@ RHEA_DEFAULT_URL = 'https://www.rhea-db.org/rhea/'
 
 # Output; namedtuple 'Recommendation'
 Recommendation = collections.namedtuple('Recommendation',
-                                        ['id', 'credibility', 'candidates', 'urls', 'labels'])
+                                        ['id', 'candidates', 'urls', 'labels'])
 
 with open(os.path.join(REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
   REF_CHEBI2FORMULA = compress_pickle.load(f)

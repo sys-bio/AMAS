@@ -40,6 +40,21 @@ class TestFunctions(unittest.TestCase):
     self.model = document.getModel()
     self.annotation = self.model.getReaction(REACTION_CREATINEKINASE).getAnnotationString()
 
+  def testApplyMSSC(self):
+    dummy = [('CHEBI:15414', 0.9),('CHEBI:59789', 0.5)]
+    self.assertEqual(tools.applyMSSC(dummy, mssc='top', cutoff=2.0),
+                     [])
+    self.assertEqual(tools.applyMSSC(dummy, mssc='above', cutoff=2.0),
+                     [])
+    self.assertEqual(tools.applyMSSC(dummy, mssc='top', cutoff=0.8),
+                     [('CHEBI:15414', 0.9)])
+    self.assertEqual(tools.applyMSSC(dummy, mssc='above', cutoff=0.8),
+                     [('CHEBI:15414', 0.9)])
+    self.assertEqual(tools.applyMSSC(dummy, mssc='top', cutoff=0.3),
+                     [('CHEBI:15414', 0.9)])
+    self.assertEqual(tools.applyMSSC(dummy, mssc='above', cutoff=0.3),
+                     dummy)
+
   def testExtractExistingSpeciesAnnotation(self):
     spec_annotation = tools.extractExistingSpeciesAnnotation(inp_model=self.model)
     self.assertTrue(spec_annotation[ATP], ATP_CHEBI)

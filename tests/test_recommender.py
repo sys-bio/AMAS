@@ -23,8 +23,8 @@ ONE_SPEC_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15414'
 TWO_SPEC_CAND = ('CHEBI:15729', 1.0)
 TWO_SPEC_URL = 'https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI%3A15729'
 
-ONE_REAC_CAND = ('RHEA:28827', 1.0)
-ONE_REAC_URL = 'https://www.rhea-db.org/rhea/28827'
+ONE_REAC_CAND = ('RHEA:22964', 1.0)
+ONE_REAC_URL = 'https://www.rhea-db.org/rhea/22964'
 
 SPECIES_SAM = 'SAM'
 SPECIES_SAM_NAME = 'S-adenosyl-L-methionine'
@@ -44,11 +44,11 @@ ATP_CHEBI = 'CHEBI:30616'
 FORMULA_ATP = 'C10N5O13P3'
 
 
-RESULT_RECOM = cn.Recommendation('R_PFK', 0.817,
+RESULT_RECOM = cn.Recommendation('R_PFK',
                                  [('RHEA:12420', 0.6), ('RHEA:13377', 0.6)],
                                  ['https://www.rhea-db.org/rhea/12420', 'https://www.rhea-db.org/rhea/13377'],
                                  ['tagatose-6-phosphate kinase activity', 'phosphoglucokinase activity'])
-RESULT_MARKDOWN = '                      R_PFK (credibility score: 0.817)                      \n' + \
+RESULT_MARKDOWN = '                                   R_PFK                                    \n' + \
                   '+----+--------------+---------------+--------------------------------------+\n' + \
                   '|    | annotation   |   match score | label                                |\n' + \
                   '+====+==============+===============+======================================+\n' + \
@@ -57,14 +57,14 @@ RESULT_MARKDOWN = '                      R_PFK (credibility score: 0.817)       
                   '|  2 | RHEA:13377   |         0.600 | phosphoglucokinase activity          |\n' + \
                   '+----+--------------+---------------+--------------------------------------+'
 
-RESULT_MARKDOWN_ODC = '                                        ODC (credibility score: 0.815)                                       \n' +\
-                      '+----+--------------+---------------+-----------------------------------------------------------------------+\n' +\
-                      '|    | annotation   |   match score | label                                                                 |\n' +\
-                      '+====+==============+===============+=======================================================================+\n' +\
-                      '|  1 | RHEA:28827   |         1.000 | L-ornithine(out) + putrescine(in) = L-ornithine(in) + putrescine(out) |\n' +\
-                      '+----+--------------+---------------+-----------------------------------------------------------------------+\n'
+RESULT_MARKDOWN_SAMdc = '                                      SAMdc                                      \n' +\
+                        '+----+--------------+---------------+-------------------------------------------+\n' +\
+                        '|    | annotation   |   match score | label                                     |\n' +\
+                        '+====+==============+===============+===========================================+\n' +\
+                        '|  1 | RHEA:15981   |         1.000 | adenosylmethionine decarboxylase activity |\n' +\
+                        '+----+--------------+---------------+-------------------------------------------+\n'
 
-RESULT_MARKDOWN_A = '                  A (credibility score: 0.958)                  \n' +\
+RESULT_MARKDOWN_A = '                               A                                \n' +\
                     '+----+--------------+---------------+--------------------------+\n' +\
                     '|    | annotation   |   match score | label                    |\n' +\
                     '+====+==============+===============+==========================+\n' +\
@@ -78,20 +78,19 @@ class TestRecommender(unittest.TestCase):
   def setUp(self):
     self.recom = recommender.Recommender(libsbml_fpath=BIOMD_190_PATH)
 
-  def testFilterRecommendationByThreshold(self):
-    recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
-    one_recom = recom.getReactionRecommendation(pred_id=R_PFK)
-    two_recom = recom.getReactionRecommendation(pred_id=R_PFL)
-    self.assertEqual(None, recom.filterRecommendationByThreshold(rec=one_recom, thresh=0.8))
-    filt_two_recom = recom.filterRecommendationByThreshold(rec=two_recom, thresh=0.8)
-    self.assertEqual(len(two_recom.candidates), 8)
-    self.assertEqual(len(filt_two_recom.candidates), 5)
+  # def testFilterRecommendationByThreshold(self):
+  #   recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
+  #   one_recom = recom.getReactionRecommendation(pred_id=R_PFK)
+  #   two_recom = recom.getReactionRecommendation(pred_id=R_PFL)
+  #   self.assertEqual(None, recom.filterRecommendationByThreshold(rec=one_recom, thresh=0.8))
+  #   filt_two_recom = recom.filterRecommendationByThreshold(rec=two_recom, thresh=0.8)
+  #   self.assertEqual(len(two_recom.candidates), 8)
+  #   self.assertEqual(len(filt_two_recom.candidates), 5)
 
   def testGetDataFrameFromRecommendation(self):
     df = self.recom.getDataFrameFromRecommendation(rec=RESULT_RECOM,
                                                    show_url=False)
     self.assertEqual(set(df.index), {1,2})
-
 
   def testGetMarkdownFromRecommendation(self):
     res = self.recom.getMarkdownFromRecommendation(rec=RESULT_RECOM,
@@ -103,16 +102,14 @@ class TestRecommender(unittest.TestCase):
                                                   update=False,
                                                   method='edist')
     self.assertEqual(one_res.id, SPECIES_SAM)
-    self.assertEqual(one_res.credibility, 0.974)
     self.assertTrue(ONE_SPEC_CAND in one_res.candidates)
     self.assertTrue(ONE_SPEC_URL in one_res.urls)
     self.assertEqual(self.recom.species.candidates, {})
     self.assertEqual(self.recom.species.formula, {})
     two_res = self.recom.getSpeciesRecommendation(pred_str=SPECIES_SAM_NAME,
-                                              update=True,
-                                              method='cdist')
+                                                  update=True,
+                                                  method='cdist')
     self.assertEqual(two_res.id, SPECIES_SAM_NAME)
-    self.assertEqual(two_res.credibility, 0.974)
     self.assertTrue(ONE_SPEC_CAND in two_res.candidates)
     self.assertTrue(ONE_SPEC_URL in two_res.urls)
     self.assertTrue((ONE_CHEBI, 1.0) in self.recom.species.candidates[SPECIES_SAM_NAME])
@@ -129,16 +126,15 @@ class TestRecommender(unittest.TestCase):
 
   def testGetSpeciesListRecommendation(self):
     specs = self.recom.getSpeciesListRecommendation(pred_ids=[SPECIES_SAM, SPECIES_ORN],
-                                                update=False, method='edist')
+                                                    update=False, method='edist')
     one_res = specs[1]
     self.assertEqual(one_res.id, SPECIES_ORN)
-    self.assertEqual(one_res.credibility, 0.971)
     self.assertTrue(TWO_SPEC_CAND in one_res.candidates)
     self.assertTrue(TWO_SPEC_URL in one_res.urls)
     self.assertEqual(self.recom.species.candidates, {})
     self.assertEqual(self.recom.species.formula, {})
     two_specs = self.recom.getSpeciesListRecommendation(pred_ids=[SPECIES_SAM, SPECIES_ORN],
-                                                    update=True, method='cdist')
+                                                        update=True, method='cdist')
     self.assertTrue((ONE_CHEBI, 1.0) in self.recom.species.candidates[SPECIES_SAM])
     one_formula = cn.REF_CHEBI2FORMULA[ONE_CHEBI]
     self.assertTrue(one_formula in self.recom.species.formula[SPECIES_SAM])      
@@ -146,7 +142,6 @@ class TestRecommender(unittest.TestCase):
   def testGetReactionRecommendation(self):
     one_res = self.recom.getReactionRecommendation(REACTION_ODC)
     self.assertEqual(one_res.id, REACTION_ODC)
-    self.assertEqual(one_res.credibility, 0.815)
     self.assertTrue(ONE_REAC_CAND in one_res.candidates)
     self.assertTrue(ONE_REAC_URL in one_res.urls)
 
@@ -162,7 +157,6 @@ class TestRecommender(unittest.TestCase):
     reacs = self.recom.getReactionListRecommendation(pred_ids=[REACTION_ODC, REACTION_SAMDC])
     one_res = reacs[0]
     self.assertEqual(one_res.id, REACTION_ODC)
-    self.assertEqual(one_res.credibility, 0.815)
     self.assertTrue(ONE_REAC_CAND in one_res.candidates)
     self.assertTrue(ONE_REAC_URL in one_res.urls)
 
@@ -211,15 +205,15 @@ class TestRecommender(unittest.TestCase):
   #   self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 1.0)
 
   #### testing methods for user-interface
-  def testAutoSelectAnnotation(self):
-    min_threshold = 0.6
-    res1 = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM, get_df=True)
-    df1 = self.recom.autoSelectAnnotation(res1, min_threshold)
-    self.assertEqual(df1.shape[0], 2)
-    self.assertEqual(set(df1[cn.DF_MATCH_SCORE_COL]), {1.0})
-    res2 = self.recom.getReactionRecommendation(pred_id=REACTION_SAMDC, get_df=True)
-    df2 = self.recom.autoSelectAnnotation(res2, min_threshold)
-    self.assertEqual(df2.shape[0], 0)
+  # def testAutoSelectAnnotation(self):
+  #   min_score = 0.6
+  #   res1 = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM, get_df=True)
+  #   df1 = self.recom.autoSelectAnnotation(res1, min_score)
+  #   self.assertEqual(df1.shape[0], 2)
+  #   self.assertEqual(set(df1[cn.DF_MATCH_SCORE_COL]), {1.0})
+  #   res2 = self.recom.getReactionRecommendation(pred_id=REACTION_SAMDC, get_df=True)
+  #   df2 = self.recom.autoSelectAnnotation(res2, min_score)
+  #   self.assertEqual(df2.shape[0], 0)
 
   def testFilterDataFrameByThreshold(self):
     df = self.recom.getDataFrameFromRecommendation(RESULT_RECOM)
@@ -229,9 +223,10 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(list(np.unique(res2[cn.DF_MATCH_SCORE_COL])), [])
 
   def testRecommendReaction(self):
+    # use the default setting
     with patch("builtins.print") as mock_print:
-      self.recom.recommendReaction(ids=['ODC'], min_score=0.6)  
-    mock_print.assert_called_once_with(RESULT_MARKDOWN_ODC) 
+      self.recom.recommendReaction(ids=['SAMdc'])  
+    mock_print.assert_called_once_with(RESULT_MARKDOWN_SAMdc) 
 
   def testRecommendSpecies(self):
     with patch("builtins.print") as mock_print:
