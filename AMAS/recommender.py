@@ -270,37 +270,6 @@ class Recommender(object):
       else:
         return None
 
-  def applyMSSC(self,
-                pred,
-                mssc,
-                cutoff):
-    """
-    Apply MSSC to a predicted results. 
-    If cutoff is too high, 
-    return an empty list.
-  
-    Parameters
-    ----------
-    pred: list-tuple
-        [(CHEBI:XXXXX, 1.0), etc.]
-    mssc: string
-    cutoff: float
-  
-    Returns
-    -------
-    filt: list-tuple
-        [(CHEBI:XXXXX, 1.0), etc.]
-    """
-    filt_pred = [val for val in pred if val[1]>=cutoff]
-    if not filt_pred:
-      return []
-    if mssc == 'top':
-      max_val = np.max([val[1] for val in filt_pred])
-      res_pred = [val for val in filt_pred if val[1]==max_val]
-    elif mssc == 'above':
-      res_pred = filt_pred
-    return res_pred
-
   def getSpeciesListRecommendation(self,
                                    pred_strs=None,
                                    pred_ids=None,
@@ -356,18 +325,16 @@ class Recommender(object):
       ids_dict = {k:self.species.getNameToUse(inp_id=k) \
                   for k in pred_ids}
       inp_strs = [ids_dict[k] for k in ids_dict.keys()]
-    pred_res = scoring_methods[method](inp_strs)
-    # convert {name_used:[]} to {id:[]} and apply mssc
-    conv_res = {k:self.applyMSSC(pred_res[ids_dict[k]], mssc, cutoff) \
-                for k in ids_dict.keys()}
-
+    pred_res = scoring_methods[method](inp_strs=inp_strs,
+                                       mssc=mssc,
+                                       cutoff=cutoff)
     result = []
-    for spec in conv_res.keys():
-      urls = [cn.CHEBI_DEFAULT_URL + val[0][6:] for val in conv_res[spec]]
-      labels = [cn.REF_CHEBI2LABEL[val[0]] for val in conv_res[spec]]
+    for spec in ids_dict.keys():
+      urls = [cn.CHEBI_DEFAULT_URL + val[0][6:] for val in pred_res[ids_dict[spec]]]
+      labels = [cn.REF_CHEBI2LABEL[val[0]] for val in pred_res[ids_dict[spec]]]
       one_recom = cn.Recommendation(spec,
                                     [(val[0], np.round(val[1], cn.ROUND_DIGITS)) \
-                                     for val in conv_res[spec]],
+                                     for val in pred_res[ids_dict[spec]]],
                                     urls,
                                     labels)
       result.append(one_recom)
@@ -557,39 +524,21 @@ class Recommender(object):
         pred_formulas[one_recom.id] = forms
     # Predict reaction annotations. 
     pred_res = self.reactions.getRScores(spec_dict=pred_formulas,
-                                         reacs=pred_ids)
-    # convert {name_used:[]} to {id:[]} and apply mssc
-    conv_res = {k:self.applyMSSC(pred_res[k], mssc, cutoff) \
-                for k in pred_ids}
+                                         reacs=pred_ids,
+                                         mssc=mssc,
+                                         cutoff=cutoff)
     result = []
-    for reac in conv_res.keys():
-      urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in conv_res[reac]]
-      labels = [cn.REF_RHEA2LABEL[val[0]] for val in conv_res[reac]]
+    for reac in pred_res.keys():
+      urls = [cn.RHEA_DEFAULT_URL + val[0][5:] for val in pred_res[reac]]
+      labels = [cn.REF_RHEA2LABEL[val[0]] for val in pred_res[reac]]
       one_recom = cn.Recommendation(reac,
                                     [(val[0], np.round(val[1], cn.ROUND_DIGITS)) \
-                                     for val in conv_res[reac]],
+                                     for val in pred_res[reac]],
                                     urls,
                                     labels)
       result.append(one_recom)
     if update:
-      self.reactions.candidates = conv_res
-    # pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=pred_formulas,
-    #                                                  inp_reac_list=pred_ids,
-    #                                                  update=update)
-    # urls = {k:[cn.RHEA_DEFAULT_URL+val[0][5:] \
-    #         for val in pred_reaction[cn.MATCH_SCORE][k]] \
-    #         for k in pred_ids}
-    # labels = {k:[cn.REF_RHEA2LABEL[val[0]] \
-    #           for val in pred_reaction[cn.MATCH_SCORE][k]] \
-    #           for k in pred_ids}
-    # result = [cn.Recommendation(k,
-    #                             pred_reaction[cn.MATCH_SCORE][k],
-    #                             urls[k],
-    #                             labels[k]) \
-    #           for k in pred_score.keys()]
-    # if update:
-    #   self.reactions.candidates = pred_match_score
-    #   self.reactions.query_df = query_df
+      self.reactions.candidates = pred_res
     if get_df:
       return [self.getDataFrameFromRecommendation(rec=val) \
               for val in result]
@@ -739,11 +688,11 @@ class Recommender(object):
     specs_predicted = {k:[cn.REF_CHEBI2FORMULA[val] for val in chebi_preds[k] \
                        if val in cn.REF_CHEBI2FORMULA.keys()] \
                        for k in chebi_preds.keys()}
-    # spec_preds_comb = self.species.predictAnnotationByCosineSimilarity(inp_ids=specs2pred)
-    # specs_predicted = {val:spec_preds_comb[val][cn.FORMULA] for val in spec_preds_comb.keys()}
-    preds = self.reactions.predictAnnotation(inp_spec_dict=specs_predicted,
-                                             inp_reac_list=refs.keys(),
-                                             update=True)[cn.CANDIDATES]
+    reac_preds = self.reactions.getRScores(spec_dict=specs_predicted,
+                                           reacs=refs.keys(),
+                                           mssc='top',
+                                           cutoff=0.0)
+    preds = {k:[val[0] for val in reac_preds[k]] for k in reac_preds.keys()}
     recall = tools.getRecall(ref=refs, pred=preds, mean=model_mean)
     precision = tools.getPrecision(ref=refs, pred=preds, mean=model_mean)
     return {cn.RECALL: recall, cn.PRECISION: precision}

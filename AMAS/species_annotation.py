@@ -92,6 +92,8 @@ class SpeciesAnnotation(object):
 
   def getCScores(self,
                  inp_strs,
+                 mssc,
+                 cutoff,
                  ref_df=CHARCOUNT_DF,
                  chebi_df=CHEBI_DF):
     """
@@ -110,6 +112,14 @@ class SpeciesAnnotation(object):
     ----------
     inp_strs: list-str
         List of strings
+    mssc: match score selection criteria
+        'top' will recommend candidates with
+        the highest match score above cutoff
+        'above' will recommend all candidates with
+        match scores above cutoff
+    cutoff: float
+        Cutoff value; only candidates with match score
+        at or above the cutoff will be recommended.
     ref_df: DataFrame
         Reference database
     chebi_df: DataFrame
@@ -130,7 +140,9 @@ class SpeciesAnnotation(object):
     cscores = dict()
     for spec in unq_strs:
       df_max = multi_mat.groupby(cn.CHEBI).max(spec)
-      spec_cscore = list(zip(df_max.index, df_max[spec]))
+      spec_cscore = tools.applyMSSC(pred=list(zip(df_max.index, df_max[spec])),
+                                    mssc=mssc,
+                                    cutoff=cutoff)
       spec_cscore.sort(key=operator.itemgetter(1), reverse=True)
       cscores[spec] = spec_cscore
     return cscores
@@ -157,7 +169,10 @@ class SpeciesAnnotation(object):
     escore = 1.0 - edist
     return escore
 
-  def getEScores(self, inp_strs):
+  def getEScores(self,
+                 inp_strs,
+                 mssc,
+                 cutoff):
     """
     Compute the eScores
     of a list of query strings with
@@ -172,6 +187,14 @@ class SpeciesAnnotation(object):
     ----------
     inp_strs: str
         List of strings
+    mssc: match score selection criteria
+        'top' will recommend candidates with
+        the highest match score above cutoff
+        'above' will recommend all candidates with
+        match scores above cutoff
+    cutoff: float
+        Cutoff value; only candidates with match score
+        at or above the cutoff will be recommended.
   
     Returns
     -------
@@ -185,8 +208,11 @@ class SpeciesAnnotation(object):
                                for val in CHEBI_LOW_SYNONYMS[one_k]])) \
                      for one_k in CHEBI_LOW_SYNONYMS.keys() \
                      if one_k in cn.REF_CHEBI2FORMULA.keys()]
-      spec_escore.sort(key=operator.itemgetter(1), reverse=True)
-      escores[spec] = spec_escore
+      mssc_escore = tools.applyMSSC(pred=spec_escore,
+                                    mssc=mssc,
+                                    cutoff=cutoff)
+      mssc_escore.sort(key=operator.itemgetter(1), reverse=True)
+      escores[spec] = mssc_escore
     return escores
 
   # TODO: remove and replace with eScore calculations      
@@ -296,61 +322,61 @@ class SpeciesAnnotation(object):
     norm_query = query_mat.divide(div_row, axis=1)
     return norm_query, name_used
 
-  def predictAnnotationByCosineSimilarity(self,
-                                          inp_strs=None,
-                                          inp_ids=None,
-                                          ref_df=CHARCOUNT_DF,
-                                          chebi_df=CHEBI_DF):
-    """
-    Predict annotation by taking cosine distance 
-    of character count vectors.
+  # def predictAnnotationByCosineSimilarity(self,
+  #                                         inp_strs=None,
+  #                                         inp_ids=None,
+  #                                         ref_df=CHARCOUNT_DF,
+  #                                         chebi_df=CHEBI_DF):
+  #   """
+  #   Predict annotation by taking cosine distance 
+  #   of character count vectors.
   
-    Parameters
-    ----------
-    inp_strs: list-str
-        Strings that will directly used
-        for prediction
-    inp_ids: list-str
-        IDs with which name2use will be
-        determined
-    ref_df: DataFrame
-        Reference database
-    chebi_df: DataFrame
-        ChEBI information sharing the index with ref_df    
+  #   Parameters
+  #   ----------
+  #   inp_strs: list-str
+  #       Strings that will directly used
+  #       for prediction
+  #   inp_ids: list-str
+  #       IDs with which name2use will be
+  #       determined
+  #   ref_df: DataFrame
+  #       Reference database
+  #   chebi_df: DataFrame
+  #       ChEBI information sharing the index with ref_df    
 
-    Returns
-    -------
-    : dict/None
-        {'name_used': str,
-         'chebi': [list-ChEBI],
-         'match_score': [(ChEBI, float)],
-         'formula': [list-formula]} 
-      if no name/ID is given, return None
-    """
-    if inp_ids:
-      one_query, name_used = self.prepareCounterQuery(specs=inp_ids,
-                                                      ref_cols=ref_df.columns,
-                                                      use_id=True)
-    elif inp_strs:
-      one_query, name_used = self.prepareCounterQuery(specs=inp_strs,
-                                                      ref_cols=ref_df.columns,
-                                                      use_id=False)  
-    else:
-      return None
-    multi_mat = ref_df.dot(one_query)
-    max_val = multi_mat.max()
-    result = dict()
-    for one_spec in one_query.columns:
-      one_res = dict()
-      one_res[cn.NAME_USED] = name_used[one_spec]
-      cand_index = multi_mat[abs(multi_mat[one_spec]-max_val[one_spec])<cn.TOLERANCE].index
-      one_res[cn.CHEBI] = list(set(chebi_df.loc[cand_index, cn.CHEBI]))
-      one_res[cn.MATCH_SCORE] = [(val, np.round(max_val[one_spec], cn.ROUND_DIGITS)) \
-                                 for val in one_res[cn.CHEBI]]
-      one_res[cn.FORMULA] = list(set([cn.REF_CHEBI2FORMULA[val] for val in one_res[cn.CHEBI] \
-                                      if val in cn.REF_CHEBI2FORMULA.keys()])) 
-      result[one_spec] = one_res
-    return result
+  #   Returns
+  #   -------
+  #   : dict/None
+  #       {'name_used': str,
+  #        'chebi': [list-ChEBI],
+  #        'match_score': [(ChEBI, float)],
+  #        'formula': [list-formula]} 
+  #     if no name/ID is given, return None
+  #   """
+  #   if inp_ids:
+  #     one_query, name_used = self.prepareCounterQuery(specs=inp_ids,
+  #                                                     ref_cols=ref_df.columns,
+  #                                                     use_id=True)
+  #   elif inp_strs:
+  #     one_query, name_used = self.prepareCounterQuery(specs=inp_strs,
+  #                                                     ref_cols=ref_df.columns,
+  #                                                     use_id=False)  
+  #   else:
+  #     return None
+  #   multi_mat = ref_df.dot(one_query)
+  #   max_val = multi_mat.max()
+  #   result = dict()
+  #   for one_spec in one_query.columns:
+  #     one_res = dict()
+  #     one_res[cn.NAME_USED] = name_used[one_spec]
+  #     cand_index = multi_mat[abs(multi_mat[one_spec]-max_val[one_spec])<cn.TOLERANCE].index
+  #     one_res[cn.CHEBI] = list(set(chebi_df.loc[cand_index, cn.CHEBI]))
+  #     one_res[cn.MATCH_SCORE] = [(val, np.round(max_val[one_spec], cn.ROUND_DIGITS)) \
+  #                                for val in one_res[cn.CHEBI]]
+  #     one_res[cn.FORMULA] = list(set([cn.REF_CHEBI2FORMULA[val] for val in one_res[cn.CHEBI] \
+  #                                     if val in cn.REF_CHEBI2FORMULA.keys()])) 
+  #     result[one_spec] = one_res
+  #   return result
 
   def getNameToUse(self, inp_id):
     """

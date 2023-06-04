@@ -100,7 +100,9 @@ class ReactionAnnotation(object):
   
   def getRScores(self,
                  spec_dict,
-                 reacs=None,
+                 reacs,
+                 mssc,
+                 cutoff,
                  ref_mat=REF_MAT):
     """
     Get a sorted list of
@@ -113,6 +115,14 @@ class ReactionAnnotation(object):
         Dictionoary, {species id: formula(str-list)}
     reacs: str-list
         IDs of reactions to predict annotatinos.
+    mssc: match score selection criteria
+        'top' will recommend candidates with
+        the highest match score above cutoff
+        'above' will recommend all candidates with
+        match scores above cutoff
+    cutoff: float
+        Cutoff value; only candidates with match score
+        at or above the cutoff will be recommended.
     ref_mat: pd.DataFrame
         Reference matrix
       
@@ -144,91 +154,93 @@ class ReactionAnnotation(object):
     div_mat = multi_mat.divide(query_colsum, axis=1)
     rscores = dict()
     for reac in reacs:
-      reac_rscore = list(zip(div_mat.index, div_mat[reac]))
+      reac_rscore = tools.applyMSSC(pred=list(zip(div_mat.index, div_mat[reac])),
+                                    mssc=mssc,
+                                    cutoff=cutoff)
       reac_rscore.sort(key=operator.itemgetter(1), reverse=True)
       rscores[reac] = reac_rscore    
     return rscores
 
-  # remove and replace
-  def predictAnnotation(self,
-                        inp_spec_dict,
-                        inp_reac_list=None,
-                        inp_ref_mat=REF_MAT,
-                        update=False):
-    """
-    Predict 1) reaction annotation candidates 
-    and 2) match score of them
-    using species dict (argument) etc.
-    Also updates several class attributes as a result. 
+  # # remove and replace
+  # def predictAnnotation(self,
+  #                       inp_spec_dict,
+  #                       inp_reac_list=None,
+  #                       inp_ref_mat=REF_MAT,
+  #                       update=False):
+  #   """
+  #   Predict 1) reaction annotation candidates 
+  #   and 2) match score of them
+  #   using species dict (argument) etc.
+  #   Also updates several class attributes as a result. 
   
-    Parameters
-    ----------
-    dict: inp_spec_dict
-        Dictionoary, {species id: formula(str-list)}
-    inp_reac_list: str-list
-        IDs of reactions to predict. If default, will do all reactions
-    inp_ref_mat: pd.DataFrame
-        Reference matrix
-    update: bool
-        Whether to save results as class attrributes or just return them.
-        If True, only match_score is returned (and values are updated).
-        If False, all relevant information is returned
+  #   Parameters
+  #   ----------
+  #   dict: inp_spec_dict
+  #       Dictionoary, {species id: formula(str-list)}
+  #   inp_reac_list: str-list
+  #       IDs of reactions to predict. If default, will do all reactions
+  #   inp_ref_mat: pd.DataFrame
+  #       Reference matrix
+  #   update: bool
+  #       Whether to save results as class attrributes or just return them.
+  #       If True, only match_score is returned (and values are updated).
+  #       If False, all relevant information is returned
 
-    Returns
-    -------
-    : dict
-        {'candidates': {reactionID: [candidates in RHEA]},
-         'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
-         'query_df': query_df}
-    """
-    # get libsbml.reaction and their IDs
-    if inp_reac_list is not None:
-      reaction_ids = inp_reac_list
-    else:
-      reaction_ids = list(self.reaction_components.keys())
-    # get dictionary of reaction ID: species component
-    r2pred_spec_formulas = dict()
-    for one_rid in reaction_ids:
-      r2pred_spec_formulas[one_rid] = {one_spec:inp_spec_dict[one_spec] \
-                                       for one_spec in self.reaction_components[one_rid]}
-    # prepare query df for prediction
-    query_df = pd.DataFrame(0, 
-                            index=inp_ref_mat.columns,
-                            columns=reaction_ids)
-    for one_rid in reaction_ids:
-      one_set_species = r2pred_spec_formulas[one_rid]
-      # for each species element of the select reaction
-      for one_spec_key in one_set_species.keys():
-        one_spec = one_set_species[one_spec_key]
-        # For each one_rid, set the values 1.0
-        query_df.loc[[val for val in one_spec if val in query_df.index], one_rid] = 1
-    multi_mat = inp_ref_mat.dot(query_df)
-    maxes = multi_mat.max()
-    #
-    # Collect candidates and calculate confidence score
-    pred_cands = dict()
-    pred_match_score = dict()
-    for one_rid in maxes.index:
-      one_multi = multi_mat.loc[:,one_rid]
-      candidates = one_multi[one_multi==maxes[one_rid]].index
-      # cand_data; (number of element matches, candidates)
-      pred_cands[one_rid] = candidates
-      # Now, match_scpre (calculated per each candidate) => replaced as a tuple
-      match_score_per_cand = []
-      for one_cand in candidates:
-        if one_cand in cn.REF_RHEA2MASTER.keys():
-          num_matches = maxes[one_rid]
-          num_maxpos_matches = len(inp_ref_mat.loc[one_cand, :].to_numpy().nonzero()[0])
-          match_score_per_cand.append((one_cand, np.round(num_matches/num_maxpos_matches, cn.ROUND_DIGITS)))
-      match_score_per_cand.sort(key=operator.itemgetter(1), reverse=True)
-      pred_match_score[one_rid] = match_score_per_cand
-    if update:
-      self.candidates = pred_match_score
-      self.query_df = query_df
-    #
-    return {'candidates': pred_cands,
-            'match_score': pred_match_score,
-            'query_df': query_df}
+  #   Returns
+  #   -------
+  #   : dict
+  #       {'candidates': {reactionID: [candidates in RHEA]},
+  #        'match_score': {reactionID: [(Rhea ID, match score: float between 0.0-1.0),]}
+  #        'query_df': query_df}
+  #   """
+  #   # get libsbml.reaction and their IDs
+  #   if inp_reac_list is not None:
+  #     reaction_ids = inp_reac_list
+  #   else:
+  #     reaction_ids = list(self.reaction_components.keys())
+  #   # get dictionary of reaction ID: species component
+  #   r2pred_spec_formulas = dict()
+  #   for one_rid in reaction_ids:
+  #     r2pred_spec_formulas[one_rid] = {one_spec:inp_spec_dict[one_spec] \
+  #                                      for one_spec in self.reaction_components[one_rid]}
+  #   # prepare query df for prediction
+  #   query_df = pd.DataFrame(0, 
+  #                           index=inp_ref_mat.columns,
+  #                           columns=reaction_ids)
+  #   for one_rid in reaction_ids:
+  #     one_set_species = r2pred_spec_formulas[one_rid]
+  #     # for each species element of the select reaction
+  #     for one_spec_key in one_set_species.keys():
+  #       one_spec = one_set_species[one_spec_key]
+  #       # For each one_rid, set the values 1.0
+  #       query_df.loc[[val for val in one_spec if val in query_df.index], one_rid] = 1
+  #   multi_mat = inp_ref_mat.dot(query_df)
+  #   maxes = multi_mat.max()
+  #   #
+  #   # Collect candidates and calculate confidence score
+  #   pred_cands = dict()
+  #   pred_match_score = dict()
+  #   for one_rid in maxes.index:
+  #     one_multi = multi_mat.loc[:,one_rid]
+  #     candidates = one_multi[one_multi==maxes[one_rid]].index
+  #     # cand_data; (number of element matches, candidates)
+  #     pred_cands[one_rid] = candidates
+  #     # Now, match_scpre (calculated per each candidate) => replaced as a tuple
+  #     match_score_per_cand = []
+  #     for one_cand in candidates:
+  #       if one_cand in cn.REF_RHEA2MASTER.keys():
+  #         num_matches = maxes[one_rid]
+  #         num_maxpos_matches = len(inp_ref_mat.loc[one_cand, :].to_numpy().nonzero()[0])
+  #         match_score_per_cand.append((one_cand, np.round(num_matches/num_maxpos_matches, cn.ROUND_DIGITS)))
+  #     match_score_per_cand.sort(key=operator.itemgetter(1), reverse=True)
+  #     pred_match_score[one_rid] = match_score_per_cand
+  #   if update:
+  #     self.candidates = pred_match_score
+  #     self.query_df = query_df
+  #   #
+  #   return {'candidates': pred_cands,
+  #           'match_score': pred_match_score,
+  #           'query_df': query_df}
 
 
   # # Develop a method to evaluate results using fitted model

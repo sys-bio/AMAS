@@ -124,21 +124,6 @@ class TestRecommender(unittest.TestCase):
     none_res = self.recom.getSpeciesIDs(pattern="AAA")
     self.assertEqual(none_res, None)
 
-  def testApplyMSSC(self):
-    dummy = [('CHEBI:15414', 0.9),('CHEBI:59789', 0.5)]
-    self.assertEqual(self.recom.applyMSSC(dummy, mssc='top', cutoff=2.0),
-                     [])
-    self.assertEqual(self.recom.applyMSSC(dummy, mssc='above', cutoff=2.0),
-                     [])
-    self.assertEqual(self.recom.applyMSSC(dummy, mssc='top', cutoff=0.8),
-                     [('CHEBI:15414', 0.9)])
-    self.assertEqual(self.recom.applyMSSC(dummy, mssc='above', cutoff=0.8),
-                     [('CHEBI:15414', 0.9)])
-    self.assertEqual(self.recom.applyMSSC(dummy, mssc='top', cutoff=0.3),
-                     [('CHEBI:15414', 0.9)])
-    self.assertEqual(self.recom.applyMSSC(dummy, mssc='above', cutoff=0.3),
-                     dummy)
-
   def testGetSpeciesListRecommendation(self):
     specs = self.recom.getSpeciesListRecommendation(pred_ids=[SPECIES_SAM, SPECIES_ORN],
                                                     update=False, method='edist')

@@ -53,12 +53,14 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.spec_cl = sa.SpeciesAnnotation(libsbml_fpath = E_COLI_PATH)
 
   def testGetCScores(self):
-    res = self.spec_cl.getCScores(['hydrogen'])['hydrogen']
+    res = self.spec_cl.getCScores(inp_strs=['hydrogen'],
+                                  mssc='top',
+                                  cutoff=0.0)['hydrogen']
     chebis = [k[0] for k in res]
     vals = [k[1] for k in res]
     # checking the list is correctly sorted (max -> min)
-    self.assertEqual(vals[0], np.max(vals))
-    self.assertEqual(vals[-1], np.min(vals))
+    self.assertTrue(abs(vals[0]-np.max(vals)) < cn.TOLERANCE)
+    self.assertTrue(abs(vals[-1]-np.max(vals)) < cn.TOLERANCE)
     # cheking hydrogen is indeed at the top
     self.assertTrue('CHEBI:18276' in chebis[:5])
     self.assertTrue('CHEBI:49637' in chebis[:5])
@@ -68,12 +70,14 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertEqual(res, 0.5)
 
   def testGetEScores(self):
-    res = self.spec_cl.getEScores(['hydrogen'])['hydrogen']
+    res = self.spec_cl.getEScores(inp_strs=['hydrogen'],
+                                  mssc='top',
+                                  cutoff=0.0)['hydrogen']
     chebis = [k[0] for k in res]
     vals = [k[1] for k in res]
     # checking the list is correctly sorted (max -> min)
-    self.assertEqual(vals[0], np.max(vals))
-    self.assertEqual(vals[-1], np.min(vals))
+    self.assertTrue(abs(vals[0]-np.max(vals)) < cn.TOLERANCE)
+    self.assertTrue(abs(vals[-1]-np.max(vals)) < cn.TOLERANCE)
     # cheking hydrogen is indeed at the top
     self.assertTrue('CHEBI:18276' in chebis[:5])
     self.assertTrue('CHEBI:49637' in chebis[:5])
@@ -101,10 +105,10 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertEqual(one_val, 0.35)
 
 
-  def testPredictAnnotationByCosineSimilarity(self):
-    one_res = self.spec_cl.predictAnnotationByCosineSimilarity(inp_ids=[M_GLUCOSE])
-    self.assertEqual(one_res[M_GLUCOSE][cn.NAME_USED], D_GLUCOSE)
-    self.assertTrue(GLUCOSE_CHEBI in one_res[M_GLUCOSE][cn.CHEBI])
+  # def testPredictAnnotationByCosineSimilarity(self):
+  #   one_res = self.spec_cl.predictAnnotationByCosineSimilarity(inp_ids=[M_GLUCOSE])
+  #   self.assertEqual(one_res[M_GLUCOSE][cn.NAME_USED], D_GLUCOSE)
+  #   self.assertTrue(GLUCOSE_CHEBI in one_res[M_GLUCOSE][cn.CHEBI])
 
   def testGetNameToUse(self):
     self.assertEqual(self.spec_cl.getNameToUse(M_GLUCOSE), D_GLUCOSE)

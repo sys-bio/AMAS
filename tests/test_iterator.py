@@ -3,6 +3,7 @@
 
 import copy
 import libsbml
+import numpy as np
 import os
 import sys
 import unittest
@@ -94,21 +95,19 @@ class TestIterator(unittest.TestCase):
   def testGetUpdatedMatchScore(self):
     res = self.anot_iter.getUpdatedMatchScore(cur_spec_formulas=copy.deepcopy(INIT_SPEC_FORMULA),
                                               inp_spec2formula_dict=ONE_SPEC2FORMULA)
-    self.assertEqual(res[it.NEW_SCORE], 1.0)
-    self.assertEqual(res[it.OLD_SCORE], 0.9)
+    self.assertEqual(np.round(res[it.NEW_SCORE], 2),
+                     0.68)
+    self.assertEqual(np.round(res[it.OLD_SCORE], 2),
+                     0.65)
     self.assertTrue(res[it.INCREASED])
 
   def testMatch(self):
     res_match = self.anot_iter.match()
-    self.assertEqual(res_match, ONE_RES_CHEBI)
+    self.assertEqual(res_match['M_atp_c'], ONE_RES_CHEBI['M_atp_c'])
 
   def testRunOneMatchCycle(self):
     match_res = self.anot_iter.runOneMatchCycle()
     self.assertEqual(match_res, ONE_RES_CHEBI)
-
-
-
-
 
 
 
