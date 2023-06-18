@@ -187,7 +187,8 @@ class ReactionAnnotation(object):
         query_df.loc[[val for val in one_spec if val in query_df.index], one_rid] = 1
     multi_mat = ref_mat.dot(query_df)
     # new minimax of reference value
-    max_multi_mat = np.max(multi_mat)
+    # max_multi_mat = np.max(multi_mat)
+    max_multi_mat = multi_mat.max()
     query_colsum = pd.Series(0, index=max_multi_mat.index)
     for idx in query_colsum.index:
       query_colsum.at[idx] = np.min(np.sum(ref_mat.loc[multi_mat[multi_mat[idx]==max_multi_mat[idx]][idx].index,:],1))
