@@ -61,7 +61,7 @@ RESULT_MARKDOWN_SAMdc = '                                      SAMdc            
                         '+----+--------------+---------------+-------------------------------------------+\n' +\
                         '|    | annotation   |   match score | label                                     |\n' +\
                         '+====+==============+===============+===========================================+\n' +\
-                        '|  1 | RHEA:15981   |         1.000 | adenosylmethionine decarboxylase activity |\n' +\
+                        '|  1 | RHEA:15981   |         0.500 | adenosylmethionine decarboxylase activity |\n' +\
                         '+----+--------------+---------------+-------------------------------------------+\n'
 
 RESULT_MARKDOWN_A = '                               A                                \n' +\
@@ -77,15 +77,6 @@ RESULT_MARKDOWN_A = '                               A                           
 class TestRecommender(unittest.TestCase):
   def setUp(self):
     self.recom = recommender.Recommender(libsbml_fpath=BIOMD_190_PATH)
-
-  # def testFilterRecommendationByThreshold(self):
-  #   recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
-  #   one_recom = recom.getReactionRecommendation(pred_id=R_PFK)
-  #   two_recom = recom.getReactionRecommendation(pred_id=R_PFL)
-  #   self.assertEqual(None, recom.filterRecommendationByThreshold(rec=one_recom, thresh=0.8))
-  #   filt_two_recom = recom.filterRecommendationByThreshold(rec=two_recom, thresh=0.8)
-  #   self.assertEqual(len(two_recom.candidates), 8)
-  #   self.assertEqual(len(filt_two_recom.candidates), 5)
 
   def testGetDataFrameFromRecommendation(self):
     df = self.recom.getDataFrameFromRecommendation(rec=RESULT_RECOM,

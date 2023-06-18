@@ -209,7 +209,8 @@ def getPrecision(ref, pred, mean=True):
   # go through each species
   for one_k in species_to_test:
     num_intersection = len(set(ref[one_k]).intersection(pred[one_k]))
-    precision[one_k] = num_intersection / len(set(pred[one_k]))
+    num_predicted = len(set(pred[one_k]))
+    precision[one_k] = num_intersection / num_predicted
   # return value is rounded up to the three decimal places
   if mean:
     return np.round(np.mean([precision[val] for val in precision.keys()]), cn.ROUND_DIGITS)
