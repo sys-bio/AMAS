@@ -65,33 +65,6 @@ class Recommender(object):
     self.just_displayed = None
     self.selection = {val:dict() for val in ELEMENT_TYPES}
 
-  # def filterRecommendationByThreshold(self, rec, thresh):
-  #   """
-  #   Filter a single recommendation 
-  #   based on the threshold value.
-  #   If none meets the criteria,
-  #   returns None (or something else?)
-
-  #   Parameters
-  #   ----------
-  #   rec: cn.Recommdnation
-  #   thresh: float (0.0-1.0)
-
-  #   Returns
-  #   -------
-  #   cn.Recommendation/None
-  #   """
-  #   thresh_index = np.sum([val[1]>=thresh for val in rec.candidates])
-  #   if thresh_index > 0:
-  #     filt_recom = cn.Recommendation(rec.id,
-  #                                    # rec.credibility,
-  #                                    rec.candidates[:thresh_index],
-  #                                    rec.urls[:thresh_index],
-  #                                    rec.labels[:thresh_index])
-  #     return filt_recom
-  #   else:
-  #     return None
-
 
   def getDataFrameFromRecommendation(self,
                                      rec,

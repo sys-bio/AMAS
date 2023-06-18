@@ -136,11 +136,14 @@ class SpeciesAnnotation(object):
                                                     use_id=False) 
     multi_mat = ref_df.dot(one_query)
     # cn.CHEBI == 'chebi'
-    multi_mat[cn.CHEBI] = chebi_df[cn.CHEBI]
+    # multi_mat[cn.CHEBI] = chebi_df[cn.CHEBI]
     cscores = dict()
     for spec in unq_strs:
-      df_max = multi_mat.groupby(cn.CHEBI).max(spec)
-      spec_cscore = tools.applyMSSC(pred=list(zip(df_max.index, df_max[spec])),
+      # df_max = multi_mat.groupby(cn.CHEBI).max(spec)
+      # spec_cscore = tools.applyMSSC(pred=list(zip(df_max.index, df_max[spec])),
+      #                               mssc=mssc,
+      #                               cutoff=cutoff)
+      spec_cscore = tools.applyMSSC(pred=zip(chebi_df[cn.CHEBI], multi_mat[spec]),
                                     mssc=mssc,
                                     cutoff=cutoff)
       spec_cscore.sort(key=operator.itemgetter(1), reverse=True)

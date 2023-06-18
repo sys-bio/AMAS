@@ -96,9 +96,9 @@ class TestIterator(unittest.TestCase):
     res = self.anot_iter.getUpdatedMatchScore(cur_spec_formulas=copy.deepcopy(INIT_SPEC_FORMULA),
                                               inp_spec2formula_dict=ONE_SPEC2FORMULA)
     self.assertEqual(np.round(res[it.NEW_SCORE], 2),
-                     0.68)
+                     1.00)
     self.assertEqual(np.round(res[it.OLD_SCORE], 2),
-                     0.65)
+                     0.90)
     self.assertTrue(res[it.INCREASED])
 
   def testMatch(self):
