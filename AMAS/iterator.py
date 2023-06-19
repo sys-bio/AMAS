@@ -201,10 +201,6 @@ class Iterator(object):
                            for k in new_pred_res.keys()])
     old_pred_val = np.mean([old_pred_res[k][0][1] \
                            for k in old_pred_res.keys()])    
-    # new_pred_val = np.mean([new_pred_res[cn.MATCH_SCORE][k][0][1] \
-    #                        for k in new_pred_res[cn.MATCH_SCORE].keys()])
-    # old_pred_val = np.mean([old_pred_res[cn.MATCH_SCORE][k][0][1] \
-    #                        for k in old_pred_res[cn.MATCH_SCORE].keys()])
     return {NEW_SCORE: new_pred_val,
             OLD_SCORE: old_pred_val,
             INCREASED: new_pred_val>old_pred_val}

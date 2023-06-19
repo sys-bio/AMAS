@@ -180,31 +180,15 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(reac_stats2[cn.RECALL][REACTION_SPMS], 1.000)
     self.assertEqual(reac_stats2[cn.PRECISION][REACTION_SPMS], 0.333)
 
-  # def testUpdateAnnotationsByIteration(self):
-  #   recom = recommender.Recommender(libsbml_fpath=E_COLI_PATH)
-  #   _ = recom.getReactionListRecommendation(pred_ids=ECOLI_REACTIONS, spec_method='edist')
-  #   self.assertEqual(recom.species.candidates[ECOLI_ATP][0][0], 'CHEBI:182955')
-  #   self.assertEqual(recom.species.candidates[ECOLI_ATP][0][1], 0.231)
-  #   self.assertTrue('C20O4' in recom.species.formula[ECOLI_ATP])
-  #   self.assertEqual(recom.reactions.candidates[R_PFK][0][0], ECOLI_RHEA)
-  #   self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 0.8)
-  #   recom.updateAnnotationsByIteration()
-  #   self.assertEqual(recom.species.candidates[ECOLI_ATP][0][0], ATP_CHEBI)
-  #   self.assertEqual(recom.species.candidates[ECOLI_ATP][0][1], 0.231)
-  #   self.assertTrue(FORMULA_ATP in recom.species.formula[ECOLI_ATP])
-  #   self.assertEqual(recom.reactions.candidates[R_PFK][0][0], ECOLI_RHEA)
-  #   self.assertEqual(recom.reactions.candidates[R_PFK][0][1], 1.0)
-
-  #### testing methods for user-interface
-  # def testAutoSelectAnnotation(self):
-  #   min_score = 0.6
-  #   res1 = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM, get_df=True)
-  #   df1 = self.recom.autoSelectAnnotation(res1, min_score)
-  #   self.assertEqual(df1.shape[0], 2)
-  #   self.assertEqual(set(df1[cn.DF_MATCH_SCORE_COL]), {1.0})
-  #   res2 = self.recom.getReactionRecommendation(pred_id=REACTION_SAMDC, get_df=True)
-  #   df2 = self.recom.autoSelectAnnotation(res2, min_score)
-  #   self.assertEqual(df2.shape[0], 0)
+  def testAutoSelectAnnotation(self):
+    cutoff = 0.6
+    res1 = self.recom.getSpeciesRecommendation(pred_id=SPECIES_SAM, get_df=True)
+    df1 = self.recom.autoSelectAnnotation(res1, cutoff)
+    self.assertEqual(df1.shape[0], 2)
+    self.assertEqual(set(df1[cn.DF_MATCH_SCORE_COL]), {1.0})
+    res2 = self.recom.getReactionRecommendation(pred_id=REACTION_SAMDC, get_df=True)
+    df2 = self.recom.autoSelectAnnotation(res2, cutoff)
+    self.assertEqual(df2.shape[0], 0)
 
   def testFilterDataFrameByThreshold(self):
     df = self.recom.getDataFrameFromRecommendation(RESULT_RECOM)

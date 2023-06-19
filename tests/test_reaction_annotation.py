@@ -37,11 +37,6 @@ class TestReactionAnnotation(unittest.TestCase):
   def setUp(self):
     self.spec_cl = sa.SpeciesAnnotation(libsbml_fpath = E_COLI_PATH)
     self.reac_cl = ra.ReactionAnnotation(libsbml_fpath = E_COLI_PATH)
-    # self.pred_species = self.spec_cl.predictAnnotationByCosineSimilarity(inp_ids=list(COMPONENTS))
-    # self.spec_formula_dict = {val: self.pred_species[val][cn.FORMULA] for val in list(COMPONENTS)}  
-    # self.pred_reaction = self.reac_cl.predictAnnotation(inp_spec_dict=self.spec_formula_dict,
-    #                                                     inp_reac_list=[R_PFK],
-    #                                                     update=True)
 
   def testGetReactionComponents(self):
     # When argument is string, i.e., reaction ID
@@ -65,15 +60,6 @@ class TestReactionAnnotation(unittest.TestCase):
     res_vals = [val[1] for val in res]
     self.assertEqual(res_vals[0], np.max(res_vals))
     self.assertEqual(res_vals[-1], np.min(res_vals))
-
-  # def testPredictAnnotation(self):
-  #   match_scores_dict = self.pred_reaction[cn.MATCH_SCORE]
-  #   self.assertTrue(ONE_CANDIDATE in [val[0] for val in match_scores_dict[R_PFK]])
-  #   self.assertTrue(0.6 in [val[1] for val in match_scores_dict[R_PFK]])
-
-  # def testEvaluatePredictedReactionAnnotation(self):
-  #   one_eval = self.reac_cl.evaluatePredictedReactionAnnotation(pred_result=self.pred_reaction)
-  #   self.assertEqual(np.round(one_eval[R_PFK], cn.ROUND_DIGITS), 0.811)
 
   def testGetRheaElementNum(self):
     num_elements = self.reac_cl.getRheaElementNum(inp_rhea=ONE_CANDIDATE)

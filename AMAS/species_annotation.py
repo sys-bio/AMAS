@@ -135,14 +135,8 @@ class SpeciesAnnotation(object):
                                                     ref_cols=ref_df.columns,
                                                     use_id=False) 
     multi_mat = ref_df.dot(one_query)
-    # cn.CHEBI == 'chebi'
-    # multi_mat[cn.CHEBI] = chebi_df[cn.CHEBI]
     cscores = dict()
     for spec in unq_strs:
-      # df_max = multi_mat.groupby(cn.CHEBI).max(spec)
-      # spec_cscore = tools.applyMSSC(pred=list(zip(df_max.index, df_max[spec])),
-      #                               mssc=mssc,
-      #                               cutoff=cutoff)
       spec_cscore = tools.applyMSSC(pred=zip(chebi_df[cn.CHEBI], multi_mat[spec]),
                                     mssc=mssc,
                                     cutoff=cutoff)
@@ -218,46 +212,6 @@ class SpeciesAnnotation(object):
       escores[spec] = mssc_escore
     return escores
 
-  # TODO: remove and replace with eScore calculations      
-  # def predictAnnotationByEditDistance(self, inp_str):
-  #   """
-  #   Predict annotation using the argument string 
-  #   and Levenshtein edit distance method. 
-
-  #   Parameters
-  #   ----------
-  #   inp_str: str
-  #       String to predict CHEBI annotation
-
-  #   Returns
-  #   -------
-  #   dict
-  #       {'name_used': str,
-  #        'chebi': [list-ChEBI],
-  #        'match_score': [(ChEBI, float)],
-  #        'formula': [list-formula]} 
-  #   """
-  #   one_result = dict()
-  #   # For now, choose the terms that are included in the CHEBI-formula mapping reference
-  #   dist_dict_min = {one_k:np.min([editdistance.eval(inp_str.lower(), val) for val in CHEBI_LOW_SYNONYMS[one_k]]) \
-  #                    for one_k in CHEBI_LOW_SYNONYMS.keys() if one_k in cn.REF_CHEBI2FORMULA.keys()}
-  #   min_min_dist = np.min([dist_dict_min[val] for val in dist_dict_min.keys()])
-  #   min_min_chebis = [one_k for one_k in dist_dict_min.keys() \
-  #                     if dist_dict_min[one_k]==min_min_dist and one_k in cn.REF_CHEBI2FORMULA.keys()]
-  #   # Results are sorted based on match_score (average of 1 - (editdistance/len_synonyms)
-  #   res_tuple = [(one_chebi,
-  #                 np.round(np.max([1.0-editdistance.eval(inp_str.lower(), val)/len(val) \
-  #                                   for val in CHEBI_LOW_SYNONYMS[one_chebi]]), cn.ROUND_DIGITS)) \
-  #                for one_chebi in min_min_chebis] 
-  #   res_tuple.sort(key=operator.itemgetter(1), reverse=True)
-  #   #  CHEBI part is added, because we want a sorted list after computing res_tuple
-  #   one_result[cn.NAME_USED] = inp_str
-  #   one_result[cn.CHEBI] = [val[0] for val in res_tuple]
-  #   one_result[cn.MATCH_SCORE] = res_tuple
-  #   min_min_formula = list(set([cn.REF_CHEBI2FORMULA[val] for val in min_min_chebis]))
-  #   one_result[cn.FORMULA] = min_min_formula
-  #   return one_result
-
   # Methods to use Cosine Similarity
   def getCountOfIndividualCharacters(self, inp_str):
     """
@@ -325,62 +279,6 @@ class SpeciesAnnotation(object):
     norm_query = query_mat.divide(div_row, axis=1)
     return norm_query, name_used
 
-  # def predictAnnotationByCosineSimilarity(self,
-  #                                         inp_strs=None,
-  #                                         inp_ids=None,
-  #                                         ref_df=CHARCOUNT_DF,
-  #                                         chebi_df=CHEBI_DF):
-  #   """
-  #   Predict annotation by taking cosine distance 
-  #   of character count vectors.
-  
-  #   Parameters
-  #   ----------
-  #   inp_strs: list-str
-  #       Strings that will directly used
-  #       for prediction
-  #   inp_ids: list-str
-  #       IDs with which name2use will be
-  #       determined
-  #   ref_df: DataFrame
-  #       Reference database
-  #   chebi_df: DataFrame
-  #       ChEBI information sharing the index with ref_df    
-
-  #   Returns
-  #   -------
-  #   : dict/None
-  #       {'name_used': str,
-  #        'chebi': [list-ChEBI],
-  #        'match_score': [(ChEBI, float)],
-  #        'formula': [list-formula]} 
-  #     if no name/ID is given, return None
-  #   """
-  #   if inp_ids:
-  #     one_query, name_used = self.prepareCounterQuery(specs=inp_ids,
-  #                                                     ref_cols=ref_df.columns,
-  #                                                     use_id=True)
-  #   elif inp_strs:
-  #     one_query, name_used = self.prepareCounterQuery(specs=inp_strs,
-  #                                                     ref_cols=ref_df.columns,
-  #                                                     use_id=False)  
-  #   else:
-  #     return None
-  #   multi_mat = ref_df.dot(one_query)
-  #   max_val = multi_mat.max()
-  #   result = dict()
-  #   for one_spec in one_query.columns:
-  #     one_res = dict()
-  #     one_res[cn.NAME_USED] = name_used[one_spec]
-  #     cand_index = multi_mat[abs(multi_mat[one_spec]-max_val[one_spec])<cn.TOLERANCE].index
-  #     one_res[cn.CHEBI] = list(set(chebi_df.loc[cand_index, cn.CHEBI]))
-  #     one_res[cn.MATCH_SCORE] = [(val, np.round(max_val[one_spec], cn.ROUND_DIGITS)) \
-  #                                for val in one_res[cn.CHEBI]]
-  #     one_res[cn.FORMULA] = list(set([cn.REF_CHEBI2FORMULA[val] for val in one_res[cn.CHEBI] \
-  #                                     if val in cn.REF_CHEBI2FORMULA.keys()])) 
-  #     result[one_spec] = one_res
-  #   return result
-
   def getNameToUse(self, inp_id):
     """
     Get name to use;
@@ -401,40 +299,6 @@ class SpeciesAnnotation(object):
     else:
       res_name = inp_id
     return res_name
-
-  # def evaluatePredictedSpeciesAnnotation(self,
-  #                                        pred,
-  #                                        name_used,
-  #                                        fitted_model=SPECIES_RF):
-  #   """
-  #   Predict the probability of 
-  #   the candidate set including the 'true'
-  #   annotation. 
-    
-  #   Parameters
-  #   ---------
-  #   pred: list-str 
-  #       Result (items) of getEScores() or getCScores().
-  #       ['CHEBI:XXXXX', 1.0), etc..]
-  #   name_used: str
-  #       Actual string used to predict annotations
-
-  #   Returns
-  #   -------
-  #   : float
-  #   """
-  #   name_length = len(name_used)
-  #   num_candidates = len(pred)
-  #   mean_match_score = np.mean([val[1] for val in pred])
-  #   formulas = list(set([cn.REF_CHEBI2FORMULA[val[0]] for val in pred \
-  #                        if val[0] in cn.REF_CHEBI2FORMULA.keys()]))
-  #   num_formulas = len(formulas)
-  #   proba_correct = fitted_model.predict_proba([[name_length,
-  #                                                num_candidates,
-  #                                                mean_match_score,
-  #                                                num_formulas]])[0][1]
-  #   return proba_correct
-
 
   def updateSpeciesWithRecommendation(self, inp_recom):
     """
@@ -483,7 +347,6 @@ class SpeciesAnnotation(object):
                        for chebi in inp_dict[k]] for k in inp_dict.keys()}
     self.candidates.update(info2upd_candidates)
     self.formula.update(info2upd_formula)
-
 
 
 

@@ -35,13 +35,14 @@ def main():
                                                    'optimized. N or no will not optimize predictions.',
                                               nargs='?',
                                               default='no')
-  parser.add_argument('--method', type=str,
-                                  help='Either "top" or "above". "top" recommends ' +\
-                                       'the best candidates that are above the cutoff, ' +\
-                                       'and "above" recommends all candidates that are above ' +\
-                                       'the cutoff. Default is "top".',
-                                  nargs='?',
-                                  default='top')
+  parser.add_argument('--mssc', type=str,
+                                help='Match score selection criteria (MSSC). ' +\
+                                     'Choose either "top" or "above". "top" recommends ' +\
+                                     'the best candidates that are above the cutoff, ' +\
+                                     'and "above" recommends all candidates that are above ' +\
+                                     'the cutoff. Default is "top"',
+                                nargs='?',
+                                default='top')
   parser.add_argument('--save', type=str, 
                                 help='Either "sbml" or "csv". ' +\
                                      'If "sbml" is chosen, model will be automatically ' +\
@@ -60,7 +61,7 @@ def main():
     optim = True
   else:
     optim = False
-  method = args.method
+  mssc = args.mssc.lower()
   save = args.save
   outfile = args.outfile
   #
@@ -92,14 +93,14 @@ def main():
       cands = res_iter[one_spec]
       adj_formulas = list(set([cn.REF_CHEBI2FORMULA[k] \
                                for k in cands if k in cn.REF_CHEBI2FORMULA.keys()]))
-      adj_cred = sa.SPECIES_RF.predict_proba([[len(recom.species.getNameToUse(one_spec)),
-                                               len(cands),
-                                               adj_match_score,
-                                               len(adj_formulas)]])[0][1]
+      # adj_cred = sa.SPECIES_RF.predict_proba([[len(recom.species.getNameToUse(one_spec)),
+      #                                          len(cands),
+      #                                          adj_match_score,
+      #                                          len(adj_formulas)]])[0][1]
       urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in cands]
       labels = [cn.REF_CHEBI2LABEL[val] for val in cands]
       adj_recom = cn.Recommendation(one_spec,
-                                    np.round(adj_cred, cn.ROUND_DIGITS),
+                                    # np.round(adj_cred, cn.ROUND_DIGITS),
                                     [(val, adj_match_score) for val in cands],
                                     urls,
                                     labels)
@@ -118,15 +119,9 @@ def main():
     recom.current_type = one_k
     for one_recom in RECOM_DICT[one_k]:
       filt_df = recom.autoSelectAnnotation(df=recom.getDataFrameFromRecommendation(one_recom),
-                                           min_score=cutoff,
-                                           method=method)
+                                           cutoff=cutoff,
+                                           mssc=mssc)
       recom.updateSelection(one_recom.id, filt_df)  
-  # recom.current_type = 'reaction'
-  # for idx, one_df in enumerate(res_reac):
-  #   filt_df = recom.autoSelectAnnotation(df=one_df,
-  #                                        min_score=cutoff,
-  #                                        method=method)
-  #   recom.updateSelection(reacts[idx], filt_df)
   # save file
   if save.lower() == 'sbml':
     if outfile is None:
