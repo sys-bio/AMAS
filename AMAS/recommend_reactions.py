@@ -4,7 +4,7 @@
 """
 Predicts annotations of reaction(s) using a local XML file
 and the reaction ID. 
-Usage: python recommend_reaction.py files/BIOMD0000000190.xml --min_score 0.6 --outfile res.csv
+Usage: python recommend_reaction.py files/BIOMD0000000190.xml --cutoff 0.6 --outfile res.csv
 """
 
 import argparse
@@ -28,13 +28,14 @@ def main():
                                                   'Reactions with fewer components than this value ' +\
                                                   'will be ignored. Default is zero.', nargs='?', default=0)
   parser.add_argument('--cutoff', type=float, help='Match score cutoff.', nargs='?', default=0.0)
-  parser.add_argument('--method', type=str, 
-                                  help='Choose either "top" or "above". "top" recommends ' +\
-                                       'the best candidates that are above the cutoff, ' +\
-                                       'and "above" recommends all candidates that are above ' +\
-                                       'the cutoff. Default is "top".',
-                                  nargs='?',
-                                  default='top')
+  parser.add_argument('--mssc', type=str,
+                                help='Match score selection criteria (MSSC). ' +\
+                                     'Choose either "top" or "above". "top" recommends ' +\
+                                     'the best candidates that are above the cutoff, ' +\
+                                     'and "above" recommends all candidates that are above ' +\
+                                     'the cutoff. Default is "top"',
+                                nargs='?',
+                                default='top')
   parser.add_argument('--outfile', type=str, help='File path to save recommendation.', nargs='?',
                       default=os.path.join(os.getcwd(), 'reaction_rec.csv'))
   args = parser.parse_args()
@@ -43,7 +44,7 @@ def main():
   reacts = args.reactions
   min_len = args.min_len
   cutoff = args.cutoff
-  method = args.method
+  mssc = args.mssc.lower()
   outfile = args.outfile
 
   recom = recommender.Recommender(libsbml_fpath=one_fpath)
@@ -62,8 +63,8 @@ def main():
   res = recom.getReactionListRecommendation(pred_ids=filt_reacts, get_df=True)
   for idx, one_df in enumerate(res):
     filt_df = recom.autoSelectAnnotation(df=one_df,
-                                         min_score=cutoff,
-                                         method=method)
+                                         cutoff=cutoff,
+                                         mssc=mssc)
     recom.updateSelection(filt_reacts[idx], filt_df)
   # save file to csv
   recom.saveToCSV(outfile)

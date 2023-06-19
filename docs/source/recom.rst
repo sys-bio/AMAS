@@ -80,7 +80,7 @@ Getting recommendation for reactions using the ``recommend_reactions`` command i
 
 .. code-block:: console
  
-   $ recommend_reactions BIOMD0000000190.xml --cutoff 0.5 --method above --outfile reactions.csv
+   $ recommend_reactions BIOMD0000000190.xml --cutoff 0.5 --mssc above --outfile reactions.csv
    ...
    Analyzing 13 reaction(s)...
 
@@ -91,4 +91,4 @@ Getting recommendation for reactions using the ``recommend_reactions`` command i
    /Users/amas/reactions.csv
 
 
-This time, no reaction ID was listed; thus, ``AMAS`` will detect all existing reactions and make recommendations for those with match score of 0.5 or above. By choosing *above* for the ``method`` option, ``AMAS`` will recommend all of the predicted candidates with match score at or above the cutoff. If *top* (default value) was chosen instead, ``AMAS`` would report only those with the highest match score that is at or above the cutoff. 
+This time, no reaction ID was listed; thus, ``AMAS`` will detect all existing reactions and make recommendations for those with match score of 0.5 or above. By choosing *above* for the ``mssc`` option, ``AMAS`` will recommend all of the predicted candidates with match score at or above the cutoff. If *top* (default value) was chosen instead, ``AMAS`` would report only those with the highest match score that is at or above the cutoff. 

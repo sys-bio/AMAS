@@ -670,88 +670,6 @@ class Recommender(object):
     precision = tools.getPrecision(ref=refs, pred=preds, mean=model_mean)
     return {cn.RECALL: recall, cn.PRECISION: precision}
 
-  # def updateAnnotationsByIteration(self, reactions=None):
-  #   """
-  #   Update both species and reaction annotations
-  #   (i.e., 1. candidates/formula for species,
-  #          2. candidates for reactions)
-
-  #   Method just needs to have predicted
-  #   both species & reaction annotations.
-
-  #   Method will use all reactions 
-  #   whose annotations were predicted. 
-
-  #   Parameters
-  #   ----------
-  #   reactions: str-list
-  #       List of reaction IDs
-
-  #   Returns
-  #   -------
-  #   """
-  #   if reactions is None:
-  #     reactions = list(self.reactions.candidates.keys())
-
-  #   anot_iter = it.Iterator(cur_spec_formula=self.species.formula,
-  #                           reaction_cl=self.reactions,
-  #                           reactions_to_update=reactions)
-  #   chebi2upd = anot_iter.match() 
-  #   for one_k in chebi2upd.keys():
-  #     one_chebi_list = chebi2upd[one_k]
-  #     # Update candidates, using the max-match score of the previous prediction
-  #     max_match_score = np.max([val[1] for val in self.species.candidates[one_k]])
-  #     self.species.candidates[one_k] = [(val, max_match_score) for val in one_chebi_list]
-  #     # Update self.species.formula
-  #     self.species.formula[one_k] = [cn.REF_CHEBI2FORMULA[val] \
-  #                                    for val in one_chebi_list \
-  #                                    if val in cn.REF_CHEBI2FORMULA.keys()]
-  #   #
-  #   # Update self.reactions.candidates by re-predicting reaction annotations (w. update)
-  #   new_pred_reaction = self.reactions.predictAnnotation(inp_spec_dict=self.species.formula,
-  #                                                        inp_reac_list=reactions,
-  #                                                        update=True)
-  #   # Return should be species & reaction recommendations. df; 
-
-  # Below are methods that interacts with user; 
-  # def autoSelectAnnotation(self, df, min_score=0.0, method='top'):
-  #   """
-  #   Choose annotations based on 
-  #   the set threshold; 
-  #   (1) if None meets the threshold, return an empty frame
-  #   (2) if multiple meet the threshold,
-  #       (a) if method is 'best':
-  #           (i) find the highest match score among them
-  #           (ii) return all above match score == highest_match_score
-  #       (b) if method is 'all':
-  #           (i) return all that is at or above min_score
-      
-  #   Parameters
-  #   ----------
-  #   df: pandas.DataFrame
-  
-  #   min_score: float (0.0-1.0)
-  
-  #   Returns
-  #   -------
-  #   pandas.DataFrame
-  #     if nothing matched,
-  #     an empty dataframe is returned
-  #   """ 
-  #   scores = df[cn.DF_MATCH_SCORE_COL]
-  #   # max_score: highest match score that exists
-  #   # min_score: threshold
-  #   max_score = np.max(scores)
-  #   if max_score < min_score:
-  #     # this will create an empty dataframe
-  #     filt_idx = scores[scores>=min_score].index
-  #   elif method=='top':
-  #     filt_idx = scores[scores==max_score].index
-  #   else:
-  #     filt_idx = scores[scores>=min_score].index
-  #   filt_df = df.loc[filt_idx, :]  
-  #   return filt_df
-
   def filterDataFrameByThreshold(self, df, min_score):
     """
     Filter dataframe by min_score (threshold),
@@ -773,6 +691,53 @@ class Recommender(object):
     scores = df[cn.DF_MATCH_SCORE_COL]
     filt_idx = scores[scores>=min_score].index
     filt_df = df.loc[filt_idx, :]
+    return filt_df
+
+
+  def autoSelectAnnotation(self,
+                           df,
+                           cutoff=0.0,
+                           mssc='top'):
+    """
+    Choose annotations based on 
+    the set threshold; 
+    (1) if None meets the threshold, return an empty frame
+    (2) if multiple meet the threshold,
+        (a) if method is 'best':
+            (i) find the highest match score among them
+            (ii) return all above match score == highest_match_score
+        (b) if method is 'all':
+            (i) return all that is at or above min_score
+      
+    Parameters
+    ----------
+    df: pandas.DataFrame
+  
+    cutoff: float (0.0-1.0)
+        Match score cutoff
+
+    mssc: str
+        Match score selection criteria;
+        either 'top' or 'above'.
+
+    Returns
+    -------
+    pandas.DataFrame
+      if nothing matched,
+      an empty dataframe is returned
+    """ 
+    scores = df[cn.DF_MATCH_SCORE_COL]
+    # max_score: highest match score that exists
+    # min_score: cutoff
+    max_score = np.max(scores)
+    if max_score < cutoff:
+      # this will create an empty dataframe
+      filt_idx = scores[scores>=cutoff].index
+    elif mssc=='top':
+      filt_idx = scores[scores==max_score].index
+    else:
+      filt_idx = scores[scores>=cutoff].index
+    filt_df = df.loc[filt_idx, :]  
     return filt_df
 
   def recommendReaction(self,

@@ -82,15 +82,6 @@ class TestSpeciesAnnotation(unittest.TestCase):
     self.assertTrue('CHEBI:18276' in chebis[:5])
     self.assertTrue('CHEBI:49637' in chebis[:5])
 
-  # def testPredictAnnotationByEditDistance(self):
-  #   one_spec_name = self.spec_cl.model.getSpecies(M_FDP_C).name.lower()
-  #   one_pred_spec = self.spec_cl.predictAnnotationByEditDistance(inp_str=one_spec_name)
-  #   self.assertTrue(('CHEBI:16905', 1.0) in one_pred_spec[cn.MATCH_SCORE])
-  #   self.assertTrue(('CHEBI:49299', 1.0) in one_pred_spec[cn.MATCH_SCORE])
-  #   self.assertTrue('CHEBI:16905' in one_pred_spec[cn.CHEBI])
-  #   self.assertTrue('CHEBI:49299' in one_pred_spec[cn.CHEBI])
-  #   self.assertEqual(one_pred_spec[cn.FORMULA],  ['C6O12P2'])
-
   def testGetCountOfIndividualCharacters(self):
     one_res = self.spec_cl.getCountOfIndividualCharacters(DUMMY_ID)
     self.assertEqual(one_res['m'], 1)
@@ -104,26 +95,8 @@ class TestSpeciesAnnotation(unittest.TestCase):
     one_val = np.round(one_query.loc['g', M_GLUCOSE], 2)
     self.assertEqual(one_val, 0.35)
 
-
-  # def testPredictAnnotationByCosineSimilarity(self):
-  #   one_res = self.spec_cl.predictAnnotationByCosineSimilarity(inp_ids=[M_GLUCOSE])
-  #   self.assertEqual(one_res[M_GLUCOSE][cn.NAME_USED], D_GLUCOSE)
-  #   self.assertTrue(GLUCOSE_CHEBI in one_res[M_GLUCOSE][cn.CHEBI])
-
   def testGetNameToUse(self):
-    self.assertEqual(self.spec_cl.getNameToUse(M_GLUCOSE), D_GLUCOSE)
-
-  # def testEvaluatePredictedSpeciesAnnotation(self):
-  #   fdp_pred_spec = self.spec_cl.getEScores(inp_strs=[M_FDP_C])[M_FDP_C][:17]
-  #   fdp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred=fdp_pred_spec,
-  #                                                               name_used=self.spec_cl.getNameToUse(M_FDP_C))
-  #   self.assertTrue(fdp_score < 0.906)
-  #   self.assertTrue(fdp_score > 0.905)
-  #   atp_pred_spec = self.spec_cl.getEScores(inp_strs=[M_ATP_C])[M_ATP_C][:2]
-  #   atp_score = self.spec_cl.evaluatePredictedSpeciesAnnotation(pred=atp_pred_spec,
-  #                                                               name_used=self.spec_cl.getNameToUse(M_ATP_C))
-  #   self.assertTrue(atp_score < 0.973)     
-  #   self.assertTrue(atp_score > 0.972)    
+    self.assertEqual(self.spec_cl.getNameToUse(M_GLUCOSE), D_GLUCOSE)  
   
   def testUpdateSpeciesWithRecommendation(self):
     one_upd = self.spec_cl.updateSpeciesWithRecommendation(DUMMY_RECOMMENDATION)
