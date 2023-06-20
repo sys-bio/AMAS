@@ -250,7 +250,7 @@ class TestRecommender(unittest.TestCase):
                 'label': ['S-adenosyl-L-methionine']}
     one_df = pd.DataFrame(one_dict)
     one_df.index = [2]
-    one_df.index.name = 'SAM (cred. 0.974)'
+    one_df.index.name = 'SAM'
     self.recom.selection['species'] = {'SAM': one_df}
     self.recom.saveToCSV("test.csv")
     new_df = pd.read_csv("test.csv")
@@ -267,7 +267,7 @@ class TestRecommender(unittest.TestCase):
                 'label': ['S-adenosyl-L-methionine']}
     one_df = pd.DataFrame(one_dict)
     one_df.index = [2]
-    one_df.index.name = 'SAM (cred. 0.974)'
+    one_df.index.name = 'SAM'
     self.recom.selection['species'] = {SPECIES_SAM: one_df}
     self.recom.saveToSBML("test_sbml.xml")
     recom2 = recommender.Recommender(libsbml_fpath='test_sbml.xml')

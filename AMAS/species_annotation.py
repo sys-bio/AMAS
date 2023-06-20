@@ -31,11 +31,6 @@ CHARCOUNT_COMB_DF = compress_pickle.load(os.path.join(cn.REF_DIR, 'charcount_df_
                                          compression="lzma")
 CHARCOUNT_DF = CHARCOUNT_COMB_DF.iloc[:, :-2]
 CHEBI_DF = CHARCOUNT_COMB_DF.iloc[:, -2:]
-# A trained random forest model 
-# suppress warning to ignore warnings about new sklearn versions
-warnings.filterwarnings("ignore")
-SPECIES_RF = compress_pickle.load(os.path.join(cn.REF_DIR, 'species_rf_fitted.lzma'))
-
 
 class SpeciesAnnotation(object):
 
@@ -135,13 +130,23 @@ class SpeciesAnnotation(object):
                                                     ref_cols=ref_df.columns,
                                                     use_id=False) 
     multi_mat = ref_df.dot(one_query)
+    # updated code to avoid repeated prediction
     cscores = dict()
-    for spec in unq_strs:
-      spec_cscore = tools.applyMSSC(pred=zip(chebi_df[cn.CHEBI], multi_mat[spec]),
+    multi_mat[cn.CHEBI] = chebi_df[cn.CHEBI]
+    for spec in inp_strs:
+      # Get max-value of each chebi term
+      g_res = multi_mat.loc[:,[cn.CHEBI, spec]].groupby([cn.CHEBI]).max()[spec]
+      spec_cscore = tools.applyMSSC(pred=zip(g_res.index, g_res),
                                     mssc=mssc,
                                     cutoff=cutoff)
-      spec_cscore.sort(key=operator.itemgetter(1), reverse=True)
       cscores[spec] = spec_cscore
+    # cscores = dict()
+    # for spec in unq_strs:
+    #   spec_cscore = tools.applyMSSC(pred=zip(chebi_df[cn.CHEBI], multi_mat[spec]),
+    #                                 mssc=mssc,
+    #                                 cutoff=cutoff)
+    #   spec_cscore.sort(key=operator.itemgetter(1), reverse=True)
+    #   cscores[spec] = spec_cscore
     return cscores
 
   def getOneEScore(self, one_s, two_s):
