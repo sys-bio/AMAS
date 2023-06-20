@@ -7,7 +7,7 @@ Command-line Arguments
 This section summarizes arguments for the commands described in the other sections. Arguments with two dashes (``--``) indicate that they are optional arguments. All arguments of ``update_annotation`` are positional (i.e., required). 
 
 .. list-table:: Arguments for ``recommend_annotation``
-   :widths: 35 50 50 50 
+   :widths: 35 50 70 50 
    :header-rows: 1
 
    * - Name
@@ -24,11 +24,11 @@ This section summarizes arguments for the commands described in the other sectio
      - 0.0
    * - \-\-optimize
      - string (*y, yes*)
-     - optimize predictions
+     - optimizing predictions
      - *no*
-   * - \-\-method
+   * - \-\-mssc
      - string (*top* or *above*)
-     - mode of selection
+     - match score selection criteria
      - *top*
    * - \-\-save
      - string (*sbml* or *csv*)
@@ -41,7 +41,7 @@ This section summarizes arguments for the commands described in the other sectio
 
 
 .. list-table:: Arguments for ``recommend_species``
-   :widths: 35 50 50 50 
+   :widths: 35 50 70 50 
    :header-rows: 1
 
    * - Name
@@ -56,17 +56,17 @@ This section summarizes arguments for the commands described in the other sectio
      - string (one or more)
      - list of species IDs
      - all existing species
-   * - \-\-reject
+   * - \-\-min_len
      - integer
-     - element filter
+     - element filter (minimum length of name)
      - 0
    * - \-\-cutoff
      - float (0.0 - 1.0)
      - match score cutoff
      - 0.0
-   * - \-\-method
+   * - \-\-mssc
      - string (*top* or *above*)
-     - mode of selection
+     - match score selection criteria
      - *top*
    * - \-\-outfile
      - string 
@@ -75,7 +75,7 @@ This section summarizes arguments for the commands described in the other sectio
 
 
 .. list-table:: Arguments for ``recommend_reactions``
-   :widths: 35 50 50 50 
+   :widths: 35 50 70 50 
    :header-rows: 1
 
    * - Name
@@ -90,17 +90,17 @@ This section summarizes arguments for the commands described in the other sectio
      - string (one or more)
      - list of reaction IDs
      - all existing reactions
-   * - \-\-reject
+   * - \-\-min_len
      - integer
-     - element filter
+     - element filter (minimum number of components)
      - 0
    * - \-\-cutoff
      - float (0.0 - 1.0)
      - match score cutoff
      - 0.0
-   * - \-\-method
+   * - \-\-mssc
      - string (*top* or *above*)
-     - mode of selection
+     - match score selection criteria
      - *top*
    * - \-\-outfile
      - string 
@@ -109,7 +109,7 @@ This section summarizes arguments for the commands described in the other sectio
 
 
 .. list-table:: Arguments for ``update_annotation``
-   :widths: 35 50 50 50 
+   :widths: 35 50 70 50 
    :header-rows: 1
 
    * - Name
@@ -122,10 +122,10 @@ This section summarizes arguments for the commands described in the other sectio
      - N/A
    * - feedback
      - string
-     - file with feedback (*UPDATE ANNOTATION*)
+     - file with feedback (*UPDATE ANNOTATION* column)
      - N/A
    * - outfile
      - string
-     - path of the new file with annotation
+     - path of the new file with updated annotations
      - N/A
 

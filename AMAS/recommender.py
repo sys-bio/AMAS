@@ -124,7 +124,6 @@ class Recommender(object):
       df = copy.deepcopy(rec)
       idx_name = df.index.name.split(' ')
       rec_id = idx_name[0]
-      # rec_credibility = float(idx_name[-1][:-1])
     else:
       df = self.getDataFrameFromRecommendation(rec, show_url)
       rec_id = rec.id
@@ -1077,8 +1076,9 @@ class Recommender(object):
     with a ChEBI term. 
     This is to inform user of how well it matches with
     a specific ChEBI term.
-    To do this, all synonyms are considered and
-    the largest value will be returned. 
+    If the ChEBI term somehow 
+    doesn't exist in the dictionary,
+    0.0 will be returned. 
 
     Parameters
     ----------
@@ -1086,20 +1086,20 @@ class Recommender(object):
         ID of a species
 
     inp_chebi: str
-        A CHEBI term. 
+        A ChEBI term. 
 
     Returns
     -------
-    res_match_score: float
+    res: float
     """
-    chebi_sub_df = sa.CHEBI_DF[sa.CHEBI_DF['chebi']==inp_chebi]
-    charcount_sub_df = sa.CHARCOUNT_DF.loc[chebi_sub_df.index, :]
-    one_query, name_used = self.species.prepareCounterQuery(specs=[inp_id],
-                                                            ref_cols=charcount_sub_df.columns,
-                                                            use_id=True)
-    multi_mat = charcount_sub_df.dot(one_query)
-    res_match_score = np.round(float(multi_mat.max()), cn.ROUND_DIGITS)
-    return res_match_score
+    inp_str = self.species.getNameToUse(inp_id)
+    scores = self.species.getCScores(inp_strs=[inp_str],
+                                     mssc='above',
+                                     cutoff=0.0)[inp_str]
+    # searching for the match score
+    res = next((np.round(v[1], cn.ROUND_DIGITS) \
+               for v in scores if v[0] == inp_chebi), 0.0)
+    return res
 
   def getMatchScoreOfRHEA(self, inp_id, inp_rhea):
     """
@@ -1123,22 +1123,20 @@ class Recommender(object):
     specs2predict = self.reactions.reaction_components[inp_id] 
     spec_results = self.getSpeciesListRecommendation(pred_ids=specs2predict,
                                                      update=False,
-                                                     method='cdist')
+                                                     method='cdist',
+                                                     mssc='top',
+                                                     cutoff=0.0)
     pred_formulas = dict()
-    for one_recom in spec_results:
-      chebis = [val[0] for val in one_recom.candidates]
+    for one_spec_res in spec_results:
+      chebis = [val[0] for val in one_spec_res.candidates]
       forms = list(set([cn.REF_CHEBI2FORMULA[k] \
              for k in chebis if k in cn.REF_CHEBI2FORMULA.keys()]))
-      pred_formulas[one_recom.id] = forms
-    query_df = pd.DataFrame(0, 
-                            index=ra.REF_MAT.columns,
-                            columns=[inp_id])
-    for one_spec_key in pred_formulas.keys():
-        one_spec = pred_formulas[one_spec_key]
-        # For each one_rid, set the values 1.0
-        query_df.loc[[val for val in one_spec if val in query_df.index], inp_id] = 1
-    sub_ref_mat = ra.REF_MAT.loc[inp_rhea, :]
-    num_matches = int(sub_ref_mat.dot(query_df))
-    num_cand_elements = len(sub_ref_mat.to_numpy().nonzero()[0])
-    res_match_score = np.round(num_matches/num_cand_elements, cn.ROUND_DIGITS)
-    return res_match_score
+      pred_formulas[one_spec_res.id] = forms
+    scores = self.reactions.getRScores(spec_dict=pred_formulas,
+                                       reacs=[inp_id],
+                                       mssc='above',
+                                       cutoff=0.0)[inp_id]
+    # searching for the match score
+    res = next((np.round(v[1], cn.ROUND_DIGITS) \
+               for v in scores if v[0] == inp_rhea), 0.0)
+    return res   

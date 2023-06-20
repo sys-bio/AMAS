@@ -17,7 +17,6 @@ import numpy as np
 import operator
 import os
 import pandas as pd
-import pickle
 
 
 with open(os.path.join(cn.REF_DIR, 'data2ref_mat.lzma'), 'rb') as handle:
@@ -37,7 +36,6 @@ REF_MAT = pd.DataFrame(0, index=inds, columns=cols)
 for val in ref_mat_pairs:
   REF_MAT.iloc[val[1], val[0]] = 1
 
-REACTION_RF = compress_pickle.load(os.path.join(cn.REF_DIR, 'reactions_rf_fitted.lzma'))
 
 class ReactionAnnotation(object):
 

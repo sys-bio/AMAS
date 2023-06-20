@@ -2,21 +2,18 @@ from setuptools import setup, find_packages
 
 INSTALL_REQUIRES = [
     "compress-pickle",
-    "coverage==5.5",
     "editdistance",
     "nose",
     "numpy",
     "pandas",
     "python-libsbml",
     "pyyaml",
-    "requests",
-    "scikit-learn"
     ]
 
 def doSetup(install_requires):
   setup(
       name='AMAS-sb',
-      version='0.1.0',
+      version='0.3.0',
       author='Woosub Shin',
       author_email='woosubs@umich.edu',
       packages=find_packages(exclude=['tests', 'notebooks']),
