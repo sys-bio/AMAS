@@ -538,7 +538,11 @@ class Recommender(object):
     """
     if isinstance(sbml, str):
       reader = libsbml.SBMLReader()
-      self.sbml_document = reader.readSBML(sbml)
+      # Reading the model string file
+      with open(sbml, 'r') as f:
+        model_str = f.read()
+      self.sbml_document = reader.readSBMLFromString(model_str)
+      # self.sbml_document = reader.readSBML(sbml)
     elif isinstance(sbml, libsbml.SBMLDocument):
       self.sbml_document = sbml
     model = self.sbml_document.getModel()
