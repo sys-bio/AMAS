@@ -13,11 +13,11 @@ INSTALL_REQUIRES = [
 def doSetup(install_requires):
   setup(
       name='AMAS-sb',
-      version='0.3.2',
+      version='1.0.0',
       author='Woosub Shin',
       author_email='woosubs@umich.edu',
       packages=find_packages(exclude=['tests', 'notebooks']),
-      url='https://github.com/woosubs/AMAS',
+      url='https://github.com/sys-bio/AMAS',
       description='AMAS (Automatic Model Annotation System)',
       long_description=open('README.md').read(),
       long_description_content_type='text/markdown',
