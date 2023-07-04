@@ -786,7 +786,11 @@ class Recommender(object):
     self.updateJustDisplayed(res_dict)
     return None
 
-  def recommendSpecies(self, ids=None, min_score=0.0):
+  def recommendSpecies(self,
+                       ids=None, 
+                       mssc='top',
+                       cutoff=0.0,
+                       outtype='table'):
     """
     Recommend one or more ids of species
     and returns a single dataframe or
@@ -796,30 +800,45 @@ class Recommender(object):
     ----------
     ids: str/list-str
         If None, will predict all
+
+    mssc: str
+        Match score selection criteria. 
   
-    min_score: threshold for cutoff
-        If None given, returns all values; 
+    cutoff: match score cutoff
+        If None given, returns all values.
+
+    outtype: str
+        Either 'table' or 'sbml'. 
+        'table' will return a pandas.DataFrame
+        'sbml' will return an sbml string
 
     Returns
     -------
-    None
+    : pd.DataFrame
     """
     self.updateCurrentElementType('species')
-  
     if isinstance(ids, str):
       species_list = [ids]
     elif ids is None:
       species_list = self.getSpeciesIDs()
     else:
       species_list = ids
-    res = self.getSpeciesListRecommendation(pred_ids=species_list,
-                                            get_df=True)
-    res_dict = {val:res[idx] for idx, val in enumerate(species_list)}
-    for k in res_dict.keys():
-      filt_df = self.filterDataFrameByThreshold(res_dict[k], min_score)
-      print(self.getMarkdownFromRecommendation(filt_df)+'\n')
-    self.updateJustDisplayed(res_dict)
-    return None
+    pred = self.getSpeciesListRecommendation(pred_ids=species_list,
+                                             mssc=mssc,
+                                             cutoff=cutoff,
+                                             get_df=True)
+    res = self.getRecomTable(element_type='species',
+                             recommended=pred)
+    # pred_dict = {val:pred[idx] for idx, val in enumerate(species_list)}
+    # dfs = []
+    # for k in pred_dict.keys():
+    #   one_df = pred_dict[k]
+    #   dfs.append(one_df)
+    #   print(self.getMarkdownFromRecommendation(one_df)+'\n')
+    # self.updateJustDisplayed(pred_dict)
+    # res = pd.concat(dfs)
+    # res.reset_index(inplace=True, drop=True)
+    return res
 
   def updateCurrentElementType(self, element_type):
     """
@@ -914,81 +933,109 @@ class Recommender(object):
       type_selection = self.selection[one_type]
       for k in type_selection.keys():
         print(self.getMarkdownFromRecommendation(type_selection[k])+"\n")
-
-  def saveToCSV(self, fpath="recommendation.csv"):
+ 
+  def getRecomTable(self,
+                    element_type,
+                    recommended):
     """
-    Save self.selection to csv.
+    Extend the dataframe using
+    results obtained by
+    self.get....ListRecommendation.
+    A new, extended dataframe will be
+    returned; to be either 
+    saved as CSV or shown to the user.   
 
     Parameters
     ----------
-    fpath: str
-        Path of the csv file to be saved. 
+    element_type: str
+        either 'species' or 'reaction'
+      
+    recommended: list-pandas.DataFrame
+        result of get....ListRecommendation method
+      
+    Returns
+    -------
+    :pandas.DataFrame
+        a single dataframe 
+        (not a list of dataframes)
     """
+    etype = element_type
     model = self.sbml_document.getModel()
     TYPE_EXISTING_ATTR = {'species': self.species.exist_annotation,
-                          'reaction': self.reactions.exist_annotation}
+                          'reaction': self.reactions.exist_annotation} 
     ELEMENT_FUNC = {'species': model.getSpecies,
                     'reaction': model.getReaction}
     TYPE_LABEL = {'species': cn.REF_CHEBI2LABEL,
                   'reaction': cn.REF_RHEA2LABEL}
     pd.set_option('display.max_colwidth', 255)
-    # edf: element_df
-    edfs = []    
-    for one_type in self.selection.keys():
-      type_selection = self.selection[one_type]
-      for k in list(type_selection.keys()):   
-        one_edf = type_selection[k]
-        if one_edf.shape[0] == 0:
-          continue
-        annotations = list(one_edf['annotation'])
-        match_scores = list(one_edf[cn.DF_MATCH_SCORE_COL])
-        labels = list(one_edf['label'])
-        # if there is existing annotation among predicted candidates;
-        if k in TYPE_EXISTING_ATTR[one_type].keys():
-          existings = [1 if val in TYPE_EXISTING_ATTR[one_type][k] else 0 \
-                       for idx, val in enumerate(one_edf['annotation'])]
-          upd_annotation = ['keep' if val in TYPE_EXISTING_ATTR[one_type][k] else 'ignore' \
-                            for idx, val in enumerate(one_edf['annotation'])]
-          annotation2add_raw = [val for val in TYPE_EXISTING_ATTR[one_type][k] \
-                                if val not in list(one_edf['annotation'])]
-          # only use existing annotation that exists in the label dictionaries
-          annotation2add = [val for val in annotation2add_raw \
-                            if val in TYPE_LABEL[one_type].keys()]
-
-        # if there doesn't exist existing annotation among predicted candidates;
-        else:
-          existings = [0] * len(annotations)
-          upd_annotation = ['ignore'] * len(annotations)
-          annotation2add = []
-        # handling existing annotations that were not predicted
-        for new_anot in annotation2add:
-          annotations.append(new_anot)
-          if one_type=='reaction':
-            match_scores.append(self.getMatchScoreOfRHEA(k, new_anot))
-            labels.append(cn.REF_RHEA2LABEL[new_anot])
-          elif one_type=='species':
-            match_scores.append(self.getMatchScoreOfCHEBI(k, new_anot))
-            labels.append(cn.REF_CHEBI2LABEL[new_anot])
-          existings.append(1)
-          upd_annotation.append('keep')
-        new_edf = pd.DataFrame({'type': [one_type]*len(annotations),
-                                'id': [k]*len(annotations),
-                                'display name': [ELEMENT_FUNC[one_type](k).name]*len(annotations),
-                                'meta id': [ELEMENT_FUNC[one_type](k).meta_id]*len(annotations),
-                                'annotation': annotations,
-                                'annotation label': labels,
-                                cn.DF_MATCH_SCORE_COL: match_scores,
-                                'existing': existings,
-                                cn.DF_UPDATE_ANNOTATION_COL: upd_annotation})
-        edfs.append(new_edf)
-    res = pd.concat(edfs)
+    edfs = []   
+    for one_edf in recommended:
+      element_id = one_edf.index.name
+      if one_edf.shape[0] == 0:
+        continue
+      annotations = list(one_edf['annotation'])
+      match_scores = list(one_edf[cn.DF_MATCH_SCORE_COL])
+      labels = list(one_edf['label'])
+      # if there is existing annotation among predicted candidates;
+      if element_id in TYPE_EXISTING_ATTR[etype].keys():
+        existings = [1 if val in TYPE_EXISTING_ATTR[etype][element_id] else 0 \
+                     for idx, val in enumerate(one_edf['annotation'])]
+        upd_annotation = ['keep' if val in TYPE_EXISTING_ATTR[etype][element_id] else 'ignore' \
+                          for idx, val in enumerate(one_edf['annotation'])]
+        annotation2add_raw = [val for val in TYPE_EXISTING_ATTR[etype][element_id] \
+                              if val not in list(one_edf['annotation'])]
+        # only use existing annotation that exists in the label dictionaries
+        annotation2add = [val for val in annotation2add_raw \
+                          if val in TYPE_LABEL[etype].keys()]  
+      # if there doesn't exist existing annotation among predicted candidates;
+      else:
+        existings = [0] * len(annotations)
+        upd_annotation = ['ignore'] * len(annotations)
+        annotation2add = []
+      # handling existing annotations that were not predicted
+      for new_anot in annotation2add:
+        annotations.append(new_anot)
+        if etype=='reaction':
+          match_scores.append(self.getMatchScoreOfRHEA(element_id, new_anot))
+          labels.append(cn.REF_RHEA2LABEL[new_anot])
+        elif etype=='species':
+          match_scores.append(self.getMatchScoreOfCHEBI(element_id, new_anot))
+          labels.append(cn.REF_CHEBI2LABEL[new_anot])
+        existings.append(1)
+        upd_annotation.append('keep')
+      new_edf = pd.DataFrame({'type': [etype]*len(annotations),
+                              'id': [element_id]*len(annotations),
+                              'display name': [ELEMENT_FUNC[etype](element_id).name]*len(annotations),
+                              'meta id': [ELEMENT_FUNC[etype](element_id).meta_id]*len(annotations),
+                              'annotation': annotations,
+                              'annotation label': labels,
+                              cn.DF_MATCH_SCORE_COL: match_scores,
+                              'existing': existings,
+                              cn.DF_UPDATE_ANNOTATION_COL: upd_annotation})
+      edfs.append(new_edf)
+    res = pd.concat(edfs, ignore_index=True)
     res.insert(0, 'file', self.fname)
-    # Write result to csv
-    res.to_csv(fpath, index=False) 
+    return res
+
+  def saveToCSV(self, obj,
+                fpath="recommendation.csv"):
+    """
+    Save a completed dataframe
+    to csv.
+
+    Parameters
+    ----------
+    obj: pandas.DataFrame
+        Object that can be saved to csv.
+
+    fpath: str
+        Path of the csv file to be saved. 
+    """
     # print summary; 
-    # Summary message
+    obj.to_csv(fpath, index=False) 
+    # print a summary message
     for one_type in ELEMENT_TYPES:
-      saved_elements = list(np.unique(res[res['type']==one_type]['id']))
+      saved_elements = list(np.unique(obj[obj['type']==one_type]['id']))
       self.printSummary(saved_elements, one_type)
 
   def saveToSBML(self,

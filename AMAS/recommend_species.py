@@ -58,14 +58,18 @@ def main():
   if len(filt_specs) == 0:
     print("No element found after the element filter.")
     return None
-  res = recom.getSpeciesListRecommendation(pred_ids=filt_specs, get_df=True)
-  for idx, one_df in enumerate(res):
-    filt_df = recom.autoSelectAnnotation(df=one_df,
-                                         cutoff=cutoff,
-                                         mssc=mssc)
-    recom.updateSelection(filt_specs[idx], filt_df)
+  res = recom.getSpeciesListRecommendation(pred_ids=filt_specs,
+                                           get_df=True,
+                                           mssc=mssc,
+                                           cutoff=cutoff)
+  res_tab = recom.getRecomTable(res)
+  # for idx, one_df in enumerate(res):
+  #   filt_df = recom.autoSelectAnnotation(df=one_df,
+  #                                        cutoff=cutoff,
+  #                                        mssc=mssc)
+  #   recom.updateSelection(filt_specs[idx], filt_df)
   # save file to csv
-  recom.saveToCSV(outfile)
+  recom.saveToCSV(res_tab, outfile)
   print("Recommendations saved as:\n%s\n" % os.path.abspath(outfile))
 
 

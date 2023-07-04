@@ -204,9 +204,14 @@ class TestRecommender(unittest.TestCase):
     mock_print.assert_called_once_with(RESULT_MARKDOWN_SAMdc) 
 
   def testRecommendSpecies(self):
-    with patch("builtins.print") as mock_print:
-      self.recom.recommendSpecies(ids=['A'])  
-    mock_print.assert_called_once_with(RESULT_MARKDOWN_A) 
+    inp_species = [SPECIES_SAM, SPECIES_ORN]
+    recomt = self.recom.recommendSpecies(ids=inp_species)
+    self.assertEqual(len(recomt.columns), 10)
+    self.assertTrue('UPDATE ANNOTATION' in recomt.columns)
+    self.assertEqual(recomt.shape, (4,10))
+    self.assertEqual(set(recomt['id']), set(inp_species))
+    self.assertEqual(set(recomt['UPDATE ANNOTATION']),
+                     {'keep', 'ignore'})
 
   def testUpdateCurrentElementType(self):
     self.recom.updateCurrentElementType(element_type='species')
@@ -244,15 +249,30 @@ class TestRecommender(unittest.TestCase):
     res_str = self.recom.getMarkdownFromRecommendation(df)+"\n"  
     mock_print.assert_called_once_with(res_str)
 
+  def testGetRecomTable(self):
+    inp_species = [SPECIES_SAM, SPECIES_ORN]
+    df = self.recom.getSpeciesListRecommendation(pred_ids=inp_species,
+                                                 get_df=True)
+    recomt = self.recom.getRecomTable('species', df)
+    self.assertEqual(len(recomt.columns), 10)
+    self.assertTrue('UPDATE ANNOTATION' in recomt.columns)
+    self.assertEqual(recomt.shape, (4,10))
+    self.assertEqual(set(recomt['id']), set(inp_species))
+    self.assertEqual(set(recomt['UPDATE ANNOTATION']),
+                     {'keep', 'ignore'})
+
   def testSaveToCSV(self):
-    one_dict = {'annotation':['CHEBI:15414'],
-                'match score': [1.0],
-                'label': ['S-adenosyl-L-methionine']}
-    one_df = pd.DataFrame(one_dict)
-    one_df.index = [2]
-    one_df.index.name = 'SAM'
-    self.recom.selection['species'] = {'SAM': one_df}
-    self.recom.saveToCSV("test.csv")
+    # one_dict = {'annotation':['CHEBI:15414'],
+    #             'match score': [1.0],
+    #             'label': ['S-adenosyl-L-methionine']}
+    # one_df = pd.DataFrame(one_dict)
+    # one_df.index = [2]
+    # one_df.index.name = 'SAM'
+    # self.recom.selection['species'] = {'SAM': one_df}
+    df = self.recom.getSpeciesListRecommendation(pred_ids=['SAM'],
+                                                 get_df=True)
+    res = self.recom.getRecomTable('species', df)
+    self.recom.saveToCSV(res, "test.csv")
     new_df = pd.read_csv("test.csv")
     self.assertEqual(new_df.loc[0, 'file'], 'BIOMD0000000190.xml')
     self.assertEqual(new_df.loc[0, 'type'], 'species')
