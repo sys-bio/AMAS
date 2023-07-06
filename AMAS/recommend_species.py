@@ -63,11 +63,6 @@ def main():
                                            mssc=mssc,
                                            cutoff=cutoff)
   res_tab = recom.getRecomTable(res)
-  # for idx, one_df in enumerate(res):
-  #   filt_df = recom.autoSelectAnnotation(df=one_df,
-  #                                        cutoff=cutoff,
-  #                                        mssc=mssc)
-  #   recom.updateSelection(filt_specs[idx], filt_df)
   # save file to csv
   recom.saveToCSV(res_tab, outfile)
   print("Recommendations saved as:\n%s\n" % os.path.abspath(outfile))

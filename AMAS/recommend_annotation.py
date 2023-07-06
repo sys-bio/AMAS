@@ -89,18 +89,12 @@ def main():
       # match score of reactions using that species
       adj_match_score = np.mean(list(itertools.chain(*[[cand[1] for cand in val.candidates] \
                         for val in filt_res_reac])))
-      # credibility
       cands = res_iter[one_spec]
       adj_formulas = list(set([cn.REF_CHEBI2FORMULA[k] \
                                for k in cands if k in cn.REF_CHEBI2FORMULA.keys()]))
-      # adj_cred = sa.SPECIES_RF.predict_proba([[len(recom.species.getNameToUse(one_spec)),
-      #                                          len(cands),
-      #                                          adj_match_score,
-      #                                          len(adj_formulas)]])[0][1]
       urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in cands]
       labels = [cn.REF_CHEBI2LABEL[val] for val in cands]
       adj_recom = cn.Recommendation(one_spec,
-                                    # np.round(adj_cred, cn.ROUND_DIGITS),
                                     [(val, adj_match_score) for val in cands],
                                     urls,
                                     labels)

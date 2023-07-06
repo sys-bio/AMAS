@@ -15,6 +15,7 @@ from AMAS import recommender
 from AMAS import species_annotation as sa
 from AMAS import tools
 
+BIOMD_17_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000017.xml')
 BIOMD_190_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000190.xml')
 BIOMD_634_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000634.xml')
 E_COLI_PATH = os.path.join(cn.TEST_DIR, 'e_coli_core.xml')
@@ -197,11 +198,20 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(list(np.unique(res1[cn.DF_MATCH_SCORE_COL])), [0.6])
     self.assertEqual(list(np.unique(res2[cn.DF_MATCH_SCORE_COL])), [])
 
-  def testRecommendReaction(self):
-    # use the default setting
+  def testRecommendReactions(self):
+    inp_reactions = [REACTION_ODC, REACTION_SAMDC]
+    recomt = self.recom.recommendReactions(ids=inp_reactions)
+    self.assertEqual(len(recomt.columns), 10)
+    self.assertTrue('UPDATE ANNOTATION' in recomt.columns)
+    self.assertEqual(recomt.shape, (4,10))
+    self.assertEqual(set(recomt['id']), set(inp_reactions))
+    self.assertEqual(set(recomt['UPDATE ANNOTATION']),
+                     {'keep', 'ignore'})
     with patch("builtins.print") as mock_print:
-      self.recom.recommendReaction(ids=['SAMdc'])  
-    mock_print.assert_called_once_with(RESULT_MARKDOWN_SAMdc) 
+      recomt2 = self.recom.recommendReactions(ids=inp_reactions,
+                                              min_len=10000)
+    res_str = 'No reaction after the element filter.'
+    mock_print.assert_called_once_with(res_str)
 
   def testRecommendSpecies(self):
     inp_species = [SPECIES_SAM, SPECIES_ORN]
@@ -212,6 +222,11 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(set(recomt['id']), set(inp_species))
     self.assertEqual(set(recomt['UPDATE ANNOTATION']),
                      {'keep', 'ignore'})
+    with patch("builtins.print") as mock_print:
+      recomt2 = self.recom.recommendSpecies(ids=inp_species,
+                                            min_len=10000)
+    res_str = 'No species after the element filter.'
+    mock_print.assert_called_once_with(res_str)
 
   def testUpdateCurrentElementType(self):
     self.recom.updateCurrentElementType(element_type='species')
@@ -261,14 +276,22 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(set(recomt['UPDATE ANNOTATION']),
                      {'keep', 'ignore'})
 
+  def testOptimizePrediction(self):
+    recom17 = recommender.Recommender(libsbml_fpath=BIOMD_17_PATH)   
+    specs = recom17.getSpeciesIDs()
+    res_spec = recom17.getSpeciesListRecommendation(pred_ids=specs)
+    reacts = recom17.getReactionIDs() 
+    res_reac = recom17.getReactionListRecommendation(pred_ids=reacts,
+                                                     spec_res=res_spec)
+    opt_spec_recom, opt_reac_recom = recom17.optimizePrediction(pred_spec=res_spec,
+                                                                pred_reac=res_reac,
+                                                                reactions_to_update=reacts)
+    aceto_prev = [val for val in res_spec if val.id == 'AcetoinIn'][0]
+    aceto_fin = [val for val in opt_spec_recom if val.id == 'AcetoinIn'][0]
+    self.assertEqual(aceto_prev.candidates[0][0], 'CHEBI:2430')
+    self.assertEqual(aceto_fin.candidates[0][0], 'CHEBI:15378')
+ 
   def testSaveToCSV(self):
-    # one_dict = {'annotation':['CHEBI:15414'],
-    #             'match score': [1.0],
-    #             'label': ['S-adenosyl-L-methionine']}
-    # one_df = pd.DataFrame(one_dict)
-    # one_df.index = [2]
-    # one_df.index.name = 'SAM'
-    # self.recom.selection['species'] = {'SAM': one_df}
     df = self.recom.getSpeciesListRecommendation(pred_ids=['SAM'],
                                                  get_df=True)
     res = self.recom.getRecomTable('species', df)

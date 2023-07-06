@@ -743,12 +743,13 @@ class Recommender(object):
     filt_df = df.loc[filt_idx, :]  
     return filt_df
 
-  def recommendReaction(self,
-                        ids=None,
-                        mssc='top',
-                        cutoff=0.0):
+  def recommendReactions(self,
+                         ids=None,
+                         min_len=0,
+                         mssc='top',
+                         cutoff=0.0):
     """
-    Recommend one or more ids of species
+    Recommend one or more ids of reactions
     and returns a single dataframe or
     a list of dataframes.
   
@@ -756,6 +757,10 @@ class Recommender(object):
     ----------
     ids: str/list-str
         If None, recommend all reactionos.
+
+    min_len: int
+        Minimum number of reaction components
+        to be returned for results
 
     mssc: str
         match score selection criteria.
@@ -770,24 +775,27 @@ class Recommender(object):
     """
     self.updateCurrentElementType('reaction')
     if isinstance(ids, str):
-      reaction_list = [ids]
+      reacs = [ids]
     elif ids is None:
-      reaction_list = self.getReactionIDs()
+      reacs = self.getReactionIDs()
     else:
-      reaction_list = ids
-    res = self.getReactionListRecommendation(pred_ids=reaction_list,
-                                             mssc=mssc,
-                                             cutoff=cutoff,
-                                             get_df=True)
-    res_dict = {val:res[idx] for idx, val in enumerate(reaction_list)}
-    for k in res_dict.keys():
-      filt_df = self.filterDataFrameByThreshold(res_dict[k], cutoff)
-      print(self.getMarkdownFromRecommendation(filt_df)+"\n")
-    self.updateJustDisplayed(res_dict)
-    return None
+      reacs = ids
+    filt_reacs = [val for val in reacs \
+                  if len(self.reactions.reaction_components[val])>=min_len]
+    if len(filt_reacs) == 0:
+      print("No reaction after the element filter.")
+      return None
+    pred  = self.getReactionListRecommendation(pred_ids=filt_reacs,
+                                               mssc=mssc,
+                                               cutoff=cutoff,
+                                               get_df=True)
+    res = self.getRecomTable(element_type='reaction',
+                             recommended=pred)
+    return res
 
   def recommendSpecies(self,
                        ids=None, 
+                       min_len=0,
                        mssc='top',
                        cutoff=0.0,
                        outtype='table'):
@@ -800,6 +808,10 @@ class Recommender(object):
     ----------
     ids: str/list-str
         If None, will predict all
+
+    min_len: int
+        Minimum length of species name
+        to be returned for results
 
     mssc: str
         Match score selection criteria. 
@@ -818,33 +830,29 @@ class Recommender(object):
     """
     self.updateCurrentElementType('species')
     if isinstance(ids, str):
-      species_list = [ids]
+      specs = [ids]
     elif ids is None:
-      species_list = self.getSpeciesIDs()
+      specs = self.getSpeciesIDs()
     else:
-      species_list = ids
-    pred = self.getSpeciesListRecommendation(pred_ids=species_list,
+      specs = ids
+    filt_specs = [val for val in specs \
+                  if len(self.species.getNameToUse(val))>=min_len]
+    if len(filt_specs) == 0:
+      print("No species after the element filter.")
+      return None
+    pred = self.getSpeciesListRecommendation(pred_ids=filt_specs,
                                              mssc=mssc,
                                              cutoff=cutoff,
                                              get_df=True)
     res = self.getRecomTable(element_type='species',
                              recommended=pred)
-    # pred_dict = {val:pred[idx] for idx, val in enumerate(species_list)}
-    # dfs = []
-    # for k in pred_dict.keys():
-    #   one_df = pred_dict[k]
-    #   dfs.append(one_df)
-    #   print(self.getMarkdownFromRecommendation(one_df)+'\n')
-    # self.updateJustDisplayed(pred_dict)
-    # res = pd.concat(dfs)
-    # res.reset_index(inplace=True, drop=True)
     return res
 
   def updateCurrentElementType(self, element_type):
     """
     Updating self.current_type
     indicator; updated when
-    recommendSpecies or recommendReaction 
+    recommendSpecies or recommendReactions
     is called; 
   
     Parameters
@@ -859,7 +867,7 @@ class Recommender(object):
     Used it every time
     result is shown to user.
     called by 
-    /recommendSpecies/recommendReaction/
+    /recommendSpecies/recommendReactions/
     /selectAnnotation/
     For now, always in the format as
     pandas.DataFrame. 
@@ -1016,6 +1024,64 @@ class Recommender(object):
     res = pd.concat(edfs, ignore_index=True)
     res.insert(0, 'file', self.fname)
     return res
+
+  def optimizePrediction(self,
+                         pred_spec,
+                         pred_reac,
+                         reactions_to_update):
+    """
+    Optimize prediction using iteration.
+  
+    Parameters
+    ----------
+    pred_spec: list-Recommendation
+
+    pred_reac: list-Recommendation
+  
+    reactions_to_update: list
+        IDs of reactions
+      
+    Returns
+    -------
+    fin_spec_recom: Recommendation (namedtuple)
+    
+    fin_reac_recom: Recommendation (namedtuple)
+    """
+    cur_form = dict()
+    for one_rec in pred_spec:
+      cur_cands = [val[0] for val in one_rec.candidates]
+      one_form = list(set([cn.REF_CHEBI2FORMULA[k] \
+                        for k in cur_cands if k in cn.REF_CHEBI2FORMULA.keys()]))
+      cur_form[one_rec.id] = one_form
+    anot_iter = it.Iterator(cur_spec_formula=cur_form,
+                            reaction_cl=self.reactions,
+                            reactions_to_update=reactions_to_update)
+    res_iter = anot_iter.match()
+    recoms_tobe_added = []
+    for one_spec in res_iter.keys():
+      pred_reacs = [val.id for val in pred_reac]
+      reacs_using_one_spec = [val for val in pred_reacs \
+                              if one_spec in self.reactions.reaction_components[val]]
+      filt_pred_reac = [val for val in pred_reac if val.id in reacs_using_one_spec]
+      # match score of reactions using that species
+      adj_match_score = np.mean(list(itertools.chain(*[[cand[1] for cand in val.candidates] \
+                                for val in filt_pred_reac])))
+      cands = res_iter[one_spec]
+      adj_formulas = list(set([cn.REF_CHEBI2FORMULA[k] \
+                               for k in cands if k in cn.REF_CHEBI2FORMULA.keys()]))
+      urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in cands]
+      labels = [cn.REF_CHEBI2LABEL[val] for val in cands]
+      adj_recom = cn.Recommendation(one_spec,
+                                    [(val, adj_match_score) for val in cands],
+                                     urls,
+                                     labels)
+      recoms_tobe_added.append(adj_recom)
+    fin_spec_recom = recoms_tobe_added + \
+                   [val for val in pred_spec if val.id not in res_iter.keys()]
+    fin_reac_recom = self.getReactionListRecommendation(pred_ids=reactions_to_update,
+                                                        spec_res=fin_spec_recom)
+    return fin_spec_recom, fin_reac_recom
+
 
   def saveToCSV(self, obj,
                 fpath="recommendation.csv"):
