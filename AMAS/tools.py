@@ -109,6 +109,27 @@ def extractRheaFromAnnotationString(inp_str):
   return list(set(map_rhea_bis + map_kegg2rhea + map_ec2rhea))
 
 
+def formatRhea(one_rhea):
+  """
+  Format rhea values; 
+  if 'RHEA:' is not in the name,
+  add it; if not, ignore it
+  
+  Parameters
+  ----------
+  str: one_rhea
+  
+  Returns
+  -------
+  :str
+  """
+  if one_rhea[:4].lower() == 'rhea':
+    str_to_add = one_rhea[5:] 
+  else:
+    str_to_add = one_rhea
+  return cn.RHEA_HEADER + str_to_add
+
+
 def getOntologyFromString(string_annotation,
                           bqbiol_qualifiers=['is', 'isVersionOf']):
   """

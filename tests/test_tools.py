@@ -68,6 +68,11 @@ class TestFunctions(unittest.TestCase):
     one_list_rhea = tools.extractExistingRheaFromAnnotationString(inp_str=one_str)
     self.assertEqual(one_list_rhea, CREATINEKINASE_ANNOTATION)
 
+  def testFormatRhea(self):
+    self.assertEqual(tools.formatRhea('12344'), 'RHEA:12344')
+    self.assertEqual(tools.formatRhea('RHEA:12344'), 'RHEA:12344')
+    self.assertEqual(tools.formatRhea('RhEa:12344'), 'RHEA:12344')
+
   def testGetOntologyFromString(self):
     filt_annotation = tools.getOntologyFromString(string_annotation=self.annotation)
     self.assertTrue((cn.EC, '2.7.3.2') in filt_annotation)

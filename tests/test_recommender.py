@@ -276,6 +276,17 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(set(recomt['UPDATE ANNOTATION']),
                      {'keep', 'ignore'})
 
+  def testGetSBMLDocument(self):
+    pred = self.recom.recommendSpecies(ids=None,
+                                       mssc='top',
+                                       cutoff=0.0)
+    res_doc = self.recom.getSBMLDocument(sbml_document=self.recom.sbml_document,
+                                         chosen=pred,
+                                         auto_feedback=True)
+    model = res_doc.getModel()
+    upd_spec_anot = tools.extractExistingSpeciesAnnotation(model)
+    self.assertEqual(set(upd_spec_anot['SAM']), {'CHEBI:15414', 'CHEBI:59789'})
+
   def testOptimizePrediction(self):
     recom17 = recommender.Recommender(libsbml_fpath=BIOMD_17_PATH)   
     specs = recom17.getSpeciesIDs()

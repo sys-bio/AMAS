@@ -93,7 +93,6 @@ class Recommender(object):
                        cn.DF_MATCH_SCORE_COL:match_scores,
                        'label':labels},
                        index=[1+val for val in list(range(len(cands)))])
-    # df.index.name = '%s (cred. %.3f)' % (rec.id ,rec.credibility)
     df.index.name = rec.id
     if show_url:
       urls = rec.urls
@@ -127,7 +126,6 @@ class Recommender(object):
     else:
       df = self.getDataFrameFromRecommendation(rec, show_url)
       rec_id = rec.id
-      # rec_credibility = rec.credibility
     # In markdown, title is shown separately,
     # so index name with element ID is removed; 
     df.index.name=None
@@ -135,7 +133,6 @@ class Recommender(object):
     # Centering and adding the title 
     len_first_line = len(df_str.split('\n')[0])
     title_line = rec_id
-    # title_line = "%s (credibility score: %.03f)" % (rec_id,  rec_credibility)
     title_line = title_line.center(len_first_line)
     df_str = title_line + '\n' + df_str
     return df_str
@@ -747,7 +744,8 @@ class Recommender(object):
                          ids=None,
                          min_len=0,
                          mssc='top',
-                         cutoff=0.0):
+                         cutoff=0.0,
+                         outtype='table'):
     """
     Recommend one or more ids of reactions
     and returns a single dataframe or
@@ -768,6 +766,11 @@ class Recommender(object):
 
     cutoff: float
         MSSC cutoff
+
+    outtype: str
+        Either 'table' or 'sbml'. 
+        'table' will return a pandas.DataFrame
+        'sbml' will return an sbml string
 
     Returns
     -------
@@ -1025,6 +1028,60 @@ class Recommender(object):
     res.insert(0, 'file', self.fname)
     return res
 
+  def getSBMLDocument(self,
+                      sbml_document,
+                      chosen,
+                      auto_feedback=False):
+    """
+    Create an updated SBML document 
+    based on the feedback.
+    If auto_feedback is True, 
+    replace 'ignore' with 'add'
+    and subsequently update the file. 
+  
+    Parameters
+    ----------
+    sbml_document: libsbml.SBMLDocument
+  
+    chosen: pandas.DataFrame
+  
+    Returns
+    -------
+    str
+        SBML document
+    """
+    model = sbml_document.getModel()
+    if auto_feedback:
+      chosen.replace('ignore', 'add', inplace=True)
+    ELEMENT_FUNC = {'species': model.getSpecies,
+                    'reaction': model.getReaction}
+    element_types = list(np.unique(chosen['type']))
+    for one_type in element_types:
+      maker = am.AnnotationMaker(one_type)
+      ACTION_FUNC = {'delete': maker.deleteAnnotation,
+                     'add': maker.addAnnotation}
+      df_type = chosen[chosen['type']==one_type]
+      uids = list(np.unique(df_type['id']))
+      meta_ids = {val:list(df_type[df_type['id']==val]['meta id'])[0] for val in uids}
+      # going through one id at a time
+      for one_id in uids:
+        orig_str = ELEMENT_FUNC[one_type](one_id).getAnnotationString()
+        df_id = df_type[df_type['id']==one_id]
+        dels = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='delete'].loc[:, 'annotation'])
+        adds_raw = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='add'].loc[:, 'annotation'])
+        # existing annotations to be kept 
+        keeps = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='keep'].loc[:, 'annotation'])
+        adds = list(set(adds_raw + keeps))
+        # if type is 'reaction', need to map rhea terms back to ec/kegg terms to delete them. 
+        if one_type == 'reaction':
+          rhea_del_terms = list(set(itertools.chain(*[tools.getAssociatedTermsToRhea(val) for val in dels])))
+          deled = maker.deleteAnnotation(rhea_del_terms, orig_str)
+        elif one_type == 'species':
+          deled = maker.deleteAnnotation(dels, orig_str)
+        added = maker.addAnnotation(adds, deled, meta_ids[one_id])
+        ELEMENT_FUNC[one_type](one_id).setAnnotation(added)
+    return sbml_document
+
   def optimizePrediction(self,
                          pred_spec,
                          pred_reac,
@@ -1081,7 +1138,6 @@ class Recommender(object):
     fin_reac_recom = self.getReactionListRecommendation(pred_ids=reactions_to_update,
                                                         spec_res=fin_spec_recom)
     return fin_spec_recom, fin_reac_recom
-
 
   def saveToCSV(self, obj,
                 fpath="recommendation.csv"):
