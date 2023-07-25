@@ -95,7 +95,7 @@ def extractRheaFromAnnotationString(inp_str):
   -------
   list-str
   """
-  exist_rheas = [cn.RHEA_HEADER+val for val in getQualifierFromString(inp_str, cn.RHEA)]
+  exist_rheas = [formatRhea(val) for val in getQualifierFromString(inp_str, cn.RHEA)]
   map_rhea_bis = [cn.REF_RHEA2MASTER[val] for val in exist_rheas if val in cn.REF_RHEA2MASTER.keys()]
 
   exist_keggs = [cn.KEGG_HEADER+val for val in getQualifierFromString(inp_str, cn.KEGG_REACTION)]

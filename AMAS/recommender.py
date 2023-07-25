@@ -99,6 +99,42 @@ class Recommender(object):
       df['url'] = urls
     return df
 
+
+  def getRecommendationFromDataFrame(self,
+                                     df):
+    """
+    Convert dataframe back to
+    namedtuple Recommendation.
+    WARNING: it may not work with 
+    empty dataframe, so be careful.
+  
+    Parameters
+    ----------
+    df: pandas.DataFrame
+
+    element_type: str
+        'species' or 'reaction'
+  
+    Returns
+    -------
+    Recommendation (namedtuple)
+    """
+    cands_tups = list(zip(df['annotation'], df['match score']))
+    one_annotation = cands_tups[0][0]
+    # indicating species
+    if one_annotation[:4] == 'CHEB':
+      default_url = cn.CHEBI_DEFAULT_URL
+      url_digit = 6
+    # indicating reaction
+    elif one_annotation[:4] == 'RHEA':
+      default_url = cn.RHEA_DEFAULT_URL
+      url_digit = 5
+    return cn.Recommendation(df.index.name,
+                             list(zip(df['annotation'], df['match score'])),
+                             [default_url + val[url_digit:] for val in df['annotation']],
+                             list(df['label']))
+
+
   def getMarkdownFromRecommendation(self,
                                     rec,
                                     show_url=False):
@@ -768,7 +804,7 @@ class Recommender(object):
         MSSC cutoff
 
     outtype: str
-        Either 'table' or 'sbml'. 
+        Either 'table' or 'sbml'.
         'table' will return a pandas.DataFrame
         'sbml' will return an sbml string
 
@@ -792,8 +828,9 @@ class Recommender(object):
                                                mssc=mssc,
                                                cutoff=cutoff,
                                                get_df=True)
-    res = self.getRecomTable(element_type='reaction',
-                             recommended=pred)
+    if outtype == 'table':
+      res = self.getRecomTable(element_type='reaction',
+                               recommended=pred)
     return res
 
   def recommendSpecies(self,
@@ -823,7 +860,7 @@ class Recommender(object):
         If None given, returns all values.
 
     outtype: str
-        Either 'table' or 'sbml'. 
+        Either 'table' or 'sbml'.
         'table' will return a pandas.DataFrame
         'sbml' will return an sbml string
 
@@ -847,8 +884,9 @@ class Recommender(object):
                                              mssc=mssc,
                                              cutoff=cutoff,
                                              get_df=True)
-    res = self.getRecomTable(element_type='species',
-                             recommended=pred)
+    if outtype == 'table':
+      res = self.getRecomTable(element_type='species',
+                               recommended=pred)
     return res
 
   def updateCurrentElementType(self, element_type):

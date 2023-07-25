@@ -84,6 +84,12 @@ class TestRecommender(unittest.TestCase):
                                                    show_url=False)
     self.assertEqual(set(df.index), {1,2})
 
+  def testGetRecommendationFromDataFrame(self):
+    df = self.recom.getDataFrameFromRecommendation(rec=RESULT_RECOM,
+                                                   show_url=False)
+    rec = self.recom.getRecommendationFromDataFrame(df)
+    self.assertEqual(rec, RESULT_RECOM)
+
   def testGetMarkdownFromRecommendation(self):
     res = self.recom.getMarkdownFromRecommendation(rec=RESULT_RECOM,
                                                    show_url=False)
