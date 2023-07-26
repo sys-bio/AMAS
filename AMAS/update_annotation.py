@@ -17,7 +17,7 @@ import sys
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
 from AMAS import constants as cn
-from AMAS import annotation_maker as am
+from AMAS import annotation_mak er as am
 from AMAS import tools
 
 def main():

@@ -1170,7 +1170,16 @@ class Recommender(object):
         adds_raw = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='add'].loc[:, 'annotation'])
         # existing annotations to be kept 
         keeps = list(df_id[df_id[cn.DF_UPDATE_ANNOTATION_COL]=='keep'].loc[:, 'annotation'])
-        adds = list(set(adds_raw + keeps))
+        # TODO: remove RHEA
+        adds_raw = list(set(adds_raw + keeps))
+        adds = []
+        for one_add in adds_raw:
+          # if it is rhea, only store number
+          if one_add[:4].lower()=='rhea':
+            adds.append(one_add[5:])
+          # if it is else, store as it is
+          else:
+            adds.append(one_add)
         # if type is 'reaction', need to map rhea terms back to ec/kegg terms to delete them. 
         if one_type == 'reaction':
           rhea_del_terms = list(set(itertools.chain(*[tools.getAssociatedTermsToRhea(val) for val in dels])))
@@ -1274,64 +1283,70 @@ class Recommender(object):
         saved_elements = list(np.unique(obj[obj['type']==one_type]['id']))
         self.printSummary(saved_elements, one_type)
 
-  def saveToSBML(self,
-                 fpath='model_amas_annotations.xml',
-                 option='augment'):
-    """
-    Update and save model;
-    How to distinguish species vs. reactions? 
-    by using self.current_element_type.
+  # def saveToSBML(self,
+  #                fpath='model_amas_annotations.xml',
+  #                option='augment'):
+  #   """
+  #   Update and save model;
+  #   How to distinguish species vs. reactions? 
+  #   by using self.current_element_type.
 
-    If option is 'augment',
-    it'll add candidate annotations to 
-    existing annotation string.
-    If option is 'replace',
-    create a new annotation string and
-    replace whatevers exists.
-    Default to 'augment'.  
+  #   If option is 'augment',
+  #   it'll add candidate annotations to 
+  #   existing annotation string.
+  #   If option is 'replace',
+  #   create a new annotation string and
+  #   replace whatevers exists.
+  #   Default to 'augment'.  
   
-    Call annotation maker;
+  #   Call annotation maker;
   
-    Parameters
-    ----------
-    fpath: str
-        Path to save file
+  #   Parameters
+  #   ----------
+  #   fpath: str
+  #       Path to save file
 
-    option: str
-        Either 'augment' or 'replace'
-    """
-    model = self.sbml_document.getModel()
-    ELEMENT_FUNC = {'species': model.getSpecies,
-                    'reaction': model.getReaction}
-    # dictionary with empty lists; 
-    saved_elements = {k:[] for k in ELEMENT_TYPES}
-    for one_type in ELEMENT_TYPES:
-      type_selection = self.selection[one_type]
-      maker = am.AnnotationMaker(one_type)
-      sel2save = type_selection
-      for one_k in sel2save.keys():
-        one_element = ELEMENT_FUNC[one_type](one_k)
-        meta_id = one_element.meta_id
-        df = sel2save[one_k]
-        cands2save = list(df['annotation'])
-        if cands2save:
-          if option == 'augment':
-            orig_annotation = one_element.getAnnotationString()
-            annotation_str = maker.addAnnotation(cands2save,
-                                                 orig_annotation,
-                                                 meta_id)
-          elif option == 'replace':
-            annotation_str = maker.getAnnotationString(cands2save, meta_id)
-          one_element.setAnnotation(annotation_str)
-          saved_elements[one_type].append(one_k)
-        else:
-          continue
-    # finally, write the sbml document 
-    libsbml.writeSBMLToFile(self.sbml_document, fpath)
+  #   option: str
+  #       Either 'augment' or 'replace'
+  #   """
+  #   model = self.sbml_document.getModel()
+  #   ELEMENT_FUNC = {'species': model.getSpecies,
+  #                   'reaction': model.getReaction}
+  #   # dictionary with empty lists; 
+  #   saved_elements = {k:[] for k in ELEMENT_TYPES}
+  #   for one_type in ELEMENT_TYPES:
+  #     type_selection = self.selection[one_type]
+  #     maker = am.AnnotationMaker(one_type)
+  #     sel2save = type_selection
+  #     for one_k in sel2save.keys():
+  #       one_element = ELEMENT_FUNC[one_type](one_k)
+  #       meta_id = one_element.meta_id
+  #       df = sel2save[one_k]
+  #       # cands2save = list(df['annotation'])
+  #       cands2save = []
+  #       for val2save in list(df['annotation']):
+  #         if val2save[:4].lower() == 'rhea':
+  #           cands2save.append(val2save[5:])
+  #         else:
+  #           cands2save.append(val2save)
+  #       if cands2save:
+  #         if option == 'augment':
+  #           orig_annotation = one_element.getAnnotationString()
+  #           annotation_str = maker.addAnnotation(cands2save,
+  #                                                orig_annotation,
+  #                                                meta_id)
+  #         elif option == 'replace':
+  #           annotation_str = maker.getAnnotationString(cands2save, meta_id)
+  #         one_element.setAnnotation(annotation_str)
+  #         saved_elements[one_type].append(one_k)
+  #       else:
+  #         continue
+  #   # finally, write the sbml document 
+  #   libsbml.writeSBMLToFile(self.sbml_document, fpath)
 
-    # Summary message
-    for one_type in ELEMENT_TYPES:
-      self.printSummary(saved_elements[one_type], one_type)
+  #   # Summary message
+  #   for one_type in ELEMENT_TYPES:
+  #     self.printSummary(saved_elements[one_type], one_type)
 
   def printSummary(self, saved, element_type):
     """

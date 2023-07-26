@@ -331,18 +331,18 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(new_df.loc[0,  cn.DF_UPDATE_ANNOTATION_COL], 'keep')
     os.remove("test.csv")
 
-  def testSaveToSBML(self):
-    one_dict = {'annotation':['CHEBI:15414'],
-                'match score': [1.0],
-                'label': ['S-adenosyl-L-methionine']}
-    one_df = pd.DataFrame(one_dict)
-    one_df.index = [2]
-    one_df.index.name = 'SAM'
-    self.recom.selection['species'] = {SPECIES_SAM: one_df}
-    self.recom.saveToSBML("test_sbml.xml")
-    recom2 = recommender.Recommender(libsbml_fpath='test_sbml.xml')
-    self.assertEqual(recom2.species.exist_annotation[SPECIES_SAM], ['CHEBI:15414'])
-    os.remove("test_sbml.xml")
+  # def testSaveToSBML(self):
+  #   one_dict = {'annotation':['CHEBI:15414'],
+  #               'match score': [1.0],
+  #               'label': ['S-adenosyl-L-methionine']}
+  #   one_df = pd.DataFrame(one_dict)
+  #   one_df.index = [2]
+  #   one_df.index.name = 'SAM'
+  #   self.recom.selection['species'] = {SPECIES_SAM: one_df}
+  #   self.recom.saveToSBML("test_sbml.xml")
+  #   recom2 = recommender.Recommender(libsbml_fpath='test_sbml.xml')
+  #   self.assertEqual(recom2.species.exist_annotation[SPECIES_SAM], ['CHEBI:15414'])
+  #   os.remove("test_sbml.xml")
 
   def testPrintSummary(self):
     with patch("builtins.print") as mock_print:
