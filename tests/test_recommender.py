@@ -78,6 +78,7 @@ RESULT_MARKDOWN_A = '                               A                           
 class TestRecommender(unittest.TestCase):
   def setUp(self):
     self.recom = recommender.Recommender(libsbml_fpath=BIOMD_190_PATH)
+    self.recom17 = recommender.Recommender(libsbml_fpath=BIOMD_17_PATH)  
 
   def testGetDataFrameFromRecommendation(self):
     df = self.recom.getDataFrameFromRecommendation(rec=RESULT_RECOM,
@@ -219,6 +220,16 @@ class TestRecommender(unittest.TestCase):
     res_str = 'No reaction after the element filter.'
     mock_print.assert_called_once_with(res_str)
 
+  def testRecommendAnnotation(self): 
+    one_res = self.recom17.recommendAnnotation(optimize=False)
+    one_sub_df = one_res[one_res['id']=='AcetoinIn']
+    self.assertTrue('CHEBI:2430' in set(one_sub_df['annotation']))
+    self.assertTrue('CHEBI:15688' in set(one_sub_df['annotation']))
+    two_res = self.recom17.recommendAnnotation(optimize=True)
+    two_sub_df = two_res[two_res['id']=='AcetoinIn']
+    self.assertTrue('CHEBI:15378' in set(two_sub_df['annotation']))
+    self.assertTrue('CHEBI:15688' in set(two_sub_df['annotation']))
+
   def testRecommendSpecies(self):
     inp_species = [SPECIES_SAM, SPECIES_ORN]
     recomt = self.recom.recommendSpecies(ids=inp_species)
@@ -293,16 +304,15 @@ class TestRecommender(unittest.TestCase):
     upd_spec_anot = tools.extractExistingSpeciesAnnotation(model)
     self.assertEqual(set(upd_spec_anot['SAM']), {'CHEBI:15414', 'CHEBI:59789'})
 
-  def testOptimizePrediction(self):
-    recom17 = recommender.Recommender(libsbml_fpath=BIOMD_17_PATH)   
-    specs = recom17.getSpeciesIDs()
-    res_spec = recom17.getSpeciesListRecommendation(pred_ids=specs,
-                                                    get_df=True)
-    reacts = recom17.getReactionIDs() 
-    res_reac = recom17.getReactionListRecommendation(pred_ids=reacts,
-                                                     get_df=True)
-    opt_recom = recom17.optimizePrediction(pred_spec=res_spec,
-                                           pred_reac=res_reac)
+  def testOptimizePrediction(self): 
+    specs = self.recom17.getSpeciesIDs()
+    res_spec = self.recom17.getSpeciesListRecommendation(pred_ids=specs,
+                                                         get_df=True)
+    reacts = self.recom17.getReactionIDs() 
+    res_reac = self.recom17.getReactionListRecommendation(pred_ids=reacts,
+                                                          get_df=True)
+    opt_recom = self.recom17.optimizePrediction(pred_spec=res_spec,
+                                                pred_reac=res_reac)
     sub_recom = opt_recom[opt_recom['id']=='AcetoinIn']
     self.assertTrue('AcetoinIn' in np.unique(opt_recom['id']))
     self.assertTrue('CHEBI:15378' in set(sub_recom['annotation']))

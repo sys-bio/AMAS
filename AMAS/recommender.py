@@ -775,6 +775,50 @@ class Recommender(object):
     filt_df = df.loc[filt_idx, :]  
     return filt_df
 
+
+  def recommendAnnotation(self,
+                          mssc='top',
+                          cutoff=0.0,
+                          optimize=False,
+                          outtype='table'):
+    """
+    Combine recommendSpecies and recommendReactions
+    methods; can optimize.
+  
+    Parameters
+    ----------
+    mssc: str
+    cutoff: float
+    optiimize: bool
+    outtype: str
+        If 'table', returns recommendation table
+        if 'sbml', returns an updated SBML model. 
+      
+    Returns
+    -------
+    pandas.DataFrame / str
+    """
+    pred_spec = self.getSpeciesListRecommendation(pred_ids=self.getSpeciesIDs(),
+                                                  mssc=mssc,
+                                                  cutoff=cutoff,
+                                                  get_df=True)
+    pred_reac = self.getReactionListRecommendation(pred_ids=self.getReactionIDs(),
+                                                   mssc=mssc,
+                                                   cutoff=cutoff,
+                                                   get_df=True)
+    if optimize:
+      res_tab = self.optimizePrediction(pred_spec=pred_spec,
+                                         pred_reac=pred_reac)
+    else:
+      s_df = self.getRecomTable(element_type='species',
+                                recommended=pred_spec)
+      r_df = self.getRecomTable(element_type='reaction',
+                                recommended=pred_reac)
+      res_tab = pd.concat([s_df, r_df],
+                          ignore_index=True)
+    return res_tab
+
+
   def recommendReactions(self,
                          ids=None,
                          min_len=0,
