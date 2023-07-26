@@ -162,7 +162,7 @@ class TestRecommender(unittest.TestCase):
   def testParseSBML(self):
     reader = libsbml.SBMLReader()
     document = reader.readSBML(BIOMD_190_PATH)
-    dummy_recom = recommender.Recommender(document)
+    dummy_recom = recommender.Recommender(libsbml_cl=document)
     # checking if model was loaded successfully
     self.assertEqual(len(dummy_recom.species.names), 11)
     self.assertEqual(len(dummy_recom.reactions.reaction_components), 13)

@@ -27,8 +27,8 @@ ELEMENT_TYPES = ['species', 'reaction']
 class Recommender(object):
 
   def __init__(self,
-               libsbml_cl=None, 
                libsbml_fpath=None,
+               libsbml_cl=None, 
                model_specs=None):
     """
     Parameters
@@ -45,12 +45,12 @@ class Recommender(object):
     # First of all, collect model information from libsbml model
     # and send the informaton to create species/reaction annotations
     fname = None
-    if libsbml_cl:
-      spec_tuple, reac_tuple = self._parseSBML(libsbml_cl)
-    elif libsbml_fpath:
+    if libsbml_fpath:
       spec_tuple, reac_tuple = self._parseSBML(libsbml_fpath)
       # basically split fpath and use the last one
       fname = libsbml_fpath.split('/')[-1]
+    elif libsbml_cl:
+      spec_tuple, reac_tuple = self._parseSBML(libsbml_cl)
     elif model_specs:
       spec_tuple = model_specs[0]
       reac_tuple = model_specs[1]
@@ -574,7 +574,6 @@ class Recommender(object):
       with open(sbml, 'r') as f:
         model_str = f.read()
       self.sbml_document = reader.readSBMLFromString(model_str)
-      # self.sbml_document = reader.readSBML(sbml)
     elif isinstance(sbml, libsbml.SBMLDocument):
       self.sbml_document = sbml
     model = self.sbml_document.getModel()
