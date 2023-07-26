@@ -10,6 +10,7 @@ Usage: python recommend_reaction.py files/BIOMD0000000190.xml --cutoff 0.6 --out
 import argparse
 import os
 from os.path import dirname, abspath
+import pandas as pd
 import sys
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
@@ -47,27 +48,20 @@ def main():
   mssc = args.mssc.lower()
   outfile = args.outfile
 
+  #
   recom = recommender.Recommender(libsbml_fpath=one_fpath)
-  recom.current_type = 'reaction'
-  # if nothing is given, predict all IDs
+  # # if nothing is given, predict all IDs
   if reacts is None:
     reacts = recom.getReactionIDs()
   print("...\nAnalyzing %d reaction(s)...\n" % len(reacts))
-  # choosing reactions with at least 'min_len' components
-  filt_reacts = [val for val in reacts \
-                 if len(recom.reactions.reaction_components[val]) >= min_len]
-  # stops if all elements were removed by filtering...
-  if len(filt_reacts) == 0:
-    print("No element found after the element filter.")
-    return None
-  res = recom.getReactionListRecommendation(pred_ids=filt_reacts,
-                                            get_df=True,
-                                            mssc=mssc,
-                                            cutoff=cutoff)
-  res_tab = recom.getRecomTable(res)
-  # save file to csv
+  res_tab = recom.recommendReactions(ids=reacts,
+                                     mssc=mssc,
+                                     cutoff=cutoff,
+                                     min_len=min_len,
+                                     outtype='table')
   recom.saveToCSV(res_tab, outfile)
-  print("Recommendations saved as:\n%s\n" % os.path.abspath(outfile))
+  if isinstance(res_tab, pd.DataFrame):
+    print("Recommendations saved as:\n%s\n" % os.path.abspath(outfile))
 
 if __name__ == '__main__':
   main()

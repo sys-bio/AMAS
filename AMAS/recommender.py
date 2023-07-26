@@ -815,8 +815,14 @@ class Recommender(object):
       r_df = self.getRecomTable(element_type='reaction',
                                 recommended=pred_reac)
       res_tab = pd.concat([s_df, r_df],
-                          ignore_index=True)
-    return res_tab
+                           ignore_index=True)
+    if outtype == 'table':
+      return res_tab
+    elif outtype == 'sbml':
+      res_sbml = self.getSBMLDocument(sbml_document=self.sbml_document,
+                                      chosen=res_tab,
+                                      auto_feedback=True)
+      return libsbml.writeSBMLToString(res_sbml)        
 
 
   def recommendReactions(self,
@@ -865,16 +871,22 @@ class Recommender(object):
     filt_reacs = [val for val in reacs \
                   if len(self.reactions.reaction_components[val])>=min_len]
     if len(filt_reacs) == 0:
-      print("No reaction after the element filter.")
+      print("No reaction after the element filter.\n")
       return None
     pred  = self.getReactionListRecommendation(pred_ids=filt_reacs,
                                                mssc=mssc,
                                                cutoff=cutoff,
                                                get_df=True)
+    res_table = self.getRecomTable(element_type='reaction',
+                                   recommended=pred)
     if outtype == 'table':
-      res = self.getRecomTable(element_type='reaction',
-                               recommended=pred)
-    return res
+      return res_table
+    elif outtype == 'sbml':
+      res_sbml = self.getSBMLDocument(sbml_document=self.sbml_document,
+                                      chosen=res_table,
+                                      auto_feedback=True)
+      return libsbml.writeSBMLToString(res_sbml)
+    return None
 
   def recommendSpecies(self,
                        ids=None, 
@@ -909,7 +921,8 @@ class Recommender(object):
 
     Returns
     -------
-    : pd.DataFrame
+    : pd.DataFrame/str/None
+        Either 
     """
     self.updateCurrentElementType('species')
     if isinstance(ids, str):
@@ -921,16 +934,22 @@ class Recommender(object):
     filt_specs = [val for val in specs \
                   if len(self.species.getNameToUse(val))>=min_len]
     if len(filt_specs) == 0:
-      print("No species after the element filter.")
+      print("No species after the element filter.\n")
       return None
     pred = self.getSpeciesListRecommendation(pred_ids=filt_specs,
                                              mssc=mssc,
                                              cutoff=cutoff,
                                              get_df=True)
+    res_table = self.getRecomTable(element_type='species',
+                                   recommended=pred)
     if outtype == 'table':
-      res = self.getRecomTable(element_type='species',
-                               recommended=pred)
-    return res
+      return res_table
+    elif outtype == 'sbml':
+      res_sbml = self.getSBMLDocument(sbml_document=self.sbml_document,
+                                      chosen=res_table,
+                                      auto_feedback=True)
+      return libsbml.writeSBMLToString(res_sbml)
+    return None
 
   def updateCurrentElementType(self, element_type):
     """
@@ -1238,7 +1257,8 @@ class Recommender(object):
                 fpath="recommendation.csv"):
     """
     Save a completed dataframe
-    to csv.
+    to csv. Doesn't proceed if obj is None, 
+    which indicates it didn't pass the element filter.
 
     Parameters
     ----------
@@ -1248,12 +1268,12 @@ class Recommender(object):
     fpath: str
         Path of the csv file to be saved. 
     """
-    # print summary; 
-    obj.to_csv(fpath, index=False) 
-    # print a summary message
-    for one_type in ELEMENT_TYPES:
-      saved_elements = list(np.unique(obj[obj['type']==one_type]['id']))
-      self.printSummary(saved_elements, one_type)
+    if isinstance(obj, pd.DataFrame):
+      obj.to_csv(fpath, index=False) 
+      # print a summary message
+      for one_type in ELEMENT_TYPES:
+        saved_elements = list(np.unique(obj[obj['type']==one_type]['id']))
+        self.printSummary(saved_elements, one_type)
 
   def saveToSBML(self,
                  fpath='model_amas_annotations.xml',

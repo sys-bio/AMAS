@@ -217,7 +217,7 @@ class TestRecommender(unittest.TestCase):
     with patch("builtins.print") as mock_print:
       recomt2 = self.recom.recommendReactions(ids=inp_reactions,
                                               min_len=10000)
-    res_str = 'No reaction after the element filter.'
+    res_str = 'No reaction after the element filter.\n'
     mock_print.assert_called_once_with(res_str)
 
   def testRecommendAnnotation(self): 
@@ -242,7 +242,7 @@ class TestRecommender(unittest.TestCase):
     with patch("builtins.print") as mock_print:
       recomt2 = self.recom.recommendSpecies(ids=inp_species,
                                             min_len=10000)
-    res_str = 'No species after the element filter.'
+    res_str = 'No species after the element filter.\n'
     mock_print.assert_called_once_with(res_str)
 
   def testUpdateCurrentElementType(self):

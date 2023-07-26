@@ -10,6 +10,7 @@ Usage: python recommend_species.py files/BIOMD0000000190.xml --min_len 2 --cutof
 import argparse
 import os
 from os.path import dirname, abspath
+import pandas as pd
 import sys
 sys.path.insert(0, dirname(dirname(abspath(__file__))))
 
@@ -47,26 +48,18 @@ def main():
   outfile = args.outfile
   #
   recom = recommender.Recommender(libsbml_fpath=one_fpath)
-  recom.current_type = 'species'
-  # if nothing is given, predict all IDs
+  # # if nothing is given, predict all IDs
   if specs is None:
     specs = recom.getSpeciesIDs()
   print("...\nAnalyzing %d species...\n" % len(specs))
-  # choosing species with at least 'min_len' names
-  filt_specs = [val for val in specs if len(recom.species.getNameToUse(val)) >= min_len]
-  # stops if all elements were removed by filtering...
-  if len(filt_specs) == 0:
-    print("No element found after the element filter.")
-    return None
-  res = recom.getSpeciesListRecommendation(pred_ids=filt_specs,
-                                           get_df=True,
-                                           mssc=mssc,
-                                           cutoff=cutoff)
-  res_tab = recom.getRecomTable(res)
-  # save file to csv
+  res_tab = recom.recommendSpecies(ids=specs,
+                                   mssc=mssc,
+                                   cutoff=cutoff,
+                                   min_len=min_len,
+                                   outtype='table')
   recom.saveToCSV(res_tab, outfile)
-  print("Recommendations saved as:\n%s\n" % os.path.abspath(outfile))
-
+  if isinstance(res_tab, pd.DataFrame):
+    print("Recommendations saved as:\n%s\n" % os.path.abspath(outfile))
 
 if __name__ == '__main__':
   main()
