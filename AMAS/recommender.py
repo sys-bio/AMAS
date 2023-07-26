@@ -91,8 +91,7 @@ class Recommender(object):
     # index starts from 1;
     df = pd.DataFrame({'annotation':cands,
                        cn.DF_MATCH_SCORE_COL:match_scores,
-                       'label':labels},
-                       index=[1+val for val in list(range(len(cands)))])
+                       'label':labels})
     df.index.name = rec.id
     if show_url:
       urls = rec.urls
@@ -1122,16 +1121,19 @@ class Recommender(object):
 
   def optimizePrediction(self,
                          pred_spec,
-                         pred_reac,
-                         reactions_to_update):
+                         pred_reac):
     """
     Optimize prediction using iteration.
   
     Parameters
     ----------
-    pred_spec: list-Recommendation
+    pred_spec: list-DataFrame
+        Result of getSpeciesListRecommendation
+        with get_df=True
 
-    pred_reac: list-Recommendation
+    pred_reac: list-DataFrame
+        Result of getReactionListRecommendation
+        with get_df=True
   
     reactions_to_update: list
         IDs of reactions
@@ -1142,40 +1144,51 @@ class Recommender(object):
     
     fin_reac_recom: Recommendation (namedtuple)
     """
-    cur_form = dict()
+    # filtering out reactions that can be updated
+    filt_reac = [val for val in pred_reac if val.shape[0]>0]
+    filt_reac_ids = [val.index.name for val in filt_reac]    
+    spec_formulas = dict()
     for one_rec in pred_spec:
-      cur_cands = [val[0] for val in one_rec.candidates]
-      one_form = list(set([cn.REF_CHEBI2FORMULA[k] \
-                        for k in cur_cands if k in cn.REF_CHEBI2FORMULA.keys()]))
-      cur_form[one_rec.id] = one_form
-    anot_iter = it.Iterator(cur_spec_formula=cur_form,
+      formulas = list(set([cn.REF_CHEBI2FORMULA[k] \
+                           for k in one_rec['annotation'] \
+                           if k in cn.REF_CHEBI2FORMULA.keys()]))
+      spec_formulas[one_rec.index.name] = formulas
+    anot_iter = it.Iterator(cur_spec_formula=spec_formulas,
                             reaction_cl=self.reactions,
-                            reactions_to_update=reactions_to_update)
+                            reactions_to_update=filt_reac_ids)
+
     res_iter = anot_iter.match()
     recoms_tobe_added = []
     for one_spec in res_iter.keys():
-      pred_reacs = [val.id for val in pred_reac]
-      reacs_using_one_spec = [val for val in pred_reacs \
+      pred_reac_ids = [val.index.name for val in pred_reac]
+      reacs_using_one_spec = [val for val in pred_reac_ids \
                               if one_spec in self.reactions.reaction_components[val]]
-      filt_pred_reac = [val for val in pred_reac if val.id in reacs_using_one_spec]
+      filt_pred_reac = [val for val in pred_reac if val.index.name in reacs_using_one_spec]
       # match score of reactions using that species
-      adj_match_score = np.mean(list(itertools.chain(*[[cand[1] for cand in val.candidates] \
-                                for val in filt_pred_reac])))
+      # average of the [very first match score from each candidaets set]
+      adj_match_score = np.mean([val['match score'].iloc[0] for val in filt_pred_reac])
       cands = res_iter[one_spec]
-      adj_formulas = list(set([cn.REF_CHEBI2FORMULA[k] \
-                               for k in cands if k in cn.REF_CHEBI2FORMULA.keys()]))
-      urls = [cn.CHEBI_DEFAULT_URL + val[6:] for val in cands]
+      scores = [adj_match_score for val in cands]
       labels = [cn.REF_CHEBI2LABEL[val] for val in cands]
-      adj_recom = cn.Recommendation(one_spec,
-                                    [(val, adj_match_score) for val in cands],
-                                     urls,
-                                     labels)
+      adj_recom = pd.DataFrame({'annotation': cands,
+                                'match score': scores, 
+                                'label': labels})
+      adj_recom.index.name = one_spec
+
       recoms_tobe_added.append(adj_recom)
-    fin_spec_recom = recoms_tobe_added + \
-                   [val for val in pred_spec if val.id not in res_iter.keys()]
-    fin_reac_recom = self.getReactionListRecommendation(pred_ids=reactions_to_update,
-                                                        spec_res=fin_spec_recom)
-    return fin_spec_recom, fin_reac_recom
+    upd_spec_dfs = recoms_tobe_added + \
+                  [val for val in pred_spec if val.index.name not in res_iter.keys()]
+    # need to be converted back to namedtuple DataFrame
+    upd_spec_recom = [self.getRecommendationFromDataFrame(val) for val in upd_spec_dfs]
+    upd_reac_dfs = self.getReactionListRecommendation(pred_ids=filt_reac_ids,
+                                                       spec_res=upd_spec_recom,
+                                                       get_df=True)
+    s_df = self.getRecomTable(element_type='species',
+                               recommended=upd_spec_dfs)
+    r_df = self.getRecomTable(element_type='reaction',
+                               recommended=upd_reac_dfs)
+    return pd.concat([s_df, r_df], ignore_index=True)
+
 
   def saveToCSV(self, obj,
                 fpath="recommendation.csv"):

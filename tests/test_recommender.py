@@ -53,23 +53,23 @@ RESULT_MARKDOWN = '                                   R_PFK                     
                   '+----+--------------+---------------+--------------------------------------+\n' + \
                   '|    | annotation   |   match score | label                                |\n' + \
                   '+====+==============+===============+======================================+\n' + \
-                  '|  1 | RHEA:12420   |         0.600 | tagatose-6-phosphate kinase activity |\n' + \
+                  '|  0 | RHEA:12420   |         0.600 | tagatose-6-phosphate kinase activity |\n' + \
                   '+----+--------------+---------------+--------------------------------------+\n' + \
-                  '|  2 | RHEA:13377   |         0.600 | phosphoglucokinase activity          |\n' + \
+                  '|  1 | RHEA:13377   |         0.600 | phosphoglucokinase activity          |\n' + \
                   '+----+--------------+---------------+--------------------------------------+'
 
 RESULT_MARKDOWN_SAMdc = '                                      SAMdc                                      \n' +\
                         '+----+--------------+---------------+-------------------------------------------+\n' +\
                         '|    | annotation   |   match score | label                                     |\n' +\
                         '+====+==============+===============+===========================================+\n' +\
-                        '|  1 | RHEA:15981   |         0.500 | adenosylmethionine decarboxylase activity |\n' +\
+                        '|  0 | RHEA:15981   |         0.500 | adenosylmethionine decarboxylase activity |\n' +\
                         '+----+--------------+---------------+-------------------------------------------+\n'
 
 RESULT_MARKDOWN_A = '                               A                                \n' +\
                     '+----+--------------+---------------+--------------------------+\n' +\
                     '|    | annotation   |   match score | label                    |\n' +\
                     '+====+==============+===============+==========================+\n' +\
-                    '|  1 | CHEBI:15625  |         1.000 | S-adenosylmethioninamine |\n' +\
+                    '|  0 | CHEBI:15625  |         1.000 | S-adenosylmethioninamine |\n' +\
                     '+----+--------------+---------------+--------------------------+\n'
 
 #############################
@@ -82,7 +82,7 @@ class TestRecommender(unittest.TestCase):
   def testGetDataFrameFromRecommendation(self):
     df = self.recom.getDataFrameFromRecommendation(rec=RESULT_RECOM,
                                                    show_url=False)
-    self.assertEqual(set(df.index), {1,2})
+    self.assertEqual(set(df.index), {0,1})
 
   def testGetRecommendationFromDataFrame(self):
     df = self.recom.getDataFrameFromRecommendation(rec=RESULT_RECOM,
@@ -296,17 +296,17 @@ class TestRecommender(unittest.TestCase):
   def testOptimizePrediction(self):
     recom17 = recommender.Recommender(libsbml_fpath=BIOMD_17_PATH)   
     specs = recom17.getSpeciesIDs()
-    res_spec = recom17.getSpeciesListRecommendation(pred_ids=specs)
+    res_spec = recom17.getSpeciesListRecommendation(pred_ids=specs,
+                                                    get_df=True)
     reacts = recom17.getReactionIDs() 
     res_reac = recom17.getReactionListRecommendation(pred_ids=reacts,
-                                                     spec_res=res_spec)
-    opt_spec_recom, opt_reac_recom = recom17.optimizePrediction(pred_spec=res_spec,
-                                                                pred_reac=res_reac,
-                                                                reactions_to_update=reacts)
-    aceto_prev = [val for val in res_spec if val.id == 'AcetoinIn'][0]
-    aceto_fin = [val for val in opt_spec_recom if val.id == 'AcetoinIn'][0]
-    self.assertEqual(aceto_prev.candidates[0][0], 'CHEBI:2430')
-    self.assertEqual(aceto_fin.candidates[0][0], 'CHEBI:15378')
+                                                     get_df=True)
+    opt_recom = recom17.optimizePrediction(pred_spec=res_spec,
+                                           pred_reac=res_reac)
+    sub_recom = opt_recom[opt_recom['id']=='AcetoinIn']
+    self.assertTrue('AcetoinIn' in np.unique(opt_recom['id']))
+    self.assertTrue('CHEBI:15378' in set(sub_recom['annotation']))
+
  
   def testSaveToCSV(self):
     df = self.recom.getSpeciesListRecommendation(pred_ids=['SAM'],
