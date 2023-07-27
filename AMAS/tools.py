@@ -95,7 +95,7 @@ def extractRheaFromAnnotationString(inp_str):
   -------
   list-str
   """
-  exist_rheas = [cn.RHEA_HEADER+val for val in getQualifierFromString(inp_str, cn.RHEA)]
+  exist_rheas = [formatRhea(val) for val in getQualifierFromString(inp_str, cn.RHEA)]
   map_rhea_bis = [cn.REF_RHEA2MASTER[val] for val in exist_rheas if val in cn.REF_RHEA2MASTER.keys()]
 
   exist_keggs = [cn.KEGG_HEADER+val for val in getQualifierFromString(inp_str, cn.KEGG_REACTION)]
@@ -107,6 +107,27 @@ def extractRheaFromAnnotationString(inp_str):
                                       for val in exist_ecs if val in cn.REF_EC2RHEA.keys()]))
 
   return list(set(map_rhea_bis + map_kegg2rhea + map_ec2rhea))
+
+
+def formatRhea(one_rhea):
+  """
+  Format rhea values; 
+  if 'RHEA:' is not in the name,
+  add it; if not, ignore it
+  
+  Parameters
+  ----------
+  str: one_rhea
+  
+  Returns
+  -------
+  :str
+  """
+  if one_rhea[:4].lower() == 'rhea':
+    str_to_add = one_rhea[5:] 
+  else:
+    str_to_add = one_rhea
+  return cn.RHEA_HEADER + str_to_add
 
 
 def getOntologyFromString(string_annotation,

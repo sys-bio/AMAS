@@ -15,6 +15,7 @@ from AMAS import recommender
 from AMAS import species_annotation as sa
 from AMAS import tools
 
+BIOMD_17_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000017.xml')
 BIOMD_190_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000190.xml')
 BIOMD_634_PATH = os.path.join(cn.TEST_DIR, 'BIOMD0000000634.xml')
 E_COLI_PATH = os.path.join(cn.TEST_DIR, 'e_coli_core.xml')
@@ -52,23 +53,23 @@ RESULT_MARKDOWN = '                                   R_PFK                     
                   '+----+--------------+---------------+--------------------------------------+\n' + \
                   '|    | annotation   |   match score | label                                |\n' + \
                   '+====+==============+===============+======================================+\n' + \
-                  '|  1 | RHEA:12420   |         0.600 | tagatose-6-phosphate kinase activity |\n' + \
+                  '|  0 | RHEA:12420   |         0.600 | tagatose-6-phosphate kinase activity |\n' + \
                   '+----+--------------+---------------+--------------------------------------+\n' + \
-                  '|  2 | RHEA:13377   |         0.600 | phosphoglucokinase activity          |\n' + \
+                  '|  1 | RHEA:13377   |         0.600 | phosphoglucokinase activity          |\n' + \
                   '+----+--------------+---------------+--------------------------------------+'
 
 RESULT_MARKDOWN_SAMdc = '                                      SAMdc                                      \n' +\
                         '+----+--------------+---------------+-------------------------------------------+\n' +\
                         '|    | annotation   |   match score | label                                     |\n' +\
                         '+====+==============+===============+===========================================+\n' +\
-                        '|  1 | RHEA:15981   |         0.500 | adenosylmethionine decarboxylase activity |\n' +\
+                        '|  0 | RHEA:15981   |         0.500 | adenosylmethionine decarboxylase activity |\n' +\
                         '+----+--------------+---------------+-------------------------------------------+\n'
 
 RESULT_MARKDOWN_A = '                               A                                \n' +\
                     '+----+--------------+---------------+--------------------------+\n' +\
                     '|    | annotation   |   match score | label                    |\n' +\
                     '+====+==============+===============+==========================+\n' +\
-                    '|  1 | CHEBI:15625  |         1.000 | S-adenosylmethioninamine |\n' +\
+                    '|  0 | CHEBI:15625  |         1.000 | S-adenosylmethioninamine |\n' +\
                     '+----+--------------+---------------+--------------------------+\n'
 
 #############################
@@ -77,11 +78,18 @@ RESULT_MARKDOWN_A = '                               A                           
 class TestRecommender(unittest.TestCase):
   def setUp(self):
     self.recom = recommender.Recommender(libsbml_fpath=BIOMD_190_PATH)
+    self.recom17 = recommender.Recommender(libsbml_fpath=BIOMD_17_PATH)  
 
   def testGetDataFrameFromRecommendation(self):
     df = self.recom.getDataFrameFromRecommendation(rec=RESULT_RECOM,
                                                    show_url=False)
-    self.assertEqual(set(df.index), {1,2})
+    self.assertEqual(set(df.index), {0,1})
+
+  def testGetRecommendationFromDataFrame(self):
+    df = self.recom.getDataFrameFromRecommendation(rec=RESULT_RECOM,
+                                                   show_url=False)
+    rec = self.recom.getRecommendationFromDataFrame(df)
+    self.assertEqual(rec, RESULT_RECOM)
 
   def testGetMarkdownFromRecommendation(self):
     res = self.recom.getMarkdownFromRecommendation(rec=RESULT_RECOM,
@@ -154,7 +162,7 @@ class TestRecommender(unittest.TestCase):
   def testParseSBML(self):
     reader = libsbml.SBMLReader()
     document = reader.readSBML(BIOMD_190_PATH)
-    dummy_recom = recommender.Recommender(document)
+    dummy_recom = recommender.Recommender(libsbml_cl=document)
     # checking if model was loaded successfully
     self.assertEqual(len(dummy_recom.species.names), 11)
     self.assertEqual(len(dummy_recom.reactions.reaction_components), 13)
@@ -197,16 +205,45 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(list(np.unique(res1[cn.DF_MATCH_SCORE_COL])), [0.6])
     self.assertEqual(list(np.unique(res2[cn.DF_MATCH_SCORE_COL])), [])
 
-  def testRecommendReaction(self):
-    # use the default setting
+  def testRecommendReactions(self):
+    inp_reactions = [REACTION_ODC, REACTION_SAMDC]
+    recomt = self.recom.recommendReactions(ids=inp_reactions)
+    self.assertEqual(len(recomt.columns), 10)
+    self.assertTrue('UPDATE ANNOTATION' in recomt.columns)
+    self.assertEqual(recomt.shape, (4,10))
+    self.assertEqual(set(recomt['id']), set(inp_reactions))
+    self.assertEqual(set(recomt['UPDATE ANNOTATION']),
+                     {'keep', 'ignore'})
     with patch("builtins.print") as mock_print:
-      self.recom.recommendReaction(ids=['SAMdc'])  
-    mock_print.assert_called_once_with(RESULT_MARKDOWN_SAMdc) 
+      recomt2 = self.recom.recommendReactions(ids=inp_reactions,
+                                              min_len=10000)
+    res_str = 'No reaction after the element filter.\n'
+    mock_print.assert_called_once_with(res_str)
+
+  def testRecommendAnnotation(self): 
+    one_res = self.recom17.recommendAnnotation(optimize=False)
+    one_sub_df = one_res[one_res['id']=='AcetoinIn']
+    self.assertTrue('CHEBI:2430' in set(one_sub_df['annotation']))
+    self.assertTrue('CHEBI:15688' in set(one_sub_df['annotation']))
+    two_res = self.recom17.recommendAnnotation(optimize=True)
+    two_sub_df = two_res[two_res['id']=='AcetoinIn']
+    self.assertTrue('CHEBI:15378' in set(two_sub_df['annotation']))
+    self.assertTrue('CHEBI:15688' in set(two_sub_df['annotation']))
 
   def testRecommendSpecies(self):
+    inp_species = [SPECIES_SAM, SPECIES_ORN]
+    recomt = self.recom.recommendSpecies(ids=inp_species)
+    self.assertEqual(len(recomt.columns), 10)
+    self.assertTrue('UPDATE ANNOTATION' in recomt.columns)
+    self.assertEqual(recomt.shape, (4,10))
+    self.assertEqual(set(recomt['id']), set(inp_species))
+    self.assertEqual(set(recomt['UPDATE ANNOTATION']),
+                     {'keep', 'ignore'})
     with patch("builtins.print") as mock_print:
-      self.recom.recommendSpecies(ids=['A'])  
-    mock_print.assert_called_once_with(RESULT_MARKDOWN_A) 
+      recomt2 = self.recom.recommendSpecies(ids=inp_species,
+                                            min_len=10000)
+    res_str = 'No species after the element filter.\n'
+    mock_print.assert_called_once_with(res_str)
 
   def testUpdateCurrentElementType(self):
     self.recom.updateCurrentElementType(element_type='species')
@@ -244,15 +281,48 @@ class TestRecommender(unittest.TestCase):
     res_str = self.recom.getMarkdownFromRecommendation(df)+"\n"  
     mock_print.assert_called_once_with(res_str)
 
+  def testGetRecomTable(self):
+    inp_species = [SPECIES_SAM, SPECIES_ORN]
+    df = self.recom.getSpeciesListRecommendation(pred_ids=inp_species,
+                                                 get_df=True)
+    recomt = self.recom.getRecomTable('species', df)
+    self.assertEqual(len(recomt.columns), 10)
+    self.assertTrue('UPDATE ANNOTATION' in recomt.columns)
+    self.assertEqual(recomt.shape, (4,10))
+    self.assertEqual(set(recomt['id']), set(inp_species))
+    self.assertEqual(set(recomt['UPDATE ANNOTATION']),
+                     {'keep', 'ignore'})
+
+  def testGetSBMLDocument(self):
+    pred = self.recom.recommendSpecies(ids=None,
+                                       mssc='top',
+                                       cutoff=0.0)
+    res_doc = self.recom.getSBMLDocument(sbml_document=self.recom.sbml_document,
+                                         chosen=pred,
+                                         auto_feedback=True)
+    model = res_doc.getModel()
+    upd_spec_anot = tools.extractExistingSpeciesAnnotation(model)
+    self.assertEqual(set(upd_spec_anot['SAM']), {'CHEBI:15414', 'CHEBI:59789'})
+
+  def testOptimizePrediction(self): 
+    specs = self.recom17.getSpeciesIDs()
+    res_spec = self.recom17.getSpeciesListRecommendation(pred_ids=specs,
+                                                         get_df=True)
+    reacts = self.recom17.getReactionIDs() 
+    res_reac = self.recom17.getReactionListRecommendation(pred_ids=reacts,
+                                                          get_df=True)
+    opt_recom = self.recom17.optimizePrediction(pred_spec=res_spec,
+                                                pred_reac=res_reac)
+    sub_recom = opt_recom[opt_recom['id']=='AcetoinIn']
+    self.assertTrue('AcetoinIn' in np.unique(opt_recom['id']))
+    self.assertTrue('CHEBI:15378' in set(sub_recom['annotation']))
+
+ 
   def testSaveToCSV(self):
-    one_dict = {'annotation':['CHEBI:15414'],
-                'match score': [1.0],
-                'label': ['S-adenosyl-L-methionine']}
-    one_df = pd.DataFrame(one_dict)
-    one_df.index = [2]
-    one_df.index.name = 'SAM'
-    self.recom.selection['species'] = {'SAM': one_df}
-    self.recom.saveToCSV("test.csv")
+    df = self.recom.getSpeciesListRecommendation(pred_ids=['SAM'],
+                                                 get_df=True)
+    res = self.recom.getRecomTable('species', df)
+    self.recom.saveToCSV(res, "test.csv")
     new_df = pd.read_csv("test.csv")
     self.assertEqual(new_df.loc[0, 'file'], 'BIOMD0000000190.xml')
     self.assertEqual(new_df.loc[0, 'type'], 'species')
@@ -261,18 +331,18 @@ class TestRecommender(unittest.TestCase):
     self.assertEqual(new_df.loc[0,  cn.DF_UPDATE_ANNOTATION_COL], 'keep')
     os.remove("test.csv")
 
-  def testSaveToSBML(self):
-    one_dict = {'annotation':['CHEBI:15414'],
-                'match score': [1.0],
-                'label': ['S-adenosyl-L-methionine']}
-    one_df = pd.DataFrame(one_dict)
-    one_df.index = [2]
-    one_df.index.name = 'SAM'
-    self.recom.selection['species'] = {SPECIES_SAM: one_df}
-    self.recom.saveToSBML("test_sbml.xml")
-    recom2 = recommender.Recommender(libsbml_fpath='test_sbml.xml')
-    self.assertEqual(recom2.species.exist_annotation[SPECIES_SAM], ['CHEBI:15414'])
-    os.remove("test_sbml.xml")
+  # def testSaveToSBML(self):
+  #   one_dict = {'annotation':['CHEBI:15414'],
+  #               'match score': [1.0],
+  #               'label': ['S-adenosyl-L-methionine']}
+  #   one_df = pd.DataFrame(one_dict)
+  #   one_df.index = [2]
+  #   one_df.index.name = 'SAM'
+  #   self.recom.selection['species'] = {SPECIES_SAM: one_df}
+  #   self.recom.saveToSBML("test_sbml.xml")
+  #   recom2 = recommender.Recommender(libsbml_fpath='test_sbml.xml')
+  #   self.assertEqual(recom2.species.exist_annotation[SPECIES_SAM], ['CHEBI:15414'])
+  #   os.remove("test_sbml.xml")
 
   def testPrintSummary(self):
     with patch("builtins.print") as mock_print:
