@@ -1,0 +1,957 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created by libAntimony version v2.13.2 with libSBML version 5.20.0. -->
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model metaid="Model_1" id="Model_1" substanceUnits="substance" timeUnits="time_unit">
+    <listOfUnitDefinitions>
+      <unitDefinition id="uM_min_1" name="uMpermin">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
+          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_min_2" name="uM(min)^-2">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+          <unit kind="second" exponent="-2" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_1" name="peruM">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="min_1" name="permin">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM" name="microM">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="time_unit" name="minute">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="substance" name="µmole">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_1_min_1" name="peruMpermin">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_1_min_2" name="uM^(-1)min^(-2)">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+          <unit kind="second" exponent="-2" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="min_uM_1" name="minperuM">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="6"/>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
+    <listOfCompartments>
+      <compartment id="cytosol" name="Cytosol" spatialDimensions="3" size="1" constant="true"/>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species id="SAM" name="S-adenosyl-L-methionine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="A" name="S-adenosylmethioninamine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="P" name="Putrescine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="S" name="Spermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="D" name="Spermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="aS" name="N1-Acetylspermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="aD" name="N1-Acetylspermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species id="Met" name="Methionine" compartment="cytosol" initialConcentration="50" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
+      <species id="ORN" name="L-Ornithine" compartment="cytosol" initialConcentration="300" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
+      <species id="AcCoA" name="Acetyl-CoA" compartment="cytosol" initialConcentration="39.5" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
+      <species id="CoA" compartment="cytosol" initialConcentration="160" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="Kaccoa" units="min_1" constant="false"/>
+      <parameter id="R" value="0.004" units="min_1" constant="true"/>
+      <parameter id="Kcoa" units="min_1" constant="false"/>
+      <parameter id="Vmaxodc" value="1.27905671844446" units="uM_min_1" constant="false"/>
+      <parameter id="Ksodc" name="KsODC" value="5" units="uM_min_2" constant="true"/>
+      <parameter id="Keq" value="1" units="uM_1" constant="true"/>
+      <parameter id="Kdodc" name="KdODC" value="0.05" units="uM_1" constant="true"/>
+      <parameter id="Antz" value="0.574589492832405" units="uM_min_1" constant="false"/>
+      <parameter id="Ksantz" name="KsANTZ" value="0.02" units="uM_min_2" constant="true"/>
+      <parameter id="Kdantz" name="KdANTZ" value="0.02" units="min_1" constant="true"/>
+      <parameter id="Vmaxssat" value="0.677298510125025" units="uM_min_1" constant="false"/>
+      <parameter id="Ksssat" name="KsSSAT" value="0.001" units="uM_min_2" constant="true"/>
+      <parameter id="Kdssat" name="KdSSAT" value="0.2" units="min_1" constant="true"/>
+      <parameter id="Vmaxsamdc" value="0.367465856805639" units="uM_min_1" constant="false"/>
+      <parameter id="Kssamdc" name="KsSAMDC" value="1" units="uM_min_2" constant="true"/>
+      <parameter id="Kdsamdc" name="KdSAMDC" value="0.02" units="min_1" constant="true"/>
+      <parameter id="ODC_Kmodc" value="60" units="uM" constant="true"/>
+      <parameter id="ODC_Kipodc" value="1300" units="uM" constant="true"/>
+      <parameter id="SAMdc_Kissamdc" value="500" units="uM" constant="true"/>
+      <parameter id="SAMdc_Kmsamdc" value="50" units="uM" constant="true"/>
+      <parameter id="SAMdc_Kapsamdc" value="0.5" units="uM" constant="true"/>
+      <parameter id="SAMdc_Kiasamdc" value="2.5" units="uM" constant="true"/>
+      <parameter id="C" value="4.44" units="dimensionless" constant="true"/>
+      <parameter id="SSAT_for_S_Kmsssat" value="35" units="uM" constant="true"/>
+      <parameter id="SSAT_for_S_Kmdssat" value="130" units="uM" constant="true"/>
+      <parameter id="SSAT_for_S_Kmaccoassat" value="1.5" units="uM" constant="true"/>
+      <parameter id="SSAT_for_S_Kmcoassat" value="40" units="uM" constant="true"/>
+      <parameter id="SSAT_for_D_Kmdssat" value="130" units="uM" constant="true"/>
+      <parameter id="SSAT_for_D_Kmsssat" value="35" units="uM" constant="true"/>
+      <parameter id="SSAT_for_D_Kmaccoassat" value="1.5" units="uM" constant="true"/>
+      <parameter id="SSAT_for_D_Kmcoassat" value="40" units="uM" constant="true"/>
+      <parameter id="PAO_for_aD_Vmpao" value="10.35" units="uM_min_1" constant="true"/>
+      <parameter id="PAO_for_aD_Kmadpao" value="14" units="uM" constant="true"/>
+      <parameter id="PAO_for_aD_Kmaspao" value="0.6" units="uM" constant="true"/>
+      <parameter id="PAO_for_aD_Kmdpao" value="50" units="uM" constant="true"/>
+      <parameter id="PAO_for_aD_Kmspao" value="15" units="uM" constant="true"/>
+      <parameter id="PAO_for_aS_Vmpao" value="10.35" units="uM_min_1" constant="true"/>
+      <parameter id="PAO_for_aS_Kmaspao" value="0.6" units="uM" constant="true"/>
+      <parameter id="PAO_for_aS_Kmadpao" value="14" units="uM" constant="true"/>
+      <parameter id="PAO_for_aS_Kmdpao" value="50" units="uM" constant="true"/>
+      <parameter id="PAO_for_aS_Kmspao" value="15" units="uM" constant="true"/>
+      <parameter id="SpdS_Vmspds" value="10.95" units="uM_min_1" constant="true"/>
+      <parameter id="SpdS_Kiaspds" value="0.8" units="uM" constant="true"/>
+      <parameter id="SpdS_Kpspds" value="40" units="uM" constant="true"/>
+      <parameter id="SpdS_Kidspds" value="100" units="uM" constant="true"/>
+      <parameter id="SpdS_KaSpds" value="0.3" units="uM" constant="true"/>
+      <parameter id="SpmS_Vmspms" value="3.23" units="uM_min_1" constant="true"/>
+      <parameter id="SpmS_Kiaspms" value="0.06" units="uM" constant="true"/>
+      <parameter id="SpmS_Kdspms" value="60" units="uM" constant="true"/>
+      <parameter id="SpmS_Kisspms" value="25" units="uM" constant="true"/>
+      <parameter id="SpmS_Kaspms" value="0.1" units="uM" constant="true"/>
+      <parameter id="MAT_Vmmat" value="0.45" units="uM_min_1" constant="true"/>
+      <parameter id="MAT_Kmmat" value="41" units="uM" constant="true"/>
+      <parameter id="MAT_Kimetmat" value="50" units="uM" constant="true"/>
+      <parameter id="P_efflux_Kpefflux" value="0.01" units="min_1" constant="true"/>
+      <parameter id="aD_efflux_Kadefflux" value="0.01" units="min_1" constant="true"/>
+    </listOfParameters>
+    <listOfRules>
+      <assignmentRule variable="Kaccoa">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <ci> R </ci>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="Kcoa">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn type="integer"> 3 </cn>
+            <ci> R </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <rateRule variable="Vmaxodc">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <divide/>
+              <ci> Ksodc </ci>
+              <apply>
+                <plus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <times/>
+                  <ci> Keq </ci>
+                  <apply>
+                    <plus/>
+                    <ci> D </ci>
+                    <ci> S </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdodc </ci>
+              <ci> Antz </ci>
+              <ci> Vmaxodc </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+      <rateRule variable="Antz">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> Ksantz </ci>
+              <apply>
+                <minus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <times/>
+                      <ci> Keq </ci>
+                      <cn> 0.01 </cn>
+                      <apply>
+                        <plus/>
+                        <ci> D </ci>
+                        <ci> S </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdantz </ci>
+              <ci> Antz </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+      <rateRule variable="Vmaxssat">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> Ksssat </ci>
+              <apply>
+                <minus/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <times/>
+                      <ci> Keq </ci>
+                      <apply>
+                        <plus/>
+                        <ci> D </ci>
+                        <ci> S </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdssat </ci>
+              <apply>
+                <divide/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <ci> Keq </ci>
+                    <apply>
+                      <plus/>
+                      <ci> D </ci>
+                      <ci> S </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+              <ci> Vmaxssat </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+      <rateRule variable="Vmaxsamdc">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> Kssamdc </ci>
+              <apply>
+                <divide/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <ci> Keq </ci>
+                    <apply>
+                      <plus/>
+                      <ci> D </ci>
+                      <ci> S </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdsamdc </ci>
+              <ci> Vmaxsamdc </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+    </listOfRules>
+    <listOfReactions>
+      <reaction id="ODC" name="Ornithine decarboxylase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="ORN" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> Vmaxodc </ci>
+                  <ci> ORN </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> ODC_Kmodc </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> P </ci>
+                        <ci> ODC_Kipodc </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> ORN </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="SAMdc" name="S-adenosylmethionine decarboxylase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="SAM" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="A" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="P"/>
+          <modifierSpeciesReference species="S"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> Vmaxsamdc </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SAMdc_Kissamdc </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> SAM </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> SAMdc_Kmsamdc </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> SAMdc_Kapsamdc </ci>
+                        <ci> P </ci>
+                      </apply>
+                      <apply>
+                        <divide/>
+                        <ci> A </ci>
+                        <ci> SAMdc_Kiasamdc </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> SAM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="SSAT_for_S" name="Spermidine/Spermine N1-acetyltransferase for S" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="S" stoichiometry="1" constant="true"/>
+          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="aS" stoichiometry="1" constant="true"/>
+          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="D"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <cn type="integer"> 1 </cn>
+                    <ci> C </ci>
+                  </apply>
+                  <ci> Vmaxssat </ci>
+                  <ci> S </ci>
+                  <ci> AcCoA </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_S_Kmsssat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> D </ci>
+                        <ci> SSAT_for_S_Kmdssat </ci>
+                      </apply>
+                    </apply>
+                    <ci> SSAT_for_S_Kmaccoassat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> CoA </ci>
+                        <ci> SSAT_for_S_Kmcoassat </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_S_Kmaccoassat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> CoA </ci>
+                        <ci> SSAT_for_S_Kmcoassat </ci>
+                      </apply>
+                    </apply>
+                    <ci> S </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_S_Kmsssat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> D </ci>
+                        <ci> SSAT_for_S_Kmdssat </ci>
+                      </apply>
+                    </apply>
+                    <ci> AcCoA </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> S </ci>
+                    <ci> AcCoA </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="SSAT_for_D" name="Spermidine/spermine N1-acetyltransferase for D" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="D" stoichiometry="1" constant="true"/>
+          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="aD" stoichiometry="1" constant="true"/>
+          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="S"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> Vmaxssat </ci>
+                  <ci> D </ci>
+                  <ci> AcCoA </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_D_Kmdssat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SSAT_for_D_Kmsssat </ci>
+                      </apply>
+                    </apply>
+                    <ci> SSAT_for_D_Kmaccoassat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> CoA </ci>
+                        <ci> SSAT_for_D_Kmcoassat </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_D_Kmaccoassat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> CoA </ci>
+                        <ci> SSAT_for_D_Kmcoassat </ci>
+                      </apply>
+                    </apply>
+                    <ci> D </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_D_Kmdssat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SSAT_for_D_Kmsssat </ci>
+                      </apply>
+                    </apply>
+                    <ci> AcCoA </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> D </ci>
+                    <ci> AcCoA </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="PAO_for_aD" name="Polyamine oxidase for aD" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="aD" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="aS"/>
+          <modifierSpeciesReference species="D"/>
+          <modifierSpeciesReference species="S"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> PAO_for_aD_Vmpao </ci>
+                  <ci> aD </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> PAO_for_aD_Kmadpao </ci>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <divide/>
+                      <ci> aD </ci>
+                      <ci> PAO_for_aD_Kmadpao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> aS </ci>
+                      <ci> PAO_for_aD_Kmaspao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> D </ci>
+                      <ci> PAO_for_aD_Kmdpao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> S </ci>
+                      <ci> PAO_for_aD_Kmspao </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="PAO_for_aS" name="Polyamine oxidase for aS" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="aS" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="D" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="aD"/>
+          <modifierSpeciesReference species="S"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> PAO_for_aS_Vmpao </ci>
+                  <ci> aS </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> PAO_for_aS_Kmaspao </ci>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <divide/>
+                      <ci> aD </ci>
+                      <ci> PAO_for_aS_Kmadpao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> aS </ci>
+                      <ci> PAO_for_aS_Kmaspao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> D </ci>
+                      <ci> PAO_for_aS_Kmdpao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> S </ci>
+                      <ci> PAO_for_aS_Kmspao </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="SpdS" name="Spermidine synthase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="A" stoichiometry="1" constant="true"/>
+          <speciesReference species="P" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="D" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> SpdS_Vmspds </ci>
+                  <ci> A </ci>
+                  <ci> P </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> SpdS_Kiaspds </ci>
+                    <ci> SpdS_Kpspds </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> D </ci>
+                        <ci> SpdS_Kidspds </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SpdS_Kpspds </ci>
+                    <ci> A </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SpdS_KaSpds </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> D </ci>
+                        <ci> SpdS_Kidspds </ci>
+                      </apply>
+                    </apply>
+                    <ci> P </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> A </ci>
+                    <ci> P </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="SpmS" name="Spermine synthase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="A" stoichiometry="1" constant="true"/>
+          <speciesReference species="D" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="S" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> SpmS_Vmspms </ci>
+                  <ci> A </ci>
+                  <ci> D </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> SpmS_Kiaspms </ci>
+                    <ci> SpmS_Kdspms </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SpmS_Kisspms </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SpmS_Kdspms </ci>
+                    <ci> A </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SpmS_Kaspms </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SpmS_Kisspms </ci>
+                      </apply>
+                    </apply>
+                    <ci> D </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> A </ci>
+                    <ci> D </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="MAT" name="Methionine adenosyltransferase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="Met" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="SAM" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <ci> MAT_Vmmat </ci>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> MAT_Kmmat </ci>
+                      <ci> Met </ci>
+                    </apply>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> SAM </ci>
+                        <ci> MAT_Kimetmat </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="VCoA" name="VCOA" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> Kcoa </ci>
+              <ci> AcCoA </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="VacCoA" name="VACCOA" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> Kaccoa </ci>
+              <ci> CoA </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="P_efflux" name="Putrescine efflux" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="P" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> P_efflux_Kpefflux </ci>
+              <ci> P </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction id="aD_efflux" name="aD efflux" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="aD" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> aD_efflux_Kadefflux </ci>
+              <ci> aD </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
