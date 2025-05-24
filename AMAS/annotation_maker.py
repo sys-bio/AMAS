@@ -480,8 +480,9 @@ class AnnotationMaker(object):
     field_list = [field.split(".")[0] if "." in field else field for field in field_list]
     for field in field_list:
       for ncbi_id in ncbi_ids:
-        for one_item in cross_dict[field][ncbi_id]:
-            items.append(self.createAnnotationItem(field, one_item))
+        if cross_dict[field][ncbi_id] is not None:
+          for one_item in cross_dict[field][ncbi_id]:
+              items.append(self.createAnnotationItem(field, one_item))
     items = sorted(list(set(items))) # remove duplicates and sort alphabetically
     container = annotation_dict['container']
     res = tools.insertItemsBackToContainer(container, items, qualifier = 'bqbiol:is')

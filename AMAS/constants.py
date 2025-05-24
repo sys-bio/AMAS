@@ -70,7 +70,15 @@ with open(os.path.join(REF_DIR, 'mrhea2chebi_prime.lzma'), 'rb') as f:
 with open(os.path.join(REF_DIR, 'rhea2label.lzma'), 'rb') as f:
   REF_RHEA2LABEL = compress_pickle.load(f)  
 with open(os.path.join(REF_DIR, 'mrhea2eckegg.lzma'), 'rb') as f:
-  REF_RHEA2ECKEGG = compress_pickle.load(f)  
+  REF_RHEA2ECKEGG = compress_pickle.load(f) 
+with open(os.path.join(REF_DIR, 'chebi2names.lzma'), 'rb') as f:
+  REF_CHEBI2NAMES = compress_pickle.load(f)
+with open(os.path.join(REF_DIR, 'names2chebi.lzma'), 'rb') as f:
+  REF_NAMES2CHEBI = compress_pickle.load(f)
+with open(os.path.join(REF_DIR, 'chebi2cleannames.lzma'), 'rb') as f:
+  REF_CHEBI2CLEANNAMES = compress_pickle.load(f)
+with open(os.path.join(REF_DIR, 'cleannames2chebi.lzma'), 'rb') as f:
+  REF_CLEANNAMES2CHEBI = compress_pickle.load(f)
 
 RDF_TAG_ITEM = ['rdf:RDF',
                 'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"',

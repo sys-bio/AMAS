@@ -154,12 +154,7 @@ def main():
       elif one_type == 'species' or one_type == 'genes' or one_type == 'qual_species' :
         deled = maker.deleteAnnotation(dels, orig_str)
 
-      print('deled:')
-      print(deled)
       added = maker.addAnnotation(adds, deled, meta_ids[one_id])
-
-      print('added:')
-      print(added)
 
       ELEMENT_FUNC[one_type](one_id).setAnnotation(added)
       new_annot = ELEMENT_FUNC[one_type](one_id).getAnnotationString()

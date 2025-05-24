@@ -590,6 +590,55 @@ def getRecall(ref, pred, mean=True):
   else:
     return {val:np.round(recall[val],cn.ROUND_DIGITS) for val in recall.keys()}
 
+def getTopKAccuracy(ref, pred, k=1, mean=True):
+  """
+  Calculate top-k accuracy for annotations.
+  Top-k accuracy measures if any of the k most confident
+  predictions match with any reference annotation.
+
+  Parameters
+  ----------
+  ref: dict
+      {id: [str-annotation, e.g., formula/Rhea]}
+      Annotations from reference. Considered 'correct'
+  pred: dict
+      {id: [str-annotation, e.g., formula/Rhea]}
+      Annotations to be evaluated. Assumes the order
+      represents confidence (first item is highest confidence)
+  k: int
+      Number of top predictions to consider
+  mean: bool
+      If True, get the average across the keys.
+      If False, get value of each key.
+
+  Returns
+  -------
+  float/dict{id: float}
+      Depending on the 'mean' argument
+  """
+  ref_keys = set(ref.keys())
+  pred_keys = set(pred.keys())
+  # select elements that can be evaluated
+  elements_to_test = ref_keys.intersection(pred_keys)
+  top_k_accuracy = dict()
+  
+  # go through each element
+  for one_k in elements_to_test:
+    # Take only top k predictions
+    top_k_preds = pred[one_k][:min(k, len(pred[one_k]))]
+    # Check if any of the top k predictions match any reference
+    matches = set(top_k_preds).intersection(set(ref[one_k]))
+    # If there's at least one match, accuracy is 1, otherwise 0
+    top_k_accuracy[one_k] = 1.0 if len(matches) > 0 else 0.0
+  
+  if mean:
+    if top_k_accuracy:
+      return np.round(np.mean([top_k_accuracy[val] for val in top_k_accuracy.keys()]), cn.ROUND_DIGITS)
+    else:
+      # No elements to test, return 0.0
+      return 0.0
+  else:
+    return {val:np.round(top_k_accuracy[val], cn.ROUND_DIGITS) for val in top_k_accuracy.keys()}
 
 def transformCHEBIToFormula(inp_list, ref_to_formula_dict):
   """
@@ -705,7 +754,8 @@ def getCrossReference(gene_ids, fields = "uniprot"):
     - dict: A dictionary structured as {field: {gene_id: value}}
             If 'uniprot' is included, 'Swiss-Prot' is prioritized compared to 'TrEMBL'.
     """
-
+    if gene_ids is None:
+        return {}
     url = "https://mygene.info/v3/query"
     headers = {
         "Accept": "application/json",
@@ -717,7 +767,6 @@ def getCrossReference(gene_ids, fields = "uniprot"):
     }
     response = requests.post(url, json=data, headers=headers)
     if response.status_code != 200:
-        print(f"Error: {response.status_code}, {response.text}")
         return {}
     results = response.json()
 

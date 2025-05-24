@@ -31,9 +31,9 @@ import base64
 import subprocess
 import os
 import threading
-
-# Initialize the Dash app
-app = dash.Dash(__name__)
+import flask
+server = flask.Flask(__name__)
+app = dash.Dash(__name__, server=server)
 
 # Paths
 csv_output_path = "recommendations.csv"
@@ -57,6 +57,30 @@ def read_process_output(process, params_used):
             break
         if line:
             process_info["output"] += line
+
+# Global variable to hold update process information
+update_process_info = {"process": None, "output": ""}
+
+# Function to read output in a separate thread
+def read_update_process_output(update_process, params_used):
+    """Reads output from the update process while it's running."""
+    update_process_info["output"] = params_used  # Initialize with parameters
+
+    for line in iter(update_process.stdout.readline, ""):  # Read line-by-line
+        if not line:
+            break
+        update_process_info["output"] += line
+        print(line, end="")  # Debugging: Print output in real-time
+
+    stdout, stderr = update_process.communicate()  # Ensure all remaining output is captured
+    if stdout:
+        update_process_info["output"] += stdout
+    if stderr:
+        update_process_info["output"] += f"\nError: {stderr}"
+
+    print("Update process completed.")  # Debugging: Ensure process finishes
+    print(update_process_info["output"])
+
 
 # Define the layout of the app
 app.layout = html.Div(
@@ -141,7 +165,7 @@ app.layout = html.Div(
                 dcc.Input(
                     id="crossref-custom",
                     type="text",
-                    placeholder="Enter fields ('GO,kegg')",
+                    placeholder="Enter fields ('ec,MIM')",
                 ),
                 html.Br(),
                 html.Br(),
@@ -153,8 +177,8 @@ app.layout = html.Div(
                     dcc.RadioItems(
                         id='mssc-radio',
                         options=[
-                            {'label': 'Top: report only candidates with the highest match score', 'value': 'top'},
-                            {'label': 'Above: report all candidates at or above cutoff match score', 'value': 'above'}
+                            {'label': 'Top', 'value': 'top'},
+                            {'label': 'Above', 'value': 'above'}
                         ],
                         value='top',  # Default value
                         inline=True
@@ -232,8 +256,8 @@ app.layout = html.Div(
                 html.H2("SBML Model", style={"fontSize": "16px", "textAlign": "center"}),
                 html.Div(id='sbml-content', style={
                     "whiteSpace": "pre-wrap", "border": "1px solid #ccc", "padding": "10px",
-                    "maxHeight": "900px", "overflowY": "scroll"
-                })
+                    "maxHeight": "900px", "overflowY": "scroll", "fontSize": "14px"
+                }, children="Please upload an SBML model to begin.")
             ]
         ),
 
@@ -357,7 +381,7 @@ def manage_workflow(contents, annotation_clicks, update_clicks, download_clicks,
                     annotation_type, tax_dropdown, tax_input, mssc, cutoff, optimize, table_data, selected_rows, sbml_text,min_len,convert_annotation,crossref_dropdown,crossref_custom):
     ctx = dash.callback_context
     if not ctx.triggered:
-        return "Please upload an SBML model to begin.", sbml_text, [], dash.no_update, True, "Please upload an SBML model to begin."
+        return "Please upload an SBML model to begin.", sbml_text, [], dash.no_update, True, ""
 
     button_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
@@ -368,7 +392,7 @@ def manage_workflow(contents, annotation_clicks, update_clicks, download_clicks,
         with open(current_model_path, "wb") as f:
             f.write(decoded)
         model_content = decoded.decode("utf-8")
-        return "Model uploaded successfully.\n Please adjust the parameters to generate recommendations.", model_content, table_data, dash.no_update, True, "Please generate recommendations first."
+        return "Model uploaded successfully.\n Please adjust the parameters to generate recommendations.", model_content, [], dash.no_update, True, ""
 
     # Handle Annotation
     if button_id == "annotation-button" and annotation_clicks > 0:
@@ -382,7 +406,7 @@ def manage_workflow(contents, annotation_clicks, update_clicks, download_clicks,
         if annotation_type in ["genes", "all"]:
             tax_id = tax_dropdown if tax_dropdown else tax_input
             if not tax_id:
-                return "Please select a taxonomy or enter a taxonomy ID for gene annotation.", sbml_text, [], dash.no_update, True, "Please generate recommendations first."
+                return "Please select a taxonomy or enter a taxonomy ID for gene annotation.", sbml_text, [], dash.no_update, True, ""
 
         else:
             tax_id = None
@@ -407,7 +431,7 @@ def manage_workflow(contents, annotation_clicks, update_clicks, download_clicks,
 
         print(command)
         process_info["process"] = subprocess.Popen(
-            command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1
+            command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
         )
         threading.Thread(target=read_process_output, args=(process_info["process"], params_used)).start()
         return params_used, sbml_text, table_data, dash.no_update, False, "Please generate recommendations first."
@@ -432,28 +456,19 @@ def manage_workflow(contents, annotation_clicks, update_clicks, download_clicks,
         if crossref_custom:
             fields.append(crossref_custom)
         fields_str = ','.join(fields)
-        params_used = f"Updating model with instructions in table.\n  --convert: {convert_annotation}\n  --fields: {fields_str}\n"
+        update_process_info["output"] = f"Updating model with instructions in table...\n\n"
         command_update = [
             "python", amas_update_path, current_model_path, csv_output_path, download_file_path, "--convert", convert_annotation, "--fields", fields_str
         ]
         print(command_update)
-        subprocess.run(
-            command_update,
-            check=True
+        update_process_info["process"] = subprocess.Popen(
+            command_update, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, bufsize=1
         )
+
+        threading.Thread(target=read_update_process_output, args=(update_process_info["process"], update_process_info["output"]),daemon=True).start()
         with open(download_file_path, "r") as f:
             updated_model_content = f.read()
-
-        if fields_str:
-            crossref_msg = f"Cross-reference fields: {fields_str}.\n"
-        else:
-            crossref_msg = "Updating with NCBI gene ids (Entrez Gene id).\n"
-        if convert_annotation == "yes":
-            return "Recommendations generated. \n" , updated_model_content, table_data, dash.no_update, True, "Update complete. \n" + crossref_msg + "Converted selected annotations in 'isDescribedBy' to 'is'.\nYou can now download the annotated model."
-        elif convert_annotation == "all":
-            return "Recommendations generated. \n"  , updated_model_content, table_data, dash.no_update, True, "Update complete. \n" + crossref_msg + "Converted all annotations in 'isDescribedBy' to 'is'.\nYou can now download the annotated model."
-        else:
-            return "Recommendations generated. \n" , updated_model_content, table_data, dash.no_update, True, "Update complete. \n" + crossref_msg + "You can now download the annotated model."
+        return "", updated_model_content, dash.no_update, dash.no_update, False, update_process_info["output"]
 
 
     # Real-Time Output
@@ -471,7 +486,18 @@ def manage_workflow(contents, annotation_clicks, update_clicks, download_clicks,
             )
             process_info["process"] = None
             return process_info["output"], sbml_text, df.to_dict("records"), dash.no_update, True, "Please make instructions in the table, and then update the model."
-        return process_info["output"], sbml_text, [], dash.no_update, False, "Please generate recommendations first."
+        else:
+            return dash.no_update, sbml_text, [], dash.no_update, False, "Please generate recommendations first."
+
+    if button_id == "interval-component" and update_process_info["process"]:
+        if update_process_info["process"].poll() is not None:
+            with open(download_file_path, "r") as f:
+                updated_model_content = f.read()
+            update_process_info["process"] = None
+            print(update_process_info["output"])
+            return dash.no_update, updated_model_content, table_data, dash.no_update, False, update_process_info["output"]
+        else:
+            return dash.no_update, sbml_text, table_data, dash.no_update, False, dash.no_update
 
     # Handle Download
     if button_id == "download-button" and download_clicks > 0:
@@ -481,4 +507,4 @@ def manage_workflow(contents, annotation_clicks, update_clicks, download_clicks,
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(host='127.0.0.1', port=8050, debug=True)

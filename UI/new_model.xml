@@ -1,1232 +1,1061 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:qual="http://www.sbml.org/sbml/level3/version1/qual/version1" level="3" version="1" qual:required="true">
-  <model id="Werle2021">
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <model metaid="Model_1" id="Model_1" name="Rodriguez-Caso2006_Polyamine_Metabolism" substanceUnits="substance" timeUnits="time_unit">
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+        <rdf:Description rdf:about="#Model_1">
+          <bqmodel:is>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/biomodels.db/MODEL6812345601"/>
+              <rdf:li rdf:resource="http://identifiers.org/biomodels.db/BIOMD0000000190"/>
+            </rdf:Bag>
+          </bqmodel:is>
+          <bqbiol:isDescribedBy>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/pubmed/16709566"/>
+            </rdf:Bag>
+          </bqbiol:isDescribedBy>
+          <bqbiol:hasTaxon>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/taxonomy/40674"/>
+              <rdf:li rdf:resource="http://identifiers.org/taxonomy/9989"/>
+            </rdf:Bag>
+          </bqbiol:hasTaxon>
+          <bqbiol:isVersionOf>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/go/GO:0006595"/>
+            </rdf:Bag>
+          </bqbiol:isVersionOf>
+          <bqbiol:hasProperty>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/mamo/MAMO_0000046"/>
+            </rdf:Bag>
+          </bqbiol:hasProperty>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
+    <listOfUnitDefinitions>
+      <unitDefinition id="min_1" name="permin">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_min_1" name="uMpermin">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
+          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_min_2" name="uM(min)^-2">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+          <unit kind="second" exponent="-2" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_1" name="peruM">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM" name="microM">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="time_unit" name="minute">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="substance" name="µmole">
+        <listOfUnits>
+          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_1_min_1" name="peruMpermin">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="uM_1_min_2" name="uM^(-1)min^(-2)">
+        <listOfUnits>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+          <unit kind="second" exponent="-2" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
+      <unitDefinition id="min_uM_1" name="minperuM">
+        <listOfUnits>
+          <unit kind="second" exponent="1" scale="1" multiplier="6"/>
+          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
+          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+        </listOfUnits>
+      </unitDefinition>
+    </listOfUnitDefinitions>
     <listOfCompartments>
-      <compartment id="default" constant="true"/>
+      <compartment id="cytosol" name="Cytosol" spatialDimensions="3" size="1" constant="true"/>
     </listOfCompartments>
-    <qual:listOfQualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000001" qual:id="TCF7L2" qual:compartment="default" qual:constant="false" qual:name="TCF7L2" qual:maxLevel="1">
+    <listOfSpecies>
+      <species metaid="metaid_0000001" id="SAM" name="S-adenosyl-L-methionine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000001">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/11641"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/6934"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/Q9NQB0"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000002" qual:id="AURKA" qual:compartment="default" qual:constant="false" qual:name="AURKA" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000002">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/11393"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/6790"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/O14965"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000003" qual:id="pCFL1" qual:compartment="default" qual:constant="false" qual:name="pCFL1" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000004" qual:id="CFL1" qual:compartment="default" qual:constant="false" qual:name="CFL1" qual:maxLevel="1">
+      </species>
+      <species metaid="metaid_0000002" id="A" name="S-adenosylmethioninamine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="metaid_0000003" id="P" name="Putrescine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="metaid_0000004" id="S" name="Spermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000004">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/1874"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/1072"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P23528"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15746"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000005" qual:id="CD44" qual:compartment="default" qual:constant="false" qual:name="CD44" qual:maxLevel="1">
+      </species>
+      <species metaid="metaid_0000005" id="D" name="Spermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
             <rdf:Description rdf:about="#metaid_0000005">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/1681"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/960"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P16070"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16610"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000006" qual:id="TWIST1" qual:compartment="default" qual:constant="false" qual:name="TWIST1" qual:maxLevel="1">
+      </species>
+      <species metaid="metaid_0000006" id="aS" name="N1-Acetylspermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="metaid_0000007" id="aD" name="N1-Acetylspermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="metaid_0000008" id="Met" name="Methionine" compartment="cytosol" initialConcentration="50" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000006">
+            <rdf:Description rdf:about="#metaid_0000008">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/12428"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/7291"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/Q15672"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16811"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000007" qual:id="LIMK" qual:compartment="default" qual:constant="false" qual:name="LIMK" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000008" qual:id="SSH1L" qual:compartment="default" qual:constant="false" qual:name="SSH1L" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000009" qual:id="Factin_n" qual:compartment="default" qual:constant="false" qual:name="Factin_n" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000010" qual:id="Factin_o" qual:compartment="default" qual:constant="false" qual:name="Factin_o" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000011" qual:id="ARP2_3" qual:compartment="default" qual:constant="false" qual:name="ARP2_3" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000012" qual:id="KRAS" qual:compartment="default" qual:constant="true" qual:name="KRAS" qual:initialLevel="1" qual:maxLevel="1">
+      </species>
+      <species metaid="metaid_0000009" id="ORN" name="L-Ornithine" compartment="cytosol" initialConcentration="300" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000012">
+            <rdf:Description rdf:about="#metaid_0000009">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/6407"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/3845"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P01116"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15729"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000013" qual:id="PI3K" qual:compartment="default" qual:constant="false" qual:name="PI3K" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000014" qual:id="PRKD1" qual:compartment="default" qual:constant="false" qual:name="PRKD1" qual:maxLevel="1">
+      </species>
+      <species metaid="metaid_0000010" id="AcCoA" name="Acetyl-CoA" compartment="cytosol" initialConcentration="39.5" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false">
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000014">
+            <rdf:Description rdf:about="#metaid_0000010">
               <bqbiol:is>
                 <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/9407"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/5587"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/Q15139"/>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15351"/>
                 </rdf:Bag>
               </bqbiol:is>
             </rdf:Description>
           </rdf:RDF>
         </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000015" qual:id="RHOA" qual:compartment="default" qual:constant="false" qual:name="RHOA" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000015">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/667"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/387"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P61586"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000016" qual:id="RAC1" qual:compartment="default" qual:constant="false" qual:name="RAC1" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000016">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/9801"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/5879"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P63000"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000017" qual:id="PAK1" qual:compartment="default" qual:constant="false" qual:name="PAK1" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000017">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/8590"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/5058"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/Q13153"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000018" qual:id="PAK4" qual:compartment="default" qual:constant="false" qual:name="PAK4" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000018">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/16059"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/10298"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/O96013"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000019" qual:id="CDH1" qual:compartment="default" qual:constant="false" qual:name="CDH1" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000019">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/1748"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/999"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P12830"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000020" qual:id="CTNNB1" qual:compartment="default" qual:constant="false" qual:name="CTNNB1" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000020">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/2514"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/1499"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P35222"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000021" qual:id="GSK3B" qual:compartment="default" qual:constant="false" qual:name="GSK3B" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000021">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/4617"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/2932"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P49841"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000022" qual:id="MYC" qual:compartment="default" qual:constant="false" qual:name="MYC" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000022">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/7553"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/4609"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P01106"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000023" qual:id="CCND1" qual:compartment="default" qual:constant="false" qual:name="CCND1" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000023">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/1582"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/595"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P24385"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000024" qual:id="RB" qual:compartment="default" qual:constant="false" qual:name="RB" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000025" qual:id="E2F" qual:compartment="default" qual:constant="false" qual:name="E2F" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000026" qual:id="CCNE1" qual:compartment="default" qual:constant="false" qual:name="CCNE1" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000026">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/1589"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/898"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P24864"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000027" qual:id="Sphase" qual:compartment="default" qual:constant="false" qual:name="Sphase" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000028" qual:id="AKT" qual:compartment="default" qual:constant="false" qual:name="AKT" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000029" qual:id="STAT3" qual:compartment="default" qual:constant="false" qual:name="STAT3" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000029">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/11364"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/6774"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P40763"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000030" qual:id="Anti_apoptotic_proteins" qual:compartment="default" qual:constant="false" qual:name="Anti_apoptotic_proteins" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000031" qual:id="Pro_apoptotic_proteins" qual:compartment="default" qual:constant="false" qual:name="Pro_apoptotic_proteins" qual:maxLevel="1"/>
-      <qual:qualitativeSpecies metaid="metaid_0000032" qual:id="CYCS" qual:compartment="default" qual:constant="false" qual:name="CYCS" qual:maxLevel="1">
-        <annotation>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-            <rdf:Description rdf:about="#metaid_0000032">
-              <bqbiol:is>
-                <rdf:Bag>
-                  <rdf:li rdf:resource="http://identifiers.org/HGNC/19986"/>
-                  <rdf:li rdf:resource="http://identifiers.org/ncbigene/54205"/>
-                  <rdf:li rdf:resource="http://identifiers.org/uniprot/P99999"/>
-                </rdf:Bag>
-              </bqbiol:is>
-            </rdf:Description>
-          </rdf:RDF>
-        </annotation>
-      </qual:qualitativeSpecies>
-      <qual:qualitativeSpecies metaid="metaid_0000033" qual:id="Caspases" qual:compartment="default" qual:constant="false" qual:name="Caspases" qual:maxLevel="1"/>
-    </qual:listOfQualitativeSpecies>
-    <qual:listOfTransitions>
-      <qual:transition qual:id="tr_TCF7L2" qual:name="Interactions targeting TCF7L2">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="PRKD1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="TCF7L2" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
+      </species>
+      <species metaid="metaid_0000011" id="CoA" compartment="cytosol" initialConcentration="160" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
+    </listOfSpecies>
+    <listOfParameters>
+      <parameter id="Kaccoa" units="min_1" constant="false"/>
+      <parameter id="R" value="0.004" units="min_1" constant="true"/>
+      <parameter id="Kcoa" units="min_1" constant="false"/>
+      <parameter id="Vmaxodc" value="1.27905671844446" units="uM_min_1" constant="false"/>
+      <parameter id="Ksodc" name="KsODC" value="5" units="uM_min_2" constant="true"/>
+      <parameter id="Keq" value="1" units="uM_1" constant="true"/>
+      <parameter id="Kdodc" name="KdODC" value="0.05" units="uM_1" constant="true"/>
+      <parameter id="Antz" value="0.574589492832405" units="uM_min_1" constant="false"/>
+      <parameter id="Ksantz" name="KsANTZ" value="0.02" units="uM_min_2" constant="true"/>
+      <parameter id="Kdantz" name="KdANTZ" value="0.02" units="min_1" constant="true"/>
+      <parameter id="Vmaxssat" value="0.677298510125025" units="uM_min_1" constant="false"/>
+      <parameter id="Ksssat" name="KsSSAT" value="0.001" units="uM_min_2" constant="true"/>
+      <parameter id="Kdssat" name="KdSSAT" value="0.2" units="min_1" constant="true"/>
+      <parameter id="Vmaxsamdc" value="0.367465856805639" units="uM_min_1" constant="false"/>
+      <parameter id="Kssamdc" name="KsSAMDC" value="1" units="uM_min_2" constant="true"/>
+      <parameter id="Kdsamdc" name="KdSAMDC" value="0.02" units="min_1" constant="true"/>
+      <parameter id="ODC_Kmodc" value="60" units="uM" constant="true"/>
+      <parameter id="ODC_Kipodc" value="1300" units="uM" constant="true"/>
+      <parameter id="SAMdc_Kissamdc" value="500" units="uM" constant="true"/>
+      <parameter id="SAMdc_Kmsamdc" value="50" units="uM" constant="true"/>
+      <parameter id="SAMdc_Kapsamdc" value="0.5" units="uM" constant="true"/>
+      <parameter id="SAMdc_Kiasamdc" value="2.5" units="uM" constant="true"/>
+      <parameter id="C" value="4.44" units="dimensionless" constant="true"/>
+      <parameter id="SSAT_for_S_Kmsssat" value="35" units="uM" constant="true"/>
+      <parameter id="SSAT_for_S_Kmdssat" value="130" units="uM" constant="true"/>
+      <parameter id="SSAT_for_S_Kmaccoassat" value="1.5" units="uM" constant="true"/>
+      <parameter id="SSAT_for_S_Kmcoassat" value="40" units="uM" constant="true"/>
+      <parameter id="SSAT_for_D_Kmdssat" value="130" units="uM" constant="true"/>
+      <parameter id="SSAT_for_D_Kmsssat" value="35" units="uM" constant="true"/>
+      <parameter id="SSAT_for_D_Kmaccoassat" value="1.5" units="uM" constant="true"/>
+      <parameter id="SSAT_for_D_Kmcoassat" value="40" units="uM" constant="true"/>
+      <parameter id="PAO_for_aD_Vmpao" value="10.35" units="uM_min_1" constant="true"/>
+      <parameter id="PAO_for_aD_Kmadpao" value="14" units="uM" constant="true"/>
+      <parameter id="PAO_for_aD_Kmaspao" value="0.6" units="uM" constant="true"/>
+      <parameter id="PAO_for_aD_Kmdpao" value="50" units="uM" constant="true"/>
+      <parameter id="PAO_for_aD_Kmspao" value="15" units="uM" constant="true"/>
+      <parameter id="PAO_for_aS_Vmpao" value="10.35" units="uM_min_1" constant="true"/>
+      <parameter id="PAO_for_aS_Kmaspao" value="0.6" units="uM" constant="true"/>
+      <parameter id="PAO_for_aS_Kmadpao" value="14" units="uM" constant="true"/>
+      <parameter id="PAO_for_aS_Kmdpao" value="50" units="uM" constant="true"/>
+      <parameter id="PAO_for_aS_Kmspao" value="15" units="uM" constant="true"/>
+      <parameter id="SpdS_Vmspds" value="10.95" units="uM_min_1" constant="true"/>
+      <parameter id="SpdS_Kiaspds" value="0.8" units="uM" constant="true"/>
+      <parameter id="SpdS_Kpspds" value="40" units="uM" constant="true"/>
+      <parameter id="SpdS_Kidspds" value="100" units="uM" constant="true"/>
+      <parameter id="SpdS_KaSpds" value="0.3" units="uM" constant="true"/>
+      <parameter id="SpmS_Vmspms" value="3.23" units="uM_min_1" constant="true"/>
+      <parameter id="SpmS_Kiaspms" value="0.06" units="uM" constant="true"/>
+      <parameter id="SpmS_Kdspms" value="60" units="uM" constant="true"/>
+      <parameter id="SpmS_Kisspms" value="25" units="uM" constant="true"/>
+      <parameter id="SpmS_Kaspms" value="0.1" units="uM" constant="true"/>
+      <parameter id="MAT_Vmmat" value="0.45" units="uM_min_1" constant="true"/>
+      <parameter id="MAT_Kmmat" value="41" units="uM" constant="true"/>
+      <parameter id="MAT_Kimetmat" value="50" units="uM" constant="true"/>
+      <parameter id="P_efflux_Kpefflux" value="0.01" units="min_1" constant="true"/>
+      <parameter id="aD_efflux_Kadefflux" value="0.01" units="min_1" constant="true"/>
+    </listOfParameters>
+    <listOfRules>
+      <assignmentRule variable="Kaccoa">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <ci> R </ci>
+        </math>
+      </assignmentRule>
+      <assignmentRule variable="Kcoa">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <times/>
+            <cn type="integer"> 3 </cn>
+            <ci> R </ci>
+          </apply>
+        </math>
+      </assignmentRule>
+      <rateRule variable="Vmaxodc">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <divide/>
+              <ci> Ksodc </ci>
               <apply>
-                <eq/>
-                <ci> PRKD1 </ci>
-                <cn type="integer"> 0 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_AURKA" qual:name="Interactions targeting AURKA">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="PAK1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="AURKA" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> PAK1 </ci>
+                <plus/>
                 <cn type="integer"> 1 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_pCFL1" qual:name="Interactions targeting pCFL1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="TCF7L2" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="CFL1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="CD44" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="LIMK" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="SSH1L" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="pCFL1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <or/>
                 <apply>
-                  <eq/>
-                  <ci> CD44 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> TCF7L2 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <and/>
+                  <times/>
+                  <ci> Keq </ci>
                   <apply>
-                    <eq/>
-                    <ci> CFL1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> LIMK </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> SSH1L </ci>
-                    <cn type="integer"> 0 </cn>
+                    <plus/>
+                    <ci> D </ci>
+                    <ci> S </ci>
                   </apply>
                 </apply>
               </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_CFL1" qual:name="Interactions targeting CFL1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="pCFL1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="LIMK" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="SSH1L" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="CFL1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdodc </ci>
+              <ci> Antz </ci>
+              <ci> Vmaxodc </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+      <rateRule variable="Antz">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> Ksantz </ci>
               <apply>
-                <or/>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> SSH1L </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> pCFL1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                </apply>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> SSH1L </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> LIMK </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> pCFL1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_CD44" qual:name="Interactions targeting CD44">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="TWIST1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="CD44" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> TWIST1 </ci>
+                <minus/>
                 <cn type="integer"> 1 </cn>
+                <apply>
+                  <divide/>
+                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <times/>
+                      <ci> Keq </ci>
+                      <cn> 0.01 </cn>
+                      <apply>
+                        <plus/>
+                        <ci> D </ci>
+                        <ci> S </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
               </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_TWIST1" qual:name="Interactions targeting TWIST1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="AURKA" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="TWIST1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdantz </ci>
+              <ci> Antz </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+      <rateRule variable="Vmaxssat">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> Ksssat </ci>
               <apply>
-                <eq/>
-                <ci> AURKA </ci>
+                <minus/>
                 <cn type="integer"> 1 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_LIMK" qual:name="Interactions targeting LIMK">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="SSH1L" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="RHOA" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="PAK1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="PAK4" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="LIMK" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <and/>
                 <apply>
-                  <or/>
-                  <apply>
-                    <eq/>
-                    <ci> RHOA </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> PAK1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> PAK4 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> SSH1L </ci>
-                  <cn type="integer"> 0 </cn>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_SSH1L" qual:name="Interactions targeting SSH1L">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="Factin_n" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="Factin_o" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="PRKD1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="SSH1L" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <and/>
-                <apply>
-                  <or/>
-                  <apply>
-                    <eq/>
-                    <ci> Factin_n </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> Factin_o </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> PRKD1 </ci>
-                  <cn type="integer"> 0 </cn>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_Factin_n" qual:name="Interactions targeting Factin_n">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="CFL1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="ARP2_3" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="RHOA" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="Factin_n" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <or/>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> CFL1 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> ARP2_3 </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                </apply>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> RHOA </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> CFL1 </ci>
-                    <cn type="integer"> 0 </cn>
-                  </apply>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_Factin_o" qual:name="Interactions targeting Factin_o">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="CFL1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="Factin_n" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="Factin_o" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="Factin_o" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <or/>
-                <apply>
-                  <and/>
-                  <apply>
-                    <eq/>
-                    <ci> Factin_o </ci>
-                    <cn type="integer"> 1 </cn>
-                  </apply>
-                  <apply>
-                    <eq/>
-                    <ci> CFL1 </ci>
-                    <cn type="integer"> 0 </cn>
-                  </apply>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> Factin_n </ci>
+                  <divide/>
                   <cn type="integer"> 1 </cn>
+                  <apply>
+                    <plus/>
+                    <cn type="integer"> 1 </cn>
+                    <apply>
+                      <times/>
+                      <ci> Keq </ci>
+                      <apply>
+                        <plus/>
+                        <ci> D </ci>
+                        <ci> S </ci>
+                      </apply>
+                    </apply>
+                  </apply>
                 </apply>
               </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_ARP2_3" qual:name="Interactions targeting ARP2_3">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="RAC1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="ARP2_3" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdssat </ci>
               <apply>
-                <eq/>
-                <ci> RAC1 </ci>
+                <divide/>
                 <cn type="integer"> 1 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_PI3K" qual:name="Interactions targeting PI3K">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="CD44" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="KRAS" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="PI3K" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <or/>
                 <apply>
-                  <eq/>
-                  <ci> KRAS </ci>
+                  <plus/>
                   <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> CD44 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_PRKD1" qual:name="Interactions targeting PRKD1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="RHOA" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="PRKD1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> RHOA </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_RHOA" qual:name="Interactions targeting RHOA">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="PAK4" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="RHOA" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> PAK4 </ci>
-                <cn type="integer"> 0 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_RAC1" qual:name="Interactions targeting RAC1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="pCFL1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="PI3K" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="RAC1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <or/>
-                <apply>
-                  <eq/>
-                  <ci> PI3K </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> pCFL1 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_PAK1" qual:name="Interactions targeting PAK1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="RAC1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="PAK1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> RAC1 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_PAK4" qual:name="Interactions targeting PAK4">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="RAC1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="PAK4" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> RAC1 </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_CDH1" qual:name="Interactions targeting CDH1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="TWIST1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="CDH1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> TWIST1 </ci>
-                <cn type="integer"> 0 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_CTNNB1" qual:name="Interactions targeting CTNNB1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="PRKD1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="PAK1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="CDH1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="CTNNB1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <and/>
-                <apply>
-                  <eq/>
-                  <ci> PAK1 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> PRKD1 </ci>
-                  <cn type="integer"> 0 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> CDH1 </ci>
-                  <cn type="integer"> 0 </cn>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_GSK3B" qual:name="Interactions targeting GSK3B">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="AKT" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="GSK3B" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> AKT </ci>
-                <cn type="integer"> 0 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_MYC" qual:name="Interactions targeting MYC">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="CTNNB1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="GSK3B" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="STAT3" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="MYC" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <or/>
-                <apply>
-                  <and/>
                   <apply>
-                    <eq/>
-                    <ci> GSK3B </ci>
-                    <cn type="integer"> 0 </cn>
+                    <times/>
+                    <ci> Keq </ci>
+                    <apply>
+                      <plus/>
+                      <ci> D </ci>
+                      <ci> S </ci>
+                    </apply>
                   </apply>
+                </apply>
+              </apply>
+              <ci> Vmaxssat </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+      <rateRule variable="Vmaxsamdc">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> Kssamdc </ci>
+              <apply>
+                <divide/>
+                <cn type="integer"> 1 </cn>
+                <apply>
+                  <plus/>
+                  <cn type="integer"> 1 </cn>
                   <apply>
-                    <eq/>
-                    <ci> STAT3 </ci>
+                    <times/>
+                    <ci> Keq </ci>
+                    <apply>
+                      <plus/>
+                      <ci> D </ci>
+                      <ci> S </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdsamdc </ci>
+              <ci> Vmaxsamdc </ci>
+            </apply>
+          </apply>
+        </math>
+      </rateRule>
+    </listOfRules>
+    <listOfReactions>
+      <reaction metaid="metaid_0000012" id="ODC" name="Ornithine decarboxylase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="ORN" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> Vmaxodc </ci>
+                  <ci> ORN </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> ODC_Kmodc </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> P </ci>
+                        <ci> ODC_Kipodc </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> ORN </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000013" id="SAMdc" name="S-adenosylmethionine decarboxylase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="SAM" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="A" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="P"/>
+          <modifierSpeciesReference species="S"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
+                    <ci> Vmaxsamdc </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SAMdc_Kissamdc </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> SAM </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> SAMdc_Kmsamdc </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> SAMdc_Kapsamdc </ci>
+                        <ci> P </ci>
+                      </apply>
+                      <apply>
+                        <divide/>
+                        <ci> A </ci>
+                        <ci> SAMdc_Kiasamdc </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <ci> SAM </ci>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000014" id="SSAT_for_S" name="Spermidine/Spermine N1-acetyltransferase for S" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="S" stoichiometry="1" constant="true"/>
+          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="aS" stoichiometry="1" constant="true"/>
+          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="D"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <apply>
+                    <divide/>
                     <cn type="integer"> 1 </cn>
+                    <ci> C </ci>
                   </apply>
+                  <ci> Vmaxssat </ci>
+                  <ci> S </ci>
+                  <ci> AcCoA </ci>
                 </apply>
                 <apply>
-                  <and/>
+                  <plus/>
                   <apply>
-                    <eq/>
-                    <ci> CTNNB1 </ci>
+                    <times/>
+                    <ci> SSAT_for_S_Kmsssat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> D </ci>
+                        <ci> SSAT_for_S_Kmdssat </ci>
+                      </apply>
+                    </apply>
+                    <ci> SSAT_for_S_Kmaccoassat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> CoA </ci>
+                        <ci> SSAT_for_S_Kmcoassat </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_S_Kmaccoassat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> CoA </ci>
+                        <ci> SSAT_for_S_Kmcoassat </ci>
+                      </apply>
+                    </apply>
+                    <ci> S </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_S_Kmsssat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> D </ci>
+                        <ci> SSAT_for_S_Kmdssat </ci>
+                      </apply>
+                    </apply>
+                    <ci> AcCoA </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> S </ci>
+                    <ci> AcCoA </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000015" id="SSAT_for_D" name="Spermidine/spermine N1-acetyltransferase for D" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="D" stoichiometry="1" constant="true"/>
+          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="aD" stoichiometry="1" constant="true"/>
+          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="S"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> Vmaxssat </ci>
+                  <ci> D </ci>
+                  <ci> AcCoA </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_D_Kmdssat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SSAT_for_D_Kmsssat </ci>
+                      </apply>
+                    </apply>
+                    <ci> SSAT_for_D_Kmaccoassat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> CoA </ci>
+                        <ci> SSAT_for_D_Kmcoassat </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_D_Kmaccoassat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> CoA </ci>
+                        <ci> SSAT_for_D_Kmcoassat </ci>
+                      </apply>
+                    </apply>
+                    <ci> D </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SSAT_for_D_Kmdssat </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SSAT_for_D_Kmsssat </ci>
+                      </apply>
+                    </apply>
+                    <ci> AcCoA </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> D </ci>
+                    <ci> AcCoA </ci>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000016" id="PAO_for_aD" name="Polyamine oxidase for aD" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="aD" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="P" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="S"/>
+          <modifierSpeciesReference species="D"/>
+          <modifierSpeciesReference species="aS"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> PAO_for_aD_Vmpao </ci>
+                  <ci> aD </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> PAO_for_aD_Kmadpao </ci>
+                  <apply>
+                    <plus/>
                     <cn type="integer"> 1 </cn>
+                    <apply>
+                      <divide/>
+                      <ci> aD </ci>
+                      <ci> PAO_for_aD_Kmadpao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> aS </ci>
+                      <ci> PAO_for_aD_Kmaspao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> D </ci>
+                      <ci> PAO_for_aD_Kmdpao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> S </ci>
+                      <ci> PAO_for_aD_Kmspao </ci>
+                    </apply>
                   </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000017" id="PAO_for_aS" name="Polyamine oxidase for aS" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="aS" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="D" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference species="S"/>
+          <modifierSpeciesReference species="aD"/>
+        </listOfModifiers>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> PAO_for_aS_Vmpao </ci>
+                  <ci> aS </ci>
+                </apply>
+                <apply>
+                  <times/>
+                  <ci> PAO_for_aS_Kmaspao </ci>
                   <apply>
-                    <eq/>
-                    <ci> GSK3B </ci>
-                    <cn type="integer"> 0 </cn>
-                  </apply>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_CCND1" qual:name="Interactions targeting CCND1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="GSK3B" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="MYC" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="AKT" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="CCND1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <and/>
-                <apply>
-                  <eq/>
-                  <ci> GSK3B </ci>
-                  <cn type="integer"> 0 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> MYC </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> AKT </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_RB" qual:name="Interactions targeting RB">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="CCND1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="RB" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> CCND1 </ci>
-                <cn type="integer"> 0 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_E2F" qual:name="Interactions targeting E2F">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="RB" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="E2F" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> RB </ci>
-                <cn type="integer"> 0 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_CCNE1" qual:name="Interactions targeting CCNE1">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="E2F" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="CCNE1" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <eq/>
-                <ci> E2F </ci>
-                <cn type="integer"> 1 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_Sphase" qual:name="Interactions targeting Sphase">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="E2F" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="CCNE1" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="Sphase" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <and/>
-                <apply>
-                  <eq/>
-                  <ci> E2F </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> CCNE1 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_AKT" qual:name="Interactions targeting AKT">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="PI3K" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="STAT3" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="AKT" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <and/>
-                <apply>
-                  <eq/>
-                  <ci> PI3K </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> STAT3 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_STAT3" qual:name="Interactions targeting STAT3">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="pCFL1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="CFL1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="CD44" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="STAT3" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <and/>
-                <apply>
-                  <or/>
-                  <apply>
-                    <eq/>
-                    <ci> pCFL1 </ci>
+                    <plus/>
                     <cn type="integer"> 1 </cn>
+                    <apply>
+                      <divide/>
+                      <ci> aD </ci>
+                      <ci> PAO_for_aS_Kmadpao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> aS </ci>
+                      <ci> PAO_for_aS_Kmaspao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> D </ci>
+                      <ci> PAO_for_aS_Kmdpao </ci>
+                    </apply>
+                    <apply>
+                      <divide/>
+                      <ci> S </ci>
+                      <ci> PAO_for_aS_Kmspao </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000018" id="SpdS" name="Spermidine synthase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="A" stoichiometry="1" constant="true"/>
+          <speciesReference species="P" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="D" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <apply>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> SpdS_Vmspds </ci>
+                  <ci> A </ci>
+                  <ci> P </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> SpdS_Kiaspds </ci>
+                    <ci> SpdS_Kpspds </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> D </ci>
+                        <ci> SpdS_Kidspds </ci>
+                      </apply>
+                    </apply>
                   </apply>
                   <apply>
-                    <eq/>
-                    <ci> CFL1 </ci>
-                    <cn type="integer"> 1 </cn>
+                    <times/>
+                    <ci> SpdS_Kpspds </ci>
+                    <ci> A </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SpdS_KaSpds </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> D </ci>
+                        <ci> SpdS_Kidspds </ci>
+                      </apply>
+                    </apply>
+                    <ci> P </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> A </ci>
+                    <ci> P </ci>
                   </apply>
                 </apply>
-                <apply>
-                  <eq/>
-                  <ci> CD44 </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
               </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_Anti_apoptotic_proteins" qual:name="Interactions targeting Anti_apoptotic_proteins">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="STAT3" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="Anti_apoptotic_proteins" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000019" id="SpmS" name="Spermine synthase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="A" stoichiometry="1" constant="true"/>
+          <speciesReference species="D" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="S" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
               <apply>
-                <eq/>
-                <ci> STAT3 </ci>
-                <cn type="integer"> 1 </cn>
+                <divide/>
+                <apply>
+                  <times/>
+                  <ci> SpmS_Vmspms </ci>
+                  <ci> A </ci>
+                  <ci> D </ci>
+                </apply>
+                <apply>
+                  <plus/>
+                  <apply>
+                    <times/>
+                    <ci> SpmS_Kiaspms </ci>
+                    <ci> SpmS_Kdspms </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SpmS_Kisspms </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SpmS_Kdspms </ci>
+                    <ci> A </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> SpmS_Kaspms </ci>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> S </ci>
+                        <ci> SpmS_Kisspms </ci>
+                      </apply>
+                    </apply>
+                    <ci> D </ci>
+                  </apply>
+                  <apply>
+                    <times/>
+                    <ci> A </ci>
+                    <ci> D </ci>
+                  </apply>
+                </apply>
               </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_Pro_apoptotic_proteins" qual:name="Interactions targeting Pro_apoptotic_proteins">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="AKT" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="Pro_apoptotic_proteins" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000020" id="MAT" name="Methionine adenosyltransferase" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="Met" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="SAM" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
               <apply>
-                <eq/>
-                <ci> AKT </ci>
-                <cn type="integer"> 0 </cn>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_CYCS" qual:name="Interactions targeting CYCS">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="CFL1" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="Anti_apoptotic_proteins" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="Pro_apoptotic_proteins" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="CYCS" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <and/>
+                <divide/>
+                <ci> MAT_Vmmat </ci>
                 <apply>
-                  <eq/>
-                  <ci> Pro_apoptotic_proteins </ci>
+                  <plus/>
                   <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> Anti_apoptotic_proteins </ci>
-                  <cn type="integer"> 0 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> CFL1 </ci>
-                  <cn type="integer"> 1 </cn>
+                  <apply>
+                    <times/>
+                    <apply>
+                      <divide/>
+                      <ci> MAT_Kmmat </ci>
+                      <ci> Met </ci>
+                    </apply>
+                    <apply>
+                      <plus/>
+                      <cn type="integer"> 1 </cn>
+                      <apply>
+                        <divide/>
+                        <ci> SAM </ci>
+                        <ci> MAT_Kimetmat </ci>
+                      </apply>
+                    </apply>
+                  </apply>
                 </apply>
               </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-      <qual:transition qual:id="tr_Caspases" qual:name="Interactions targeting Caspases">
-        <qual:listOfInputs>
-          <qual:input qual:qualitativeSpecies="AKT" qual:transitionEffect="none"/>
-          <qual:input qual:qualitativeSpecies="CYCS" qual:transitionEffect="none"/>
-        </qual:listOfInputs>
-        <qual:listOfOutputs>
-          <qual:output qual:qualitativeSpecies="Caspases" qual:transitionEffect="assignmentLevel"/>
-        </qual:listOfOutputs>
-        <qual:listOfFunctionTerms>
-          <qual:defaultTerm qual:resultLevel="0"/>
-          <qual:functionTerm qual:resultLevel="1">
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <apply>
-                <and/>
-                <apply>
-                  <eq/>
-                  <ci> CYCS </ci>
-                  <cn type="integer"> 1 </cn>
-                </apply>
-                <apply>
-                  <eq/>
-                  <ci> AKT </ci>
-                  <cn type="integer"> 0 </cn>
-                </apply>
-              </apply>
-            </math>
-          </qual:functionTerm>
-        </qual:listOfFunctionTerms>
-      </qual:transition>
-    </qual:listOfTransitions>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000021" id="VCoA" name="VCOA" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> Kcoa </ci>
+              <ci> AcCoA </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000022" id="VacCoA" name="VACCOA" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+        </listOfProducts>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> Kaccoa </ci>
+              <ci> CoA </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000023" id="P_efflux" name="Putrescine efflux" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="P" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> P_efflux_Kpefflux </ci>
+              <ci> P </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+      <reaction metaid="metaid_0000024" id="aD_efflux" name="aD efflux" reversible="false" fast="false">
+        <listOfReactants>
+          <speciesReference species="aD" stoichiometry="1" constant="true"/>
+        </listOfReactants>
+        <kineticLaw>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+              <times/>
+              <ci> cytosol </ci>
+              <ci> aD_efflux_Kadefflux </ci>
+              <ci> aD </ci>
+            </apply>
+          </math>
+        </kineticLaw>
+      </reaction>
+    </listOfReactions>
   </model>
 </sbml>
