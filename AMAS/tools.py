@@ -50,8 +50,10 @@ def extractExistingSpeciesAnnotation(inp_model, qualifier=cn.CHEBI):
   """
   exist_raw = {val.getId():getOneOntologyFromString(val.getAnnotationString(), [cn.CHEBI, cn.OBO_CHEBI]) \
                for val in inp_model.getListOfSpecies()}
+#   print(f"exist_raw: {exist_raw}")
   exist_filt = {val:exist_raw[val] for val in exist_raw.keys() \
                 if exist_raw[val]}
+#   print(f"exist_filt: {exist_filt}")
   # remove duplicates
   exist_filt = {val:list(set(exist_filt[val])) for val in exist_filt.keys()}
   return exist_filt

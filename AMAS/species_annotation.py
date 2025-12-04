@@ -25,7 +25,7 @@ import warnings
 
 with open(os.path.join(cn.REF_DIR, 'chebi_low_synonyms_comp.lzma'), 'rb') as f:
   CHEBI_LOW_SYNONYMS = compress_pickle.load(f)
-CHARCOUNT_COMB_DF = compress_pickle.load(os.path.join(cn.REF_DIR, 'charcount_df_scaled.lzma'),
+CHARCOUNT_COMB_DF = compress_pickle.load(os.path.join(cn.REF_DIR, 'charcount_df_scaled_2jan2025.lzma'),
                                          compression="lzma")
 CHARCOUNT_DF = CHARCOUNT_COMB_DF.iloc[:, :-2]
 CHEBI_DF = CHARCOUNT_COMB_DF.iloc[:, -2:]

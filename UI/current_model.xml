@@ -1,195 +1,488 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Created by libAntimony version v2.13.2 with libSBML version 5.20.0. -->
-<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
-  <model metaid="Model_1" id="Model_1" name="Rodriguez-Caso2006_Polyamine_Metabolism" substanceUnits="substance" timeUnits="time_unit">
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level2/version3" level="2" metaid="metaid_0000001" version="3">
+  <model id="Model_1" metaid="metaid_0000002" name="Rodriguez-Caso2006_Polyamine_Metabolism">
+    <notes>
+      <body xmlns="http://www.w3.org/1999/xhtml">
+        <p>
+          <span style="font-weight: 600;">SBML creators: Armando Reyes-Palomares * , Carlos Rodríguez-Caso +, Raul Montañez * , Marta Cascante $, Francisca Sánchez-Jiménez * , Miguel A. Medina *</span>
+        </p>
+        <p>
+          <span style="font-weight: 600;">* ProCel Group, Department of Molecular Biology and Biochemistry, Faculty of Sciences, Campus de Teatinos, University of Malaga and CIBER de Enfermedades Raras (CIBER-ER). + Complex Systems Lab (ICREA-UPF), Barcelona Biomedical Research Park (PRBB-GRIB). $ Department of Biochemistry and Molecular Biology, Faculty of Biology, Universitat de Barcelona.</span>
+        </p>
+        <p>
+          <span style="font-weight: 600;">http://asp.uma.es</span>
+        </p>
+        <p>
+          <span style="font-weight: 600;">Metabolic modeling of polyamine metabolism in mammals.</span>
+          <br/>
+          <span style="font-style: italic;">Rodríguez-Caso,C et al.: J Biol Chem 2006 : 281:21799-812.</span>
+          <br/>
+          The model reproduces the dynamical behavior of the polyamine metabolism in mammals. In this model there are some additions and corrections to the publication. All perturbations and analysis have produced results very close to the published experiments. The model was successfully tested on CoPaSi v.4.4 (build 26).      </p>
+        <p>Parameters not included in the publication:</p>
+        <p>1. Parameters for SSAT kinetic constants:</p>
+        <p>KmAcCoA = 1.5 µM</p>
+        <p>KmCoA = 40 µM</p>
+        <p>2. Parameters for equation MAT (table 1):</p>
+        <p>Vmax_MAT = 0.45 µM/min</p>
+        <p>Km_MAT = 41 µM</p>
+        <p>Ki_MET_MAT = 50 µM</p>
+        <p>3. Erratum.: The corrected ODE for time-dependent variable Antz is:</p>
+        <p>KsANTZ*(1-1/(1+Keq*0.01*([D]+[S])))-KdANTZ*[Antz]</p>
+        <p>According to these modifications the new steady-state analysis results are:</p>
+        <p>Metabolites:</p>
+        <p>[P]= 104.681 µM</p>
+        <p>[D]= 76.7492 µM</p>
+        <p>[S]= 58.0135 µM</p>
+        <p>[SAM]= 52.327 µM</p>
+        <p>[A]= 0.0101962 µM</p>
+        <p>[aS]= 0.0245375 µM</p>
+        <p>[aD]= 0.832236 µM</p>
+        <p>Time-dependent global parameters:</p>
+        <p>[Antz] = 0.574038 µM</p>
+        <p>Vmaxodc = 1.28315 µM/min</p>
+        <p>Vmaxssat = 0.673814 µM/min</p>
+        <p>Vmaxsamdc = 0.36829 µM/min</p>
+        <br/>
+        <p>To the extent possible under law, all copyright and related or neighbouring rights to this encoded model have been dedicated to the public domain worldwide. Please refer to      <a href="http://creativecommons.org/publicdomain/zero/1.0/" title="Creative Commons CC0">CC0 Public Domain Dedication</a>
+          for more information.      </p>
+      <p>In summary, you are entitled to use this encoded model in absolutely any manner you deem suitable, verbatim, or with modification, alone or embedded it in a larger context, redistribute it, commercially or not, in a restricted way or not.</p>
+      <br/>
+      <p>To cite BioModels Database, please use:      <a href="http://www.ncbi.nlm.nih.gov/pubmed/20587024" target="_blank">Li C, Donizelli M, Rodriguez N, Dharuri H, Endler L, Chelliah V, Li L, He E, Henry A, Stefan MI, Snoep JL, Hucka M, Le Novère N, Laibe C (2010) BioModels Database: An enhanced, curated and annotated resource for published quantitative kinetic models. BMC Syst Biol., 4:92.</a>
+  </p>
+</body>
+</notes>
     <annotation>
-      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
-        <rdf:Description rdf:about="#Model_1">
-          <bqmodel:is>
-            <rdf:Bag>
-              <rdf:li rdf:resource="http://identifiers.org/biomodels.db/MODEL6812345601"/>
-              <rdf:li rdf:resource="http://identifiers.org/biomodels.db/BIOMD0000000190"/>
-            </rdf:Bag>
-          </bqmodel:is>
-          <bqbiol:isDescribedBy>
-            <rdf:Bag>
-              <rdf:li rdf:resource="http://identifiers.org/pubmed/16709566"/>
-            </rdf:Bag>
-          </bqbiol:isDescribedBy>
-          <bqbiol:hasTaxon>
-            <rdf:Bag>
-              <rdf:li rdf:resource="http://identifiers.org/taxonomy/40674"/>
-              <rdf:li rdf:resource="http://identifiers.org/taxonomy/9989"/>
-            </rdf:Bag>
-          </bqbiol:hasTaxon>
-          <bqbiol:isVersionOf>
-            <rdf:Bag>
-              <rdf:li rdf:resource="http://identifiers.org/go/GO:0006595"/>
-            </rdf:Bag>
-          </bqbiol:isVersionOf>
-          <bqbiol:hasProperty>
-            <rdf:Bag>
-              <rdf:li rdf:resource="http://identifiers.org/mamo/MAMO_0000046"/>
-            </rdf:Bag>
-          </bqbiol:hasProperty>
-        </rdf:Description>
-      </rdf:RDF>
-    </annotation>
-    <listOfUnitDefinitions>
-      <unitDefinition id="min_1" name="permin">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+        <rdf:Description rdf:about="#metaid_0000002">
+	<dc:creator>
+	<rdf:Bag>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Endler</vCard:Family>
+	<vCard:Given>Lukas</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>lukas@ebi.ac.uk</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>EMBL-EBI</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	
+	
+	
+	
+	
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Reyes-Palomares</vCard:Family>
+	<vCard:Given>Armando</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>armando@uma.es</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>University of M?laga. CIBERER (Enfermedades Raras)</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Rodríguez-Caso</vCard:Family>
+	<vCard:Given>Carlos</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>carlos.rodriguez@upf.edu</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>Universitat Pompeu Fabra</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Montañez</vCard:Family>
+	<vCard:Given>Raul</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>raulemm@uma.es</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>University of Malaga</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Cascante</vCard:Family>
+	<vCard:Given>Marta</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>martacascante@ub.edu</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>University of Barcelona</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Sánchez-Jiménez</vCard:Family>
+	<vCard:Given>Francisca</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>kika@uma.es</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>University of Malaga</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Medina</vCard:Family>
+	<vCard:Given>Miguel A.</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>medina@uma.es</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>University of Malaga</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	</rdf:Bag>
+	</dc:creator>
+	<dcterms:created rdf:parseType="Resource">
+	<dcterms:W3CDTF>2008-09-08T15:27:37Z</dcterms:W3CDTF>
+	</dcterms:created>
+	<dcterms:modified rdf:parseType="Resource">
+	<dcterms:W3CDTF>2012-07-05T14:37:34Z</dcterms:W3CDTF>
+	</dcterms:modified>
+	<bqmodel:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/biomodels.db/MODEL6812345601"/>
+	</rdf:Bag>
+	</bqmodel:is>
+	<bqmodel:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/biomodels.db/BIOMD0000000190"/>
+	</rdf:Bag>
+	</bqmodel:is>
+	<bqmodel:isDescribedBy>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/pubmed/16709566"/>
+	</rdf:Bag>
+	</bqmodel:isDescribedBy>
+	<bqbiol:hasTaxon>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/taxonomy/40674"/>
+	<rdf:li rdf:resource="http://identifiers.org/taxonomy/9989"/>
+	</rdf:Bag>
+	</bqbiol:hasTaxon>
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0006595"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	<bqbiol:hasProperty>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/mamo/MAMO_0000046"/>
+	</rdf:Bag>
+	</bqbiol:hasProperty>
+	</rdf:Description>
+	
+	
+  </rdf:RDF>
+</annotation>
+      <listOfUnitDefinitions>
+      <unitDefinition id="time" metaid="metaid_0000016" name="minute">
         <listOfUnits>
-          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
+          <unit kind="second" metaid="_442073" multiplier="60"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="uM_min_1" name="uMpermin">
+      <unitDefinition id="substance" metaid="metaid_0000017" name="µmole">
         <listOfUnits>
-          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
-          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
-          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+          <unit kind="mole" metaid="_442085" scale="-6"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="uM_min_2" name="uM(min)^-2">
+      <unitDefinition id="uM_1" metaid="metaid_0000053" name="peruM">
         <listOfUnits>
-          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
-          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
-          <unit kind="second" exponent="-2" scale="1" multiplier="6"/>
+          <unit exponent="-1" kind="mole" metaid="_442097" scale="-6"/>
+          <unit kind="litre" metaid="_442109"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="uM_1" name="peruM">
+      <unitDefinition id="uM_min_1" metaid="metaid_0000054" name="uMpermin">
         <listOfUnits>
-          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
-          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+          <unit kind="mole" metaid="_442121" scale="-6"/>
+          <unit exponent="-1" kind="second" metaid="_442133" multiplier="60"/>
+          <unit exponent="-1" kind="litre" metaid="_442145"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="uM" name="microM">
+      <unitDefinition id="uM_1_min_1" metaid="metaid_0000056" name="peruMpermin">
         <listOfUnits>
-          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
-          <unit kind="litre" exponent="-1" scale="0" multiplier="1"/>
+          <unit exponent="-1" kind="mole" metaid="_442157" scale="-6"/>
+          <unit exponent="-1" kind="second" metaid="_442169" multiplier="60"/>
+          <unit kind="litre" metaid="_442181"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="time_unit" name="minute">
+      <unitDefinition id="uM_1_min_2" metaid="metaid_0000075" name="uM^(-1)min^(-2)">
         <listOfUnits>
-          <unit kind="second" exponent="1" scale="1" multiplier="6"/>
+          <unit exponent="-1" kind="mole" metaid="_442193" scale="-6"/>
+          <unit exponent="-2" kind="second" metaid="_442205" multiplier="60"/>
+          <unit kind="litre" metaid="_442217"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="substance" name="µmole">
+      <unitDefinition id="min_1" metaid="metaid_0000076" name="permin">
         <listOfUnits>
-          <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
+          <unit exponent="-1" kind="second" metaid="_442229" multiplier="60"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="uM_1_min_1" name="peruMpermin">
+      <unitDefinition id="uM" metaid="metaid_0000077" name="microM">
         <listOfUnits>
-          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
-          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
-          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
+          <unit kind="mole" metaid="_442241" scale="-6"/>
+          <unit exponent="-1" kind="litre" metaid="_442253"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="uM_1_min_2" name="uM^(-1)min^(-2)">
+      <unitDefinition id="min_uM_1" metaid="metaid_0000078" name="minperuM">
         <listOfUnits>
-          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
-          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
-          <unit kind="second" exponent="-2" scale="1" multiplier="6"/>
+          <unit kind="second" metaid="_442265" multiplier="60"/>
+          <unit exponent="-1" kind="mole" metaid="_442277" scale="-6"/>
+          <unit kind="litre" metaid="_442289"/>
         </listOfUnits>
       </unitDefinition>
-      <unitDefinition id="min_uM_1" name="minperuM">
+      <unitDefinition id="uM_min_2" metaid="metaid_0000079" name="uM(min)^-2">
         <listOfUnits>
-          <unit kind="second" exponent="1" scale="1" multiplier="6"/>
-          <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
-          <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
+          <unit kind="mole" metaid="_442301" scale="-6"/>
+          <unit exponent="-1" kind="litre" metaid="_442313"/>
+          <unit exponent="-2" kind="second" metaid="_442325" multiplier="60"/>
         </listOfUnits>
       </unitDefinition>
     </listOfUnitDefinitions>
     <listOfCompartments>
-      <compartment id="cytosol" name="Cytosol" spatialDimensions="3" size="1" constant="true"/>
+      <compartment id="cytosol" metaid="metaid_0000035" name="Cytosol" size="1">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000035">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0005829"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </compartment>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="SAM" name="S-adenosyl-L-methionine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="A" name="S-adenosylmethioninamine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="P" name="Putrescine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="S" name="Spermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="D" name="Spermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="aS" name="N1-Acetylspermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="aD" name="N1-Acetylspermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="Met" name="Methionine" compartment="cytosol" initialConcentration="50" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
-      <species id="ORN" name="L-Ornithine" compartment="cytosol" initialConcentration="300" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
-      <species id="AcCoA" name="Acetyl-CoA" compartment="cytosol" initialConcentration="39.5" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
-      <species id="CoA" compartment="cytosol" initialConcentration="160" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
+      <species compartment="cytosol" id="SAM" initialConcentration="0.01" metaid="metaid_0000036" name="S-adenosyl-L-methionine">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000036">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00019"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species compartment="cytosol" id="A" initialConcentration="0.01" metaid="metaid_0000037" name="S-adenosylmethioninamine">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000037">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15625"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C01137"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species compartment="cytosol" id="P" initialConcentration="0.01" metaid="metaid_0000038" name="Putrescine">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000038">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:17148"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00134"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species compartment="cytosol" id="S" initialConcentration="0.01" metaid="metaid_0000039" name="Spermine">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000039">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15746"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00750"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species compartment="cytosol" id="D" initialConcentration="0.01" metaid="metaid_0000040" name="Spermidine">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000040">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16610"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00315"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species compartment="cytosol" id="aS" initialConcentration="0.01" metaid="metaid_0000041" name="N1-Acetylspermine">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000041">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:17312"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C02567"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species compartment="cytosol" id="aD" initialConcentration="0.01" metaid="metaid_0000042" name="N1-Acetylspermidine">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000042">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:22204"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00612"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species boundaryCondition="true" compartment="cytosol" constant="true" id="Met" initialConcentration="50" metaid="metaid_0000043" name="Methionine">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000043">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16643"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00073"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species boundaryCondition="true" compartment="cytosol" constant="true" id="ORN" initialConcentration="300" metaid="metaid_0000044" name="L-Ornithine">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000044">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15729"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00077"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species boundaryCondition="true" compartment="cytosol" constant="true" id="AcCoA" initialConcentration="39.5" metaid="metaid_0000045" name="Acetyl-CoA">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000045">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15351"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00024"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
+      <species boundaryCondition="true" compartment="cytosol" constant="true" id="CoA" initialConcentration="160" metaid="metaid_0000046" name="CoA">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000046">
+	<bqbiol:is>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15346"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00010"/>
+	</rdf:Bag>
+	</bqbiol:is>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+            </species>
     </listOfSpecies>
     <listOfParameters>
-      <parameter id="Kaccoa" units="min_1" constant="false"/>
-      <parameter id="R" value="0.004" units="min_1" constant="true"/>
-      <parameter id="Kcoa" units="min_1" constant="false"/>
-      <parameter id="Vmaxodc" value="1.27905671844446" units="uM_min_1" constant="false"/>
-      <parameter id="Ksodc" name="KsODC" value="5" units="uM_min_2" constant="true"/>
-      <parameter id="Keq" value="1" units="uM_1" constant="true"/>
-      <parameter id="Kdodc" name="KdODC" value="0.05" units="uM_1" constant="true"/>
-      <parameter id="Antz" value="0.574589492832405" units="uM_min_1" constant="false"/>
-      <parameter id="Ksantz" name="KsANTZ" value="0.02" units="uM_min_2" constant="true"/>
-      <parameter id="Kdantz" name="KdANTZ" value="0.02" units="min_1" constant="true"/>
-      <parameter id="Vmaxssat" value="0.677298510125025" units="uM_min_1" constant="false"/>
-      <parameter id="Ksssat" name="KsSSAT" value="0.001" units="uM_min_2" constant="true"/>
-      <parameter id="Kdssat" name="KdSSAT" value="0.2" units="min_1" constant="true"/>
-      <parameter id="Vmaxsamdc" value="0.367465856805639" units="uM_min_1" constant="false"/>
-      <parameter id="Kssamdc" name="KsSAMDC" value="1" units="uM_min_2" constant="true"/>
-      <parameter id="Kdsamdc" name="KdSAMDC" value="0.02" units="min_1" constant="true"/>
-      <parameter id="ODC_Kmodc" value="60" units="uM" constant="true"/>
-      <parameter id="ODC_Kipodc" value="1300" units="uM" constant="true"/>
-      <parameter id="SAMdc_Kissamdc" value="500" units="uM" constant="true"/>
-      <parameter id="SAMdc_Kmsamdc" value="50" units="uM" constant="true"/>
-      <parameter id="SAMdc_Kapsamdc" value="0.5" units="uM" constant="true"/>
-      <parameter id="SAMdc_Kiasamdc" value="2.5" units="uM" constant="true"/>
-      <parameter id="C" value="4.44" units="dimensionless" constant="true"/>
-      <parameter id="SSAT_for_S_Kmsssat" value="35" units="uM" constant="true"/>
-      <parameter id="SSAT_for_S_Kmdssat" value="130" units="uM" constant="true"/>
-      <parameter id="SSAT_for_S_Kmaccoassat" value="1.5" units="uM" constant="true"/>
-      <parameter id="SSAT_for_S_Kmcoassat" value="40" units="uM" constant="true"/>
-      <parameter id="SSAT_for_D_Kmdssat" value="130" units="uM" constant="true"/>
-      <parameter id="SSAT_for_D_Kmsssat" value="35" units="uM" constant="true"/>
-      <parameter id="SSAT_for_D_Kmaccoassat" value="1.5" units="uM" constant="true"/>
-      <parameter id="SSAT_for_D_Kmcoassat" value="40" units="uM" constant="true"/>
-      <parameter id="PAO_for_aD_Vmpao" value="10.35" units="uM_min_1" constant="true"/>
-      <parameter id="PAO_for_aD_Kmadpao" value="14" units="uM" constant="true"/>
-      <parameter id="PAO_for_aD_Kmaspao" value="0.6" units="uM" constant="true"/>
-      <parameter id="PAO_for_aD_Kmdpao" value="50" units="uM" constant="true"/>
-      <parameter id="PAO_for_aD_Kmspao" value="15" units="uM" constant="true"/>
-      <parameter id="PAO_for_aS_Vmpao" value="10.35" units="uM_min_1" constant="true"/>
-      <parameter id="PAO_for_aS_Kmaspao" value="0.6" units="uM" constant="true"/>
-      <parameter id="PAO_for_aS_Kmadpao" value="14" units="uM" constant="true"/>
-      <parameter id="PAO_for_aS_Kmdpao" value="50" units="uM" constant="true"/>
-      <parameter id="PAO_for_aS_Kmspao" value="15" units="uM" constant="true"/>
-      <parameter id="SpdS_Vmspds" value="10.95" units="uM_min_1" constant="true"/>
-      <parameter id="SpdS_Kiaspds" value="0.8" units="uM" constant="true"/>
-      <parameter id="SpdS_Kpspds" value="40" units="uM" constant="true"/>
-      <parameter id="SpdS_Kidspds" value="100" units="uM" constant="true"/>
-      <parameter id="SpdS_KaSpds" value="0.3" units="uM" constant="true"/>
-      <parameter id="SpmS_Vmspms" value="3.23" units="uM_min_1" constant="true"/>
-      <parameter id="SpmS_Kiaspms" value="0.06" units="uM" constant="true"/>
-      <parameter id="SpmS_Kdspms" value="60" units="uM" constant="true"/>
-      <parameter id="SpmS_Kisspms" value="25" units="uM" constant="true"/>
-      <parameter id="SpmS_Kaspms" value="0.1" units="uM" constant="true"/>
-      <parameter id="MAT_Vmmat" value="0.45" units="uM_min_1" constant="true"/>
-      <parameter id="MAT_Kmmat" value="41" units="uM" constant="true"/>
-      <parameter id="MAT_Kimetmat" value="50" units="uM" constant="true"/>
-      <parameter id="P_efflux_Kpefflux" value="0.01" units="min_1" constant="true"/>
-      <parameter id="aD_efflux_Kadefflux" value="0.01" units="min_1" constant="true"/>
+      <parameter constant="false" id="Vmaxodc" metaid="metaid_0000018" name="Vmaxodc" units="uM_min_1" value="1.27905671844446"/>
+      <parameter constant="false" id="Vmaxssat" metaid="metaid_0000019" name="Vmaxssat" units="uM_min_1" value="0.677298510125025"/>
+      <parameter constant="false" id="Vmaxsamdc" metaid="metaid_0000020" name="Vmaxsamdc" units="uM_min_1" value="0.367465856805639"/>
+      <parameter constant="false" id="Antz" metaid="metaid_0000021" name="Antz" units="uM_min_1" value="0.574589492832405"/>
+      <parameter id="Keq" metaid="metaid_0000022" name="Keq" units="uM_1" value="1"/>
+      <parameter id="Kdodc" metaid="metaid_0000023" name="KdODC" units="uM_1" value="0.05"/>
+      <parameter id="Ksodc" metaid="metaid_0000024" name="KsODC" units="uM_min_2" value="5"/>
+      <parameter id="Kdssat" metaid="metaid_0000025" name="KdSSAT" units="min_1" value="0.2"/>
+      <parameter id="Ksssat" metaid="metaid_0000026" name="KsSSAT" units="uM_min_2" value="0.001"/>
+      <parameter id="Kdsamdc" metaid="metaid_0000027" name="KdSAMDC" units="min_1" value="0.02"/>
+      <parameter id="Kssamdc" metaid="metaid_0000028" name="KsSAMDC" units="uM_min_2" value="1"/>
+      <parameter id="Kdantz" metaid="metaid_0000029" name="KdANTZ" units="min_1" value="0.02"/>
+      <parameter id="Ksantz" metaid="metaid_0000030" name="KsANTZ" units="uM_min_2" value="0.02"/>
+      <parameter id="R" metaid="metaid_0000031" name="R" units="min_1" value="0.004"/>
+      <parameter id="C" metaid="metaid_0000032" name="C" units="dimensionless" value="4.44"/>
+      <parameter constant="false" id="Kaccoa" metaid="metaid_0000033" name="Kaccoa" units="min_1" value="0.004"/>
+      <parameter constant="false" id="Kcoa" metaid="metaid_0000034" name="Kcoa" units="min_1" value="0.012"/>
     </listOfParameters>
     <listOfRules>
-      <assignmentRule variable="Kaccoa">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <assignmentRule metaid="metaid_0000055" variable="Kaccoa">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <ci> R </ci>
         </math>
-      </assignmentRule>
-      <assignmentRule variable="Kcoa">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            </assignmentRule>
+      <assignmentRule metaid="metaid_0000057" variable="Kcoa">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <apply>
             <times/>
-            <cn type="integer"> 3 </cn>
+            <cn> 3 </cn>
             <ci> R </ci>
           </apply>
         </math>
-      </assignmentRule>
-      <rateRule variable="Vmaxodc">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            </assignmentRule>
+      <rateRule metaid="metaid_0000058" variable="Vmaxodc">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000058">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/reactome/REACT_13565.1"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <apply>
             <minus/>
             <apply>
@@ -197,7 +490,7 @@
               <ci> Ksodc </ci>
               <apply>
                 <plus/>
-                <cn type="integer"> 1 </cn>
+                <cn> 1 </cn>
                 <apply>
                   <times/>
                   <ci> Keq </ci>
@@ -217,9 +510,96 @@
             </apply>
           </apply>
         </math>
-      </rateRule>
-      <rateRule variable="Antz">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            </rateRule>
+      <rateRule metaid="metaid_0000059" variable="Vmaxssat">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> Ksssat </ci>
+              <apply>
+                <minus/>
+                <cn> 1 </cn>
+                <apply>
+                  <divide/>
+                  <cn> 1 </cn>
+                  <apply>
+                    <plus/>
+                    <cn> 1 </cn>
+                    <apply>
+                      <times/>
+                      <ci> Keq </ci>
+                      <apply>
+                        <plus/>
+                        <ci> D </ci>
+                        <ci> S </ci>
+                      </apply>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdssat </ci>
+              <apply>
+                <divide/>
+                <cn> 1 </cn>
+                <apply>
+                  <plus/>
+                  <cn> 1 </cn>
+                  <apply>
+                    <times/>
+                    <ci> Keq </ci>
+                    <apply>
+                      <plus/>
+                      <ci> D </ci>
+                      <ci> S </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+              <ci> Vmaxssat </ci>
+            </apply>
+          </apply>
+        </math>
+            </rateRule>
+      <rateRule metaid="metaid_0000060" variable="Vmaxsamdc">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
+          <apply>
+            <minus/>
+            <apply>
+              <times/>
+              <ci> Kssamdc </ci>
+              <apply>
+                <divide/>
+                <cn> 1 </cn>
+                <apply>
+                  <plus/>
+                  <cn> 1 </cn>
+                  <apply>
+                    <times/>
+                    <ci> Keq </ci>
+                    <apply>
+                      <plus/>
+                      <ci> D </ci>
+                      <ci> S </ci>
+                    </apply>
+                  </apply>
+                </apply>
+              </apply>
+            </apply>
+            <apply>
+              <times/>
+              <ci> Kdsamdc </ci>
+              <ci> Vmaxsamdc </ci>
+            </apply>
+          </apply>
+        </math>
+            </rateRule>
+      <rateRule metaid="metaid_0000061" variable="Antz">
+        <math xmlns="http://www.w3.org/1998/Math/MathML">        
           <apply>
             <minus/>
             <apply>
@@ -227,13 +607,13 @@
               <ci> Ksantz </ci>
               <apply>
                 <minus/>
-                <cn type="integer"> 1 </cn>
+                <cn> 1 </cn>
                 <apply>
                   <divide/>
-                  <cn type="integer"> 1 </cn>
+                  <cn> 1 </cn>
                   <apply>
                     <plus/>
-                    <cn type="integer"> 1 </cn>
+                    <cn> 1 </cn>
                     <apply>
                       <times/>
                       <ci> Keq </ci>
@@ -255,105 +635,33 @@
             </apply>
           </apply>
         </math>
-      </rateRule>
-      <rateRule variable="Vmaxssat">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <apply>
-            <minus/>
-            <apply>
-              <times/>
-              <ci> Ksssat </ci>
-              <apply>
-                <minus/>
-                <cn type="integer"> 1 </cn>
-                <apply>
-                  <divide/>
-                  <cn type="integer"> 1 </cn>
-                  <apply>
-                    <plus/>
-                    <cn type="integer"> 1 </cn>
-                    <apply>
-                      <times/>
-                      <ci> Keq </ci>
-                      <apply>
-                        <plus/>
-                        <ci> D </ci>
-                        <ci> S </ci>
-                      </apply>
-                    </apply>
-                  </apply>
-                </apply>
-              </apply>
-            </apply>
-            <apply>
-              <times/>
-              <ci> Kdssat </ci>
-              <apply>
-                <divide/>
-                <cn type="integer"> 1 </cn>
-                <apply>
-                  <plus/>
-                  <cn type="integer"> 1 </cn>
-                  <apply>
-                    <times/>
-                    <ci> Keq </ci>
-                    <apply>
-                      <plus/>
-                      <ci> D </ci>
-                      <ci> S </ci>
-                    </apply>
-                  </apply>
-                </apply>
-              </apply>
-              <ci> Vmaxssat </ci>
-            </apply>
-          </apply>
-        </math>
-      </rateRule>
-      <rateRule variable="Vmaxsamdc">
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <apply>
-            <minus/>
-            <apply>
-              <times/>
-              <ci> Kssamdc </ci>
-              <apply>
-                <divide/>
-                <cn type="integer"> 1 </cn>
-                <apply>
-                  <plus/>
-                  <cn type="integer"> 1 </cn>
-                  <apply>
-                    <times/>
-                    <ci> Keq </ci>
-                    <apply>
-                      <plus/>
-                      <ci> D </ci>
-                      <ci> S </ci>
-                    </apply>
-                  </apply>
-                </apply>
-              </apply>
-            </apply>
-            <apply>
-              <times/>
-              <ci> Kdsamdc </ci>
-              <ci> Vmaxsamdc </ci>
-            </apply>
-          </apply>
-        </math>
-      </rateRule>
+            </rateRule>
     </listOfRules>
     <listOfReactions>
-      <reaction id="ODC" name="Ornithine decarboxylase" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="ORN" stoichiometry="1" constant="true"/>
+      <reaction id="ODC" metaid="metaid_0000062" name="Ornithine decarboxylase" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000062">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/ec-code/4.1.1.17"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R00670"/>
+	<rdf:li rdf:resource="http://identifiers.org/reactome/REACT_1211.3"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_442337" species="ORN"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="P" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_442349" species="P"/>
         </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_442361">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -368,14 +676,14 @@
                   <plus/>
                   <apply>
                     <times/>
-                    <ci> ODC_Kmodc </ci>
+                    <ci> Kmodc </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> P </ci>
-                        <ci> ODC_Kipodc </ci>
+                        <ci> Kipodc </ci>
                       </apply>
                     </apply>
                   </apply>
@@ -384,21 +692,39 @@
               </apply>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kipodc" metaid="_442373" units="uM" value="1300"/>
+            <parameter id="Kmodc" metaid="_442385" units="uM" value="60"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="SAMdc" name="S-adenosylmethionine decarboxylase" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="SAM" stoichiometry="1" constant="true"/>
+      <reaction id="SAMdc" metaid="metaid_0000063" name="S-adenosylmethionine decarboxylase" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000063">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/ec-code/4.1.1.50"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R00178"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_442397" species="SAM"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="A" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_442409" species="A"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="P"/>
-          <modifierSpeciesReference species="S"/>
+          <modifierSpeciesReference metaid="_442421" species="S"/>
+          <modifierSpeciesReference metaid="_442433" species="P"/>
         </listOfModifiers>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_442445">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -411,11 +737,11 @@
                     <ci> Vmaxsamdc </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> S </ci>
-                        <ci> SAMdc_Kissamdc </ci>
+                        <ci> Kissamdc </ci>
                       </apply>
                     </apply>
                   </apply>
@@ -425,19 +751,19 @@
                   <plus/>
                   <apply>
                     <times/>
-                    <ci> SAMdc_Kmsamdc </ci>
+                    <ci> Kmsamdc </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
-                        <ci> SAMdc_Kapsamdc </ci>
+                        <ci> Kapsamdc </ci>
                         <ci> P </ci>
                       </apply>
                       <apply>
                         <divide/>
                         <ci> A </ci>
-                        <ci> SAMdc_Kiasamdc </ci>
+                        <ci> Kiasamdc </ci>
                       </apply>
                     </apply>
                   </apply>
@@ -446,22 +772,42 @@
               </apply>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kapsamdc" metaid="_442457" units="uM" value="0.5"/>
+            <parameter id="Kiasamdc" metaid="_442469" units="uM" value="2.5"/>
+            <parameter id="Kissamdc" metaid="_442481" units="uM" value="500"/>
+            <parameter id="Kmsamdc" metaid="_442493" units="uM" value="50"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="SSAT_for_S" name="Spermidine/Spermine N1-acetyltransferase for S" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="S" stoichiometry="1" constant="true"/>
-          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+      <reaction id="SSAT_for_S" metaid="metaid_0000064" name="Spermidine/Spermine N1-acetyltransferase for S" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000064">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/ec-code/2.3.1.57"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R03910"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_442505" species="S"/>
+          <speciesReference metaid="_442517" species="AcCoA"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="aS" stoichiometry="1" constant="true"/>
-          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_442529" species="aS"/>
+          <speciesReference metaid="_442541" species="CoA"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="D"/>
+          <modifierSpeciesReference metaid="_442553" species="D"/>
         </listOfModifiers>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_442565">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -471,7 +817,7 @@
                   <times/>
                   <apply>
                     <divide/>
-                    <cn type="integer"> 1 </cn>
+                    <cn> 1 </cn>
                     <ci> C </ci>
                   </apply>
                   <ci> Vmaxssat </ci>
@@ -482,51 +828,51 @@
                   <plus/>
                   <apply>
                     <times/>
-                    <ci> SSAT_for_S_Kmsssat </ci>
+                    <ci> Kmsssat </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> D </ci>
-                        <ci> SSAT_for_S_Kmdssat </ci>
+                        <ci> Kmdssat </ci>
                       </apply>
                     </apply>
-                    <ci> SSAT_for_S_Kmaccoassat </ci>
+                    <ci> Kmaccoassat </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> CoA </ci>
-                        <ci> SSAT_for_S_Kmcoassat </ci>
+                        <ci> Kmcoassat </ci>
                       </apply>
                     </apply>
                   </apply>
                   <apply>
                     <times/>
-                    <ci> SSAT_for_S_Kmaccoassat </ci>
+                    <ci> Kmaccoassat </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> CoA </ci>
-                        <ci> SSAT_for_S_Kmcoassat </ci>
+                        <ci> Kmcoassat </ci>
                       </apply>
                     </apply>
                     <ci> S </ci>
                   </apply>
                   <apply>
                     <times/>
-                    <ci> SSAT_for_S_Kmsssat </ci>
+                    <ci> Kmsssat </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> D </ci>
-                        <ci> SSAT_for_S_Kmdssat </ci>
+                        <ci> Kmdssat </ci>
                       </apply>
                     </apply>
                     <ci> AcCoA </ci>
@@ -540,22 +886,42 @@
               </apply>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kmaccoassat" metaid="_442577" units="uM" value="1.5"/>
+            <parameter id="Kmcoassat" metaid="_442589" units="uM" value="40"/>
+            <parameter id="Kmdssat" metaid="_442601" units="uM" value="130"/>
+            <parameter id="Kmsssat" metaid="_442613" units="uM" value="35"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="SSAT_for_D" name="Spermidine/spermine N1-acetyltransferase for D" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="D" stoichiometry="1" constant="true"/>
-          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+      <reaction id="SSAT_for_D" metaid="metaid_0000065" name="Spermidine/spermine N1-acetyltransferase for D" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000065">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/ec-code/2.3.1.57"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R03910"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_442625" species="D"/>
+          <speciesReference metaid="_442637" species="AcCoA"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="aD" stoichiometry="1" constant="true"/>
-          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_442649" species="aD"/>
+          <speciesReference metaid="_442661" species="CoA"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="S"/>
+          <modifierSpeciesReference metaid="_442673" species="S"/>
         </listOfModifiers>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_442685">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -571,51 +937,51 @@
                   <plus/>
                   <apply>
                     <times/>
-                    <ci> SSAT_for_D_Kmdssat </ci>
+                    <ci> Kmdssat </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> S </ci>
-                        <ci> SSAT_for_D_Kmsssat </ci>
+                        <ci> Kmsssat </ci>
                       </apply>
                     </apply>
-                    <ci> SSAT_for_D_Kmaccoassat </ci>
+                    <ci> Kmaccoassat </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> CoA </ci>
-                        <ci> SSAT_for_D_Kmcoassat </ci>
+                        <ci> Kmcoassat </ci>
                       </apply>
                     </apply>
                   </apply>
                   <apply>
                     <times/>
-                    <ci> SSAT_for_D_Kmaccoassat </ci>
+                    <ci> Kmaccoassat </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> CoA </ci>
-                        <ci> SSAT_for_D_Kmcoassat </ci>
+                        <ci> Kmcoassat </ci>
                       </apply>
                     </apply>
                     <ci> D </ci>
                   </apply>
                   <apply>
                     <times/>
-                    <ci> SSAT_for_D_Kmdssat </ci>
+                    <ci> Kmdssat </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> S </ci>
-                        <ci> SSAT_for_D_Kmsssat </ci>
+                        <ci> Kmsssat </ci>
                       </apply>
                     </apply>
                     <ci> AcCoA </ci>
@@ -629,22 +995,43 @@
               </apply>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kmaccoassat" metaid="_442697" units="uM" value="1.5"/>
+            <parameter id="Kmcoassat" metaid="_442709" units="uM" value="40"/>
+            <parameter id="Kmdssat" metaid="_442721" units="uM" value="130"/>
+            <parameter id="Kmsssat" metaid="_442733" units="uM" value="35"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="PAO_for_aD" name="Polyamine oxidase for aD" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="aD" stoichiometry="1" constant="true"/>
+      <reaction id="PAO_for_aD" metaid="metaid_0000066" name="Polyamine oxidase for aD" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000066">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/ec-code/1.5.3.11"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R03899"/>
+	<rdf:li rdf:resource="http://identifiers.org/reactome/REACT_1548.3"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_442745" species="aD"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="P" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_442757" species="P"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="S"/>
-          <modifierSpeciesReference species="D"/>
-          <modifierSpeciesReference species="aS"/>
+          <modifierSpeciesReference metaid="_442769" species="aS"/>
+          <modifierSpeciesReference metaid="_442781" species="D"/>
+          <modifierSpeciesReference metaid="_442793" species="S"/>
         </listOfModifiers>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_442805" sboTerm="SBO:0000270">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -652,55 +1039,77 @@
                 <divide/>
                 <apply>
                   <times/>
-                  <ci> PAO_for_aD_Vmpao </ci>
+                  <ci> Vmpao </ci>
                   <ci> aD </ci>
                 </apply>
                 <apply>
                   <times/>
-                  <ci> PAO_for_aD_Kmadpao </ci>
+                  <ci> Kmadpao </ci>
                   <apply>
                     <plus/>
-                    <cn type="integer"> 1 </cn>
+                    <cn> 1 </cn>
                     <apply>
                       <divide/>
                       <ci> aD </ci>
-                      <ci> PAO_for_aD_Kmadpao </ci>
+                      <ci> Kmadpao </ci>
                     </apply>
                     <apply>
                       <divide/>
                       <ci> aS </ci>
-                      <ci> PAO_for_aD_Kmaspao </ci>
+                      <ci> Kmaspao </ci>
                     </apply>
                     <apply>
                       <divide/>
                       <ci> D </ci>
-                      <ci> PAO_for_aD_Kmdpao </ci>
+                      <ci> Kmdpao </ci>
                     </apply>
                     <apply>
                       <divide/>
                       <ci> S </ci>
-                      <ci> PAO_for_aD_Kmspao </ci>
+                      <ci> Kmspao </ci>
                     </apply>
                   </apply>
                 </apply>
               </apply>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kmadpao" metaid="_442817" units="uM" value="14"/>
+            <parameter id="Kmaspao" metaid="_442829" units="uM" value="0.6"/>
+            <parameter id="Kmdpao" metaid="_442841" units="uM" value="50"/>
+            <parameter id="Kmspao" metaid="_442853" units="uM" value="15"/>
+            <parameter id="Vmpao" metaid="_442865" units="uM_min_1" value="10.35"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="PAO_for_aS" name="Polyamine oxidase for aS" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="aS" stoichiometry="1" constant="true"/>
+      <reaction id="PAO_for_aS" metaid="metaid_0000067" name="Polyamine oxidase for aS" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000067">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/ec-code/1.5.3.11"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R03899"/>
+	<rdf:li rdf:resource="http://identifiers.org/reactome/REACT_2231.4"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_442877" species="aS"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="D" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_442889" species="D"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="S"/>
-          <modifierSpeciesReference species="aD"/>
+          <modifierSpeciesReference metaid="_442901" species="aD"/>
+          <modifierSpeciesReference metaid="_442913" species="S"/>
         </listOfModifiers>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_442925" sboTerm="SBO:0000270">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -708,52 +1117,73 @@
                 <divide/>
                 <apply>
                   <times/>
-                  <ci> PAO_for_aS_Vmpao </ci>
+                  <ci> Vmpao </ci>
                   <ci> aS </ci>
                 </apply>
                 <apply>
                   <times/>
-                  <ci> PAO_for_aS_Kmaspao </ci>
+                  <ci> Kmaspao </ci>
                   <apply>
                     <plus/>
-                    <cn type="integer"> 1 </cn>
+                    <cn> 1 </cn>
                     <apply>
                       <divide/>
                       <ci> aD </ci>
-                      <ci> PAO_for_aS_Kmadpao </ci>
+                      <ci> Kmadpao </ci>
                     </apply>
                     <apply>
                       <divide/>
                       <ci> aS </ci>
-                      <ci> PAO_for_aS_Kmaspao </ci>
+                      <ci> Kmaspao </ci>
                     </apply>
                     <apply>
                       <divide/>
                       <ci> D </ci>
-                      <ci> PAO_for_aS_Kmdpao </ci>
+                      <ci> Kmdpao </ci>
                     </apply>
                     <apply>
                       <divide/>
                       <ci> S </ci>
-                      <ci> PAO_for_aS_Kmspao </ci>
+                      <ci> Kmspao </ci>
                     </apply>
                   </apply>
                 </apply>
               </apply>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kmadpao" metaid="_442937" units="uM" value="14"/>
+            <parameter id="Kmaspao" metaid="_442949" units="uM" value="0.6"/>
+            <parameter id="Kmdpao" metaid="_442961" units="uM" value="50"/>
+            <parameter id="Kmspao" metaid="_442973" units="uM" value="15"/>
+            <parameter id="Vmpao" metaid="_442985" units="uM_min_1" value="10.35"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="SpdS" name="Spermidine synthase" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="A" stoichiometry="1" constant="true"/>
-          <speciesReference species="P" stoichiometry="1" constant="true"/>
+      <reaction id="SpdS" metaid="metaid_0000068" name="Spermidine synthase" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000068">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/ec-code/2.5.1.16"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R01920"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_442997" species="A"/>
+          <speciesReference metaid="_443009" species="P"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="D" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_443021" species="D"/>
         </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_443033">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -761,7 +1191,7 @@
                 <divide/>
                 <apply>
                   <times/>
-                  <ci> SpdS_Vmspds </ci>
+                  <ci> Vmspds </ci>
                   <ci> A </ci>
                   <ci> P </ci>
                 </apply>
@@ -769,33 +1199,33 @@
                   <plus/>
                   <apply>
                     <times/>
-                    <ci> SpdS_Kiaspds </ci>
-                    <ci> SpdS_Kpspds </ci>
+                    <ci> Kiaspds </ci>
+                    <ci> Kpspds </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> D </ci>
-                        <ci> SpdS_Kidspds </ci>
+                        <ci> Kidspds </ci>
                       </apply>
                     </apply>
                   </apply>
                   <apply>
                     <times/>
-                    <ci> SpdS_Kpspds </ci>
+                    <ci> Kpspds </ci>
                     <ci> A </ci>
                   </apply>
                   <apply>
                     <times/>
-                    <ci> SpdS_KaSpds </ci>
+                    <ci> KaSpds </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> D </ci>
-                        <ci> SpdS_Kidspds </ci>
+                        <ci> Kidspds </ci>
                       </apply>
                     </apply>
                     <ci> P </ci>
@@ -809,18 +1239,39 @@
               </apply>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="KaSpds" metaid="_443045" units="uM" value="0.3"/>
+            <parameter id="Kiaspds" metaid="_443058" units="uM" value="0.8"/>
+            <parameter id="Kidspds" metaid="_443070" units="uM" value="100"/>
+            <parameter id="Kpspds" metaid="_443082" units="uM" value="40"/>
+            <parameter id="Vmspds" metaid="_443094" units="uM_min_1" value="10.95"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="SpmS" name="Spermine synthase" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="A" stoichiometry="1" constant="true"/>
-          <speciesReference species="D" stoichiometry="1" constant="true"/>
+      <reaction id="SpmS" metaid="metaid_0000069" name="Spermine synthase" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000069">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/ec-code/2.5.1.22"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R02869"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_443106" species="A"/>
+          <speciesReference metaid="_443118" species="D"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="S" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_443130" species="S"/>
         </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_443142">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -828,7 +1279,7 @@
                 <divide/>
                 <apply>
                   <times/>
-                  <ci> SpmS_Vmspms </ci>
+                  <ci> Vmspms </ci>
                   <ci> A </ci>
                   <ci> D </ci>
                 </apply>
@@ -836,33 +1287,33 @@
                   <plus/>
                   <apply>
                     <times/>
-                    <ci> SpmS_Kiaspms </ci>
-                    <ci> SpmS_Kdspms </ci>
+                    <ci> Kiaspms </ci>
+                    <ci> Kdspms </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> S </ci>
-                        <ci> SpmS_Kisspms </ci>
+                        <ci> Kisspms </ci>
                       </apply>
                     </apply>
                   </apply>
                   <apply>
                     <times/>
-                    <ci> SpmS_Kdspms </ci>
+                    <ci> Kdspms </ci>
                     <ci> A </ci>
                   </apply>
                   <apply>
                     <times/>
-                    <ci> SpmS_Kaspms </ci>
+                    <ci> Kaspms </ci>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> S </ci>
-                        <ci> SpmS_Kisspms </ci>
+                        <ci> Kisspms </ci>
                       </apply>
                     </apply>
                     <ci> D </ci>
@@ -876,40 +1327,61 @@
               </apply>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kaspms" metaid="_443154" units="uM" value="0.1"/>
+            <parameter id="Kdspms" metaid="_443166" units="uM" value="60"/>
+            <parameter id="Kiaspms" metaid="_443178" units="uM" value="0.06"/>
+            <parameter id="Kisspms" metaid="_443190" units="uM" value="25"/>
+            <parameter id="Vmspms" metaid="_443202" units="uM_min_1" value="3.23"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="MAT" name="Methionine adenosyltransferase" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="Met" stoichiometry="1" constant="true"/>
+      <reaction id="MAT" metaid="metaid_0000070" name="Methionine adenosyltransferase" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000070">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/ec-code/2.5.1.6"/>
+	<rdf:li rdf:resource="http://identifiers.org/kegg.reaction/R00177"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_443214" species="Met"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="SAM" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_443226" species="SAM"/>
         </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_443238" sboTerm="SBO:0000260">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
               <apply>
                 <divide/>
-                <ci> MAT_Vmmat </ci>
+                <ci> Vmmat </ci>
                 <apply>
                   <plus/>
-                  <cn type="integer"> 1 </cn>
+                  <cn> 1 </cn>
                   <apply>
                     <times/>
                     <apply>
                       <divide/>
-                      <ci> MAT_Kmmat </ci>
+                      <ci> Kmmat </ci>
                       <ci> Met </ci>
                     </apply>
                     <apply>
                       <plus/>
-                      <cn type="integer"> 1 </cn>
+                      <cn> 1 </cn>
                       <apply>
                         <divide/>
                         <ci> SAM </ci>
-                        <ci> MAT_Kimetmat </ci>
+                        <ci> Kimetmat </ci>
                       </apply>
                     </apply>
                   </apply>
@@ -917,17 +1389,35 @@
               </apply>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kimetmat" metaid="_443250" units="uM" value="50"/>
+            <parameter id="Kmmat" metaid="_443262" units="uM" value="41"/>
+            <parameter id="Vmmat" metaid="_443274" units="uM_min_1" value="0.45"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="VCoA" name="VCOA" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+      <reaction id="VCoA" metaid="metaid_0000071" name="VCOA" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000071">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0046356"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_443287" species="AcCoA"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_443299" species="CoA"/>
         </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_443311" sboTerm="SBO:0000049">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -935,17 +1425,30 @@
               <ci> AcCoA </ci>
             </apply>
           </math>
-        </kineticLaw>
+                </kineticLaw>
       </reaction>
-      <reaction id="VacCoA" name="VACCOA" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="CoA" stoichiometry="1" constant="true"/>
+      <reaction id="VacCoA" metaid="metaid_0000072" name="VACCOA" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000072">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0006085"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_443323" species="CoA"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_443335" species="AcCoA"/>
         </listOfProducts>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_443347" sboTerm="SBO:0000049">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
@@ -953,36 +1456,55 @@
               <ci> CoA </ci>
             </apply>
           </math>
-        </kineticLaw>
+                </kineticLaw>
       </reaction>
-      <reaction id="P_efflux" name="Putrescine efflux" reversible="false" fast="false">
-        <listOfReactants>
-          <speciesReference species="P" stoichiometry="1" constant="true"/>
+      <reaction id="P_efflux" metaid="metaid_0000073" name="Putrescine efflux" reversible="false">
+        <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqmodel="http://biomodels.net/model-qualifiers/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000073">
+	<bqbiol:isVersionOf>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0009447"/>
+	</rdf:Bag>
+	</bqbiol:isVersionOf>
+	</rdf:Description>
+	
+	
+      </rdf:RDF>
+    </annotation>
+              <listOfReactants>
+          <speciesReference metaid="_443359" species="P"/>
         </listOfReactants>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_443371" sboTerm="SBO:0000049">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
-              <ci> P_efflux_Kpefflux </ci>
+              <ci> Kpefflux </ci>
               <ci> P </ci>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kpefflux" metaid="_443383" units="min_1" value="0.01"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="aD_efflux" name="aD efflux" reversible="false" fast="false">
+      <reaction id="aD_efflux" metaid="metaid_0000074" name="aD efflux" reversible="false">
         <listOfReactants>
-          <speciesReference species="aD" stoichiometry="1" constant="true"/>
+          <speciesReference metaid="_443395" species="aD"/>
         </listOfReactants>
-        <kineticLaw>
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <kineticLaw metaid="_443407" sboTerm="SBO:0000049">
+          <math xmlns="http://www.w3.org/1998/Math/MathML">          
             <apply>
               <times/>
               <ci> cytosol </ci>
-              <ci> aD_efflux_Kadefflux </ci>
+              <ci> Kadefflux </ci>
               <ci> aD </ci>
             </apply>
           </math>
+                  <listOfParameters>
+            <parameter id="Kadefflux" metaid="_443419" units="min_1" value="0.01"/>
+          </listOfParameters>
         </kineticLaw>
       </reaction>
     </listOfReactions>

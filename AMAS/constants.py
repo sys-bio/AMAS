@@ -51,9 +51,9 @@ NCBI_GENE_DEFAULT_URL = 'https://www.ncbi.nlm.nih.gov/gene/'
 Recommendation = collections.namedtuple('Recommendation',
                                         ['id', 'candidates', 'urls', 'labels'])
 
-with open(os.path.join(REF_DIR, 'chebi_shortened_formula_comp.lzma'), 'rb') as f:
+with open(os.path.join(REF_DIR, 'chebi_shortened_formula_2jan2025.lzma'), 'rb') as f:
   REF_CHEBI2FORMULA = compress_pickle.load(f)
-with open(os.path.join(REF_DIR, 'chebi2label.lzma'), 'rb') as f:
+with open(os.path.join(REF_DIR, 'chebi2label_2jan2025.lzma'), 'rb') as f:
   REF_CHEBI2LABEL = compress_pickle.load(f)
 with open(os.path.join(REF_DIR, 'ncbigene2label_bigg_organisms_protein_coding.lzma'), 'rb') as f:
   REF_NCBI_GENE2LABEL = compress_pickle.load(f)
