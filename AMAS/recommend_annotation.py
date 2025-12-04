@@ -2,11 +2,11 @@
 
 # recommend_annotation.py
 """
-Predicts annotations of species and reactions using a local XML file
-and the reaction ID. 
-This is a combined version of recommend_species and recommend_reaction,
+Predicts annotations of species, reactions, and genes (if exist) using a local XML file
+This is a combined version of recommend_species, recommend_reaction, and recommend_genes,
 but is more convenient because user will just get the updated XML file or whole recommendations. 
-Usage: python recommend_reaction.py files/BIOMD0000000190.xml --cutoff 0.6 --save csv --outfile res.csv 
+
+Usage: python recommend_annotation.py files/e_coli_core.xml --tax 511145 --cutoff 0.6 --save csv --outfile rec.csv 
 """
 
 import argparse
@@ -23,13 +23,14 @@ from AMAS import iterator as it
 from AMAS import species_annotation as sa
 from AMAS import reaction_annotation as ra
 from AMAS import recommender
-
+from AMAS import tools
 
 def main():
   parser = argparse.ArgumentParser(description='Recommend annotations of an SBML model ' +\
-                                               '(for both species and reactions) and save results.') 
+                                               '(for species, reactions, and genes) and save results.') 
   parser.add_argument('model', type=str, help='SBML model file (.xml).')
-  # One or more reaction IDs can be given
+  # taxonomy id for gene annotation, by default is human
+  parser.add_argument('--tax', type=str, help='Taxonomy ID of the species', nargs='?', default='9606') 
   parser.add_argument('--cutoff', type=float, help='Match score cutoff.', nargs='?', default=0.0)
   parser.add_argument('--optimize', type=str, help='Whether to optimize or not. ' +\
                                                    'If y or yes is given, predictions will be ' +\
@@ -49,13 +50,13 @@ def main():
                                      'If "sbml" is chosen, model will be automatically ' +\
                                      'annotated with recommended candidates and saved. ' +\
                                      'If "csv" is chosen, recommendations will be saved ' +\
-                                     'as a csv file. Default is "csv".',
+                                     'as a csv file. Default is "sbml".',
                                 nargs='?',
                                 default='sbml')
   parser.add_argument('--outfile', type=str, help='Path to save an output file.', nargs='?')
   args = parser.parse_args()
-  recom = recommender.Recommender(libsbml_fpath=args.model)
   one_fpath = args.model
+  tax = str(args.tax)
   cutoff = args.cutoff
   optim_raw = args.optimize
   if optim_raw.lower() in ['y', 'yes']:
@@ -65,17 +66,43 @@ def main():
   mssc = args.mssc.lower()
   save = args.save
   outfile = args.outfile
-  #
-  recom = recommender.Recommender(libsbml_fpath=one_fpath)
-  specs = recom.getSpeciesIDs()
-  print("...\nAnalyzing %d species...\n" % len(specs))
-  reacts = recom.getReactionIDs()
-  print("...\nAnalyzing %d reaction(s)...\n" % len(reacts))
 
-  res_tab = recom.recommendAnnotation(mssc=mssc,
-                                      cutoff=cutoff,
-                                      optimize=optim,
-                                      outtype='table')
+  recom = recommender.Recommender(libsbml_fpath=one_fpath)
+  if recom.model_type == 'SBML-qual':
+    print("...\nAnnotating SBML-qual model\n")
+    qual_species = recom.getQualSpeciesIDs()
+    if not qual_species:
+      print("\nNo qualitative species found in the model.")
+    else:
+      print("...\nAnalyzing %d qualitative species...\n" % len(qual_species))
+    res_tab = recom.recommendQualitativeSpecies(tax_id=tax,
+                                  ids=qual_species,
+                                  mssc=mssc,
+                                  cutoff=cutoff,
+                                  outtype='table')
+  
+  else:
+    specs = recom.getSpeciesIDs()
+    if not specs:
+      print("\nNo species found in the model.")
+    else:
+      print("...\nAnalyzing %d species...\n" % len(specs))
+    reacts = recom.getReactionIDs()
+    if not reacts:
+      print("\nNo reactions found in the model.")
+    else:
+      print("...\nAnalyzing %d reaction(s)...\n" % len(reacts))
+    genes = recom.getGeneIDs()
+    if not genes:
+      print("\nNo genes found in the model.")
+    else:
+      print("...\nAnalyzing %d gene(s)...\n" % len(genes))
+
+    res_tab = recom.recommendAnnotation(tax_id = tax,
+                                        mssc=mssc,
+                                        cutoff=cutoff,
+                                        optimize=optim,
+                                        outtype='table')
   if save == 'csv':
     if outfile is None:
       outfile = os.path.join(os.getcwd(), 'recommendations.csv')

@@ -3,7 +3,7 @@
 <Annotation for Reaction>
 reaction_annotation creates and predicts
 annotation of libsbml reactions,
-using existing  species annotations or,
+using existing species annotations or,
 annotations predicted via species_annotation.
 """
 

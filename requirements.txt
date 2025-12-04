@@ -1,9 +1,10 @@
 compress-pickle
-editdistance
-nose
+# editdistance
+# nose
 numpy
 pandas
 python-libsbml
-scikit-learn
-sphinx
+# scikit-learn
+# sphinx
 tabulate
+dash

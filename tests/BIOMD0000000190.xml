@@ -73,20 +73,30 @@
 	
 	<rdf:li rdf:parseType="Resource">
 	<vCard:N rdf:parseType="Resource">
-	<vCard:Family>Medina</vCard:Family>
-	<vCard:Given>Miguel A.</vCard:Given>
+	<vCard:Family>Reyes-Palomares</vCard:Family>
+	<vCard:Given>Armando</vCard:Given>
 	</vCard:N>
-	<vCard:EMAIL>medina@uma.es</vCard:EMAIL>
+	<vCard:EMAIL>armando@uma.es</vCard:EMAIL>
 	<vCard:ORG rdf:parseType="Resource">
-	<vCard:Orgname>University of Malaga</vCard:Orgname>
+	<vCard:Orgname>University of M?laga. CIBERER (Enfermedades Raras)</vCard:Orgname>
 	</vCard:ORG>
 	</rdf:li>
 	<rdf:li rdf:parseType="Resource">
 	<vCard:N rdf:parseType="Resource">
-	<vCard:Family>Sánchez-Jiménez</vCard:Family>
-	<vCard:Given>Francisca</vCard:Given>
+	<vCard:Family>Rodríguez-Caso</vCard:Family>
+	<vCard:Given>Carlos</vCard:Given>
 	</vCard:N>
-	<vCard:EMAIL>kika@uma.es</vCard:EMAIL>
+	<vCard:EMAIL>carlos.rodriguez@upf.edu</vCard:EMAIL>
+	<vCard:ORG rdf:parseType="Resource">
+	<vCard:Orgname>Universitat Pompeu Fabra</vCard:Orgname>
+	</vCard:ORG>
+	</rdf:li>
+	<rdf:li rdf:parseType="Resource">
+	<vCard:N rdf:parseType="Resource">
+	<vCard:Family>Montañez</vCard:Family>
+	<vCard:Given>Raul</vCard:Given>
+	</vCard:N>
+	<vCard:EMAIL>raulemm@uma.es</vCard:EMAIL>
 	<vCard:ORG rdf:parseType="Resource">
 	<vCard:Orgname>University of Malaga</vCard:Orgname>
 	</vCard:ORG>
@@ -103,32 +113,22 @@
 	</rdf:li>
 	<rdf:li rdf:parseType="Resource">
 	<vCard:N rdf:parseType="Resource">
-	<vCard:Family>Montañez</vCard:Family>
-	<vCard:Given>Raul</vCard:Given>
+	<vCard:Family>Sánchez-Jiménez</vCard:Family>
+	<vCard:Given>Francisca</vCard:Given>
 	</vCard:N>
-	<vCard:EMAIL>raulemm@uma.es</vCard:EMAIL>
+	<vCard:EMAIL>kika@uma.es</vCard:EMAIL>
 	<vCard:ORG rdf:parseType="Resource">
 	<vCard:Orgname>University of Malaga</vCard:Orgname>
 	</vCard:ORG>
 	</rdf:li>
 	<rdf:li rdf:parseType="Resource">
 	<vCard:N rdf:parseType="Resource">
-	<vCard:Family>Rodríguez-Caso</vCard:Family>
-	<vCard:Given>Carlos</vCard:Given>
+	<vCard:Family>Medina</vCard:Family>
+	<vCard:Given>Miguel A.</vCard:Given>
 	</vCard:N>
-	<vCard:EMAIL>carlos.rodriguez@upf.edu</vCard:EMAIL>
+	<vCard:EMAIL>medina@uma.es</vCard:EMAIL>
 	<vCard:ORG rdf:parseType="Resource">
-	<vCard:Orgname>Universitat Pompeu Fabra</vCard:Orgname>
-	</vCard:ORG>
-	</rdf:li>
-	<rdf:li rdf:parseType="Resource">
-	<vCard:N rdf:parseType="Resource">
-	<vCard:Family>Reyes-Palomares</vCard:Family>
-	<vCard:Given>Armando</vCard:Given>
-	</vCard:N>
-	<vCard:EMAIL>armando@uma.es</vCard:EMAIL>
-	<vCard:ORG rdf:parseType="Resource">
-	<vCard:Orgname>University of M?laga. CIBERER (Enfermedades Raras)</vCard:Orgname>
+	<vCard:Orgname>University of Malaga</vCard:Orgname>
 	</vCard:ORG>
 	</rdf:li>
 	</rdf:Bag>
@@ -162,10 +162,16 @@
 	</bqbiol:hasTaxon>
 	<bqbiol:isVersionOf>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.go/GO:0006595"/>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0006595"/>
 	</rdf:Bag>
 	</bqbiol:isVersionOf>
+	<bqbiol:hasProperty>
+	<rdf:Bag>
+	<rdf:li rdf:resource="http://identifiers.org/mamo/MAMO_0000046"/>
+	</rdf:Bag>
+	</bqbiol:hasProperty>
 	</rdf:Description>
+	
 	
   </rdf:RDF>
 </annotation>
@@ -240,10 +246,11 @@
             <rdf:Description rdf:about="#metaid_0000035">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.go/GO:0005829"/>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0005829"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -256,11 +263,12 @@
             <rdf:Description rdf:about="#metaid_0000036">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15414"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00019"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -271,11 +279,12 @@
             <rdf:Description rdf:about="#metaid_0000037">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15625"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15625"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C01137"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -286,11 +295,12 @@
             <rdf:Description rdf:about="#metaid_0000038">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:17148"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:17148"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00134"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -301,11 +311,12 @@
             <rdf:Description rdf:about="#metaid_0000039">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15746"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15746"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00750"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -316,11 +327,12 @@
             <rdf:Description rdf:about="#metaid_0000040">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:16610"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16610"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00315"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -331,11 +343,12 @@
             <rdf:Description rdf:about="#metaid_0000041">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:17312"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:17312"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C02567"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -346,11 +359,12 @@
             <rdf:Description rdf:about="#metaid_0000042">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:22204"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:22204"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00612"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -361,11 +375,12 @@
             <rdf:Description rdf:about="#metaid_0000043">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:16643"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16643"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00073"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -376,11 +391,12 @@
             <rdf:Description rdf:about="#metaid_0000044">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15729"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15729"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00077"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -391,11 +407,12 @@
             <rdf:Description rdf:about="#metaid_0000045">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15351"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15351"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00024"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -406,11 +423,12 @@
             <rdf:Description rdf:about="#metaid_0000046">
 	<bqbiol:is>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.chebi/CHEBI:15346"/>
+	<rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15346"/>
 	<rdf:li rdf:resource="http://identifiers.org/kegg.compound/C00010"/>
 	</rdf:Bag>
 	</bqbiol:is>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -460,6 +478,7 @@
 	</rdf:Bag>
 	</bqbiol:isVersionOf>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -632,6 +651,7 @@
 	</bqbiol:isVersionOf>
 	</rdf:Description>
 	
+	
       </rdf:RDF>
     </annotation>
               <listOfReactants>
@@ -689,6 +709,7 @@
 	</rdf:Bag>
 	</bqbiol:isVersionOf>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -770,6 +791,7 @@
 	</rdf:Bag>
 	</bqbiol:isVersionOf>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -884,6 +906,7 @@
 	</bqbiol:isVersionOf>
 	</rdf:Description>
 	
+	
       </rdf:RDF>
     </annotation>
               <listOfReactants>
@@ -993,6 +1016,7 @@
 	</bqbiol:isVersionOf>
 	</rdf:Description>
 	
+	
       </rdf:RDF>
     </annotation>
               <listOfReactants>
@@ -1071,6 +1095,7 @@
 	</bqbiol:isVersionOf>
 	</rdf:Description>
 	
+	
       </rdf:RDF>
     </annotation>
               <listOfReactants>
@@ -1146,6 +1171,7 @@
 	</rdf:Bag>
 	</bqbiol:isVersionOf>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -1234,6 +1260,7 @@
 	</bqbiol:isVersionOf>
 	</rdf:Description>
 	
+	
       </rdf:RDF>
     </annotation>
               <listOfReactants>
@@ -1321,6 +1348,7 @@
 	</bqbiol:isVersionOf>
 	</rdf:Description>
 	
+	
       </rdf:RDF>
     </annotation>
               <listOfReactants>
@@ -1374,10 +1402,11 @@
             <rdf:Description rdf:about="#metaid_0000071">
 	<bqbiol:isVersionOf>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.go/GO:0046356"/>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0046356"/>
 	</rdf:Bag>
 	</bqbiol:isVersionOf>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -1404,10 +1433,11 @@
             <rdf:Description rdf:about="#metaid_0000072">
 	<bqbiol:isVersionOf>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.go/GO:0006085"/>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0006085"/>
 	</rdf:Bag>
 	</bqbiol:isVersionOf>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>
@@ -1434,10 +1464,11 @@
             <rdf:Description rdf:about="#metaid_0000073">
 	<bqbiol:isVersionOf>
 	<rdf:Bag>
-	<rdf:li rdf:resource="http://identifiers.org/obo.go/GO:0009447"/>
+	<rdf:li rdf:resource="http://identifiers.org/go/GO:0009447"/>
 	</rdf:Bag>
 	</bqbiol:isVersionOf>
 	</rdf:Description>
+	
 	
       </rdf:RDF>
     </annotation>

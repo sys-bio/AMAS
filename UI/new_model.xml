@@ -1,8 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created by libAntimony version v2.13.2 with libSBML version 5.20.0. -->
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
-  <model metaid="Model_1" id="Model_1" substanceUnits="substance" timeUnits="time_unit">
+  <model metaid="Model_1" id="Model_1" name="Rodriguez-Caso2006_Polyamine_Metabolism" substanceUnits="substance" timeUnits="time_unit">
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+        <rdf:Description rdf:about="#Model_1">
+          <bqmodel:is>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/biomodels.db/MODEL6812345601"/>
+              <rdf:li rdf:resource="http://identifiers.org/biomodels.db/BIOMD0000000190"/>
+            </rdf:Bag>
+          </bqmodel:is>
+          <bqbiol:isDescribedBy>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/pubmed/16709566"/>
+            </rdf:Bag>
+          </bqbiol:isDescribedBy>
+          <bqbiol:hasTaxon>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/taxonomy/40674"/>
+              <rdf:li rdf:resource="http://identifiers.org/taxonomy/9989"/>
+            </rdf:Bag>
+          </bqbiol:hasTaxon>
+          <bqbiol:isVersionOf>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/go/GO:0006595"/>
+            </rdf:Bag>
+          </bqbiol:isVersionOf>
+          <bqbiol:hasProperty>
+            <rdf:Bag>
+              <rdf:li rdf:resource="http://identifiers.org/mamo/MAMO_0000046"/>
+            </rdf:Bag>
+          </bqbiol:hasProperty>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
     <listOfUnitDefinitions>
+      <unitDefinition id="min_1" name="permin">
+        <listOfUnits>
+          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
+        </listOfUnits>
+      </unitDefinition>
       <unitDefinition id="uM_min_1" name="uMpermin">
         <listOfUnits>
           <unit kind="mole" exponent="1" scale="-6" multiplier="1"/>
@@ -21,11 +58,6 @@
         <listOfUnits>
           <unit kind="litre" exponent="1" scale="0" multiplier="1"/>
           <unit kind="mole" exponent="-1" scale="-6" multiplier="1"/>
-        </listOfUnits>
-      </unitDefinition>
-      <unitDefinition id="min_1" name="permin">
-        <listOfUnits>
-          <unit kind="second" exponent="-1" scale="1" multiplier="6"/>
         </listOfUnits>
       </unitDefinition>
       <unitDefinition id="uM" name="microM">
@@ -70,17 +102,89 @@
       <compartment id="cytosol" name="Cytosol" spatialDimensions="3" size="1" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="SAM" name="S-adenosyl-L-methionine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="A" name="S-adenosylmethioninamine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="P" name="Putrescine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="S" name="Spermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="D" name="Spermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="aS" name="N1-Acetylspermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="aD" name="N1-Acetylspermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
-      <species id="Met" name="Methionine" compartment="cytosol" initialConcentration="50" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
-      <species id="ORN" name="L-Ornithine" compartment="cytosol" initialConcentration="300" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
-      <species id="AcCoA" name="Acetyl-CoA" compartment="cytosol" initialConcentration="39.5" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
-      <species id="CoA" compartment="cytosol" initialConcentration="160" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
+      <species metaid="metaid_0000001" id="SAM" name="S-adenosyl-L-methionine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000001">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15414"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000002" id="A" name="S-adenosylmethioninamine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="metaid_0000003" id="P" name="Putrescine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="metaid_0000004" id="S" name="Spermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000004">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15746"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000005" id="D" name="Spermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000005">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16610"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000006" id="aS" name="N1-Acetylspermine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="metaid_0000007" id="aD" name="N1-Acetylspermidine" compartment="cytosol" initialConcentration="0.01" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false"/>
+      <species metaid="metaid_0000008" id="Met" name="Methionine" compartment="cytosol" initialConcentration="50" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000008">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:16811"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000009" id="ORN" name="L-Ornithine" compartment="cytosol" initialConcentration="300" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000009">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15729"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000010" id="AcCoA" name="Acetyl-CoA" compartment="cytosol" initialConcentration="39.5" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:vCard4="http://www.w3.org/2006/vcard/ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/" xmlns:bqmodel="http://biomodels.net/model-qualifiers/">
+            <rdf:Description rdf:about="#metaid_0000010">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="http://identifiers.org/chebi/CHEBI:15351"/>
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species metaid="metaid_0000011" id="CoA" compartment="cytosol" initialConcentration="160" hasOnlySubstanceUnits="false" boundaryCondition="true" constant="false"/>
     </listOfSpecies>
     <listOfParameters>
       <parameter id="Kaccoa" units="min_1" constant="false"/>
@@ -312,7 +416,7 @@
       </rateRule>
     </listOfRules>
     <listOfReactions>
-      <reaction id="ODC" name="Ornithine decarboxylase" reversible="false" fast="false">
+      <reaction metaid="metaid_0000012" id="ODC" name="Ornithine decarboxylase" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="ORN" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -353,7 +457,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="SAMdc" name="S-adenosylmethionine decarboxylase" reversible="false" fast="false">
+      <reaction metaid="metaid_0000013" id="SAMdc" name="S-adenosylmethionine decarboxylase" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="SAM" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -415,7 +519,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="SSAT_for_S" name="Spermidine/Spermine N1-acetyltransferase for S" reversible="false" fast="false">
+      <reaction metaid="metaid_0000014" id="SSAT_for_S" name="Spermidine/Spermine N1-acetyltransferase for S" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="S" stoichiometry="1" constant="true"/>
           <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
@@ -509,7 +613,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="SSAT_for_D" name="Spermidine/spermine N1-acetyltransferase for D" reversible="false" fast="false">
+      <reaction metaid="metaid_0000015" id="SSAT_for_D" name="Spermidine/spermine N1-acetyltransferase for D" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="D" stoichiometry="1" constant="true"/>
           <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
@@ -598,7 +702,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="PAO_for_aD" name="Polyamine oxidase for aD" reversible="false" fast="false">
+      <reaction metaid="metaid_0000016" id="PAO_for_aD" name="Polyamine oxidase for aD" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="aD" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -606,9 +710,9 @@
           <speciesReference species="P" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="aS"/>
-          <modifierSpeciesReference species="D"/>
           <modifierSpeciesReference species="S"/>
+          <modifierSpeciesReference species="D"/>
+          <modifierSpeciesReference species="aS"/>
         </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -655,7 +759,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="PAO_for_aS" name="Polyamine oxidase for aS" reversible="false" fast="false">
+      <reaction metaid="metaid_0000017" id="PAO_for_aS" name="Polyamine oxidase for aS" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="aS" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -663,8 +767,8 @@
           <speciesReference species="D" stoichiometry="1" constant="true"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="aD"/>
           <modifierSpeciesReference species="S"/>
+          <modifierSpeciesReference species="aD"/>
         </listOfModifiers>
         <kineticLaw>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -711,7 +815,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="SpdS" name="Spermidine synthase" reversible="false" fast="false">
+      <reaction metaid="metaid_0000018" id="SpdS" name="Spermidine synthase" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="A" stoichiometry="1" constant="true"/>
           <speciesReference species="P" stoichiometry="1" constant="true"/>
@@ -778,7 +882,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="SpmS" name="Spermine synthase" reversible="false" fast="false">
+      <reaction metaid="metaid_0000019" id="SpmS" name="Spermine synthase" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="A" stoichiometry="1" constant="true"/>
           <speciesReference species="D" stoichiometry="1" constant="true"/>
@@ -845,7 +949,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="MAT" name="Methionine adenosyltransferase" reversible="false" fast="false">
+      <reaction metaid="metaid_0000020" id="MAT" name="Methionine adenosyltransferase" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="Met" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -886,7 +990,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="VCoA" name="VCOA" reversible="false" fast="false">
+      <reaction metaid="metaid_0000021" id="VCoA" name="VCOA" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="AcCoA" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -904,7 +1008,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="VacCoA" name="VACCOA" reversible="false" fast="false">
+      <reaction metaid="metaid_0000022" id="VacCoA" name="VACCOA" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="CoA" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -922,7 +1026,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="P_efflux" name="Putrescine efflux" reversible="false" fast="false">
+      <reaction metaid="metaid_0000023" id="P_efflux" name="Putrescine efflux" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="P" stoichiometry="1" constant="true"/>
         </listOfReactants>
@@ -937,7 +1041,7 @@
           </math>
         </kineticLaw>
       </reaction>
-      <reaction id="aD_efflux" name="aD efflux" reversible="false" fast="false">
+      <reaction metaid="metaid_0000024" id="aD_efflux" name="aD efflux" reversible="false" fast="false">
         <listOfReactants>
           <speciesReference species="aD" stoichiometry="1" constant="true"/>
         </listOfReactants>

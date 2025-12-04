@@ -6,19 +6,18 @@ AMAS recommendation.
 
 import itertools
 import re
-
-RDF_TAG_ITEM = ['rdf:RDF',
-                'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"',
-                'xmlns:dcterms="http://purl.org/dc/terms/"',
-                'xmlns:vcard4="http://www.w3.org/2006/vcard/ns#"',
-                'xmlns:bqbiol="http://biomodels.net/biology-qualifiers/"',
-                'xmlns:bqmodel="http://biomodels.net/model-qualifiers/"']
-RDF_TAG = ' '.join(RDF_TAG_ITEM)
+from AMAS import tools
+from AMAS import constants as cn
 
 MATCH_SCORE_BY = {'species': 'by_name',
-                  'reaction': 'by_component'}
+                  'reaction': 'by_component',
+                  'genes':'by_name',
+                  'qual_species':'by_name'}
+
 KNOWLEDGE_RESOURCE = {'species': 'chebi',
-                      'reaction': 'rhea'}
+                      'reaction': 'rhea',
+                      'genes': 'ncbigene',
+                      'qual_species':'ncbigene'}
 
 
 class AnnotationMaker(object):
@@ -30,11 +29,12 @@ class AnnotationMaker(object):
     Parameters
     ----------
     element: str
-        Either 'species' or 'reaction'
+        Either 'species' or 'reaction' or 'genes' or 'qual_species'
         This will determine 
         the type of match score
         and the knowledge resource used. 
     """
+    self.qualifiers = ['bqbiol:is', 'bqbiol:isDescribedBy']
     self.prefix = prefix
     self.knowledge_resource = KNOWLEDGE_RESOURCE[element]
     # Below is only used when annotation line is created; 
@@ -108,7 +108,8 @@ class AnnotationMaker(object):
 
   def getAnnotationString(self,
                           candidates,
-                          meta_id):
+                          meta_id,
+                          cross_reference = None):
     """
     Get a string of annotations,
     using a list of strings.
@@ -122,26 +123,45 @@ class AnnotationMaker(object):
 
     meta_id: str
         Meta ID of the element to be included in the annotation. 
+    
+    cross_reference: str
+        Cross reference to be used for adding additional annotations.
+        Single field or comma-separated. E.g., 'uniprot' or 'uniprot,HGNC'
+
     Returns
     -------
     str
     """
+    # get the cross reference first if provided
+    if cross_reference:
+        all_cross_dict = tools.getCrossReference(candidates, fields = cross_reference)
+        field_list = cross_reference.split(",") if "," in cross_reference else [cross_reference]
+        
     # First, construct an empty container
     container_items = ['annotation', 
-                       RDF_TAG,
-                       'rdf:Description rdf:about="#'+meta_id+'"',
+                       cn.RDF_TAG,
+                       'rdf:Description rdf:about="#' + str(meta_id) + '"',
                        self.prefix,
                        'rdf:Bag']
     empty_container = self.createAnnotationContainer(container_items)
     # Next, create annotation lines
     items_from = []
     for one_cand in candidates:
-      items_from.append(self.createAnnotationItem(KNOWLEDGE_RESOURCE[self.element],
+        items_from.append(self.createAnnotationItem(KNOWLEDGE_RESOURCE[self.element],
                                                   one_cand))
-    #
+        if cross_reference:
+            for field in field_list:
+                one_cand_cross = all_cross_dict[field][one_cand]
+                if isinstance(one_cand_cross, list):
+                    for i in one_cand_cross:
+                        items_from.append(self.createAnnotationItem(field, i))    
+                else:
+                    items_from.append(self.createAnnotationItem(field, one_cand_cross))     
+
     result = self.insertList(insert_to=empty_container,
-                             insert_from=items_from)
+                                insert_from=items_from)
     return ('\n').join(result)
+
 
   def getIndent(self, num_indents=0):
     """
@@ -216,48 +236,6 @@ class AnnotationMaker(object):
            insert_to[start_loc:]
 
 
-  def divideExistingAnnotation(self,
-                               inp_str):
-    """
-    Divide existing string annotation
-    into an empty container and
-    items; 
-  
-    Parameters
-    ----------
-    inp_str: str
-  
-    Returns
-    -------
-    :dict/None
-        Dictionary of container,
-        and items to be augmented
-        Return None if it cannot be divided
-    """
-    template_container = []
-    items = []
-    # check if it can be divided
-    if '<rdf:Bag>' not in inp_str:
-      return None
-    exist_anot_list = inp_str.split('\n')
-    one_line = ''
-    while one_line.strip() != '<rdf:Bag>' and exist_anot_list:
-      one_line = exist_anot_list.pop(0)
-      template_container.append(one_line)
-
-    one_line = exist_anot_list.pop(0)
-    while one_line.strip() != '</rdf:Bag>' and exist_anot_list:
-      items.append(one_line.strip())
-      one_line = exist_anot_list.pop(0)
-
-    template_container.append(one_line)
-    while exist_anot_list:
-      one_line = exist_anot_list.pop(0)
-      template_container.append(one_line)  
-    res = {'container': template_container,
-           'items': items}
-    return res
-
   def addAnnotation(self, 
                     terms,
                     annotation,
@@ -266,12 +244,12 @@ class AnnotationMaker(object):
     Add terms to existing annotations
     (meta id is supposed to be included
     in the existing annotation)
-  
+
     Parameters
     ----------
     terms: str-list
         List of terms to be added
-      
+
     annotation: str
         Existing element annotation
 
@@ -284,26 +262,46 @@ class AnnotationMaker(object):
     -------
     :str
     """
-    annotation_dict = self.divideExistingAnnotation(annotation)
-    # TODO: if there is no existing annotations, create a new one
-    if annotation_dict is None:
-      if meta_id is None: 
-        meta_id = tools.extractMetaID(annotation)
-      return self.getAnnotationString(terms, meta_id)
-    container = annotation_dict['container']
-    existing_items = annotation_dict['items']
-    existing_identifiers = []
-    for val in existing_items:
-      url = re.findall('"(.*?)"', val)[0]
-      existing_identifiers.append(url.split('/')[-1])
-    # duplicated terms will not be added
-    additional_identifiers = [val for val in terms \
-                              if val not in existing_identifiers]
-    new_items = [self.createAnnotationItem(KNOWLEDGE_RESOURCE[self.element],one_cand) \
-                 for one_cand in additional_identifiers]
-    items = existing_items + new_items
-    res = self.insertList(container, items)
-    return '\n'.join(res)
+    qualifier_res = [q for q in self.qualifiers if q != self.prefix][0]
+    # Attempt to divide the existing annotation
+    annotation_dict = tools.divideExistingAnnotation(annotation, qualifier = self.prefix)
+    annotation_dict_res = tools.divideExistingAnnotation(annotation, qualifier = qualifier_res)
+
+    # If there is no existing annotation, create a new one
+    if not annotation_dict:
+      if not meta_id: 
+          meta_id = self.extractMetaID(annotation)
+          
+      # if there exists an annotation for the other qualifier, add the terms to that annotation
+      if annotation_dict_res:
+        empty_container = self.createEmptyContainerWithQualifiers(meta_id)
+        items = self.cleanItems(annotation_dict_res['items'])
+        container = tools.insertItemsBackToContainer(empty_container, items, qualifier = qualifier_res)
+        items = [self.createAnnotationItem(KNOWLEDGE_RESOURCE[self.element], one_cand) for one_cand in terms]
+    
+    # if there is no annotation for the other qualifier, create a new one
+      else:
+        return self.getAnnotationString(terms, meta_id)
+    
+    else:
+      # Process existing annotations
+      container = annotation_dict['container']
+      existing_items = annotation_dict['items']
+      existing_identifiers = []
+      for val in existing_items:
+          url = re.findall('"(.*?)"', val)[0]
+          existing_identifiers.append(url.split('/')[-1])
+      
+      # Add only new terms that are not already present
+      additional_identifiers = [val for val in terms if val not in existing_identifiers]
+      new_items = [self.createAnnotationItem(KNOWLEDGE_RESOURCE[self.element], one_cand) for one_cand in additional_identifiers]
+      items = existing_items + new_items 
+
+    # remove duplicates and sort alphabetically
+    items = sorted(list(set(items)))
+    res = tools.insertItemsBackToContainer(container, items, qualifier = self.prefix)
+    return res
+
 
   def deleteAnnotation(self,
                        terms,
@@ -324,7 +322,7 @@ class AnnotationMaker(object):
     -------
     :str
     """
-    annotation_dict = self.divideExistingAnnotation(annotation)
+    annotation_dict = tools.divideExistingAnnotation(annotation, qualifier = self.prefix)
     # if cannot parse annotation, return the original annotation
     if annotation_dict is None:
       return annotation
@@ -336,8 +334,8 @@ class AnnotationMaker(object):
       if all([k not in val for k in terms]):
         rem_items.append(val)
     if rem_items:
-      res = self.insertList(container, rem_items)
-      return '\n'.join(res)
+      res = tools.insertItemsBackToContainer(container, rem_items, qualifier = self.prefix)
+      return res
     # if all items were deleted, return an empty string
     else:
       return ''
@@ -366,4 +364,190 @@ class AnnotationMaker(object):
     else:
       return metaid_re.group(1)
 
+  def convertIsDescribedByToIs(self, inp_str, meta_id):
+    """
+    Convert items in <bqbiol:isDescribedBy> to <bqbiol:is>
+    Will not move pubmed annotations
+
+    Parameters
+    ----------
+    inp_str: str
+        Existing annotation string
+
+    meta_id: str
+        Meta ID of the element to be included in the annotation. 
+
+    Returns
+    -------
+    :str
+        The updated annotation string with <bqbiol:is> items.
+    """
+    # find all <bqbiol:isDescribedBy> items
+    des_dict = tools.divideExistingAnnotation(inp_str, qualifier = 'bqbiol:isDescribedBy')
+    # find all <bqbiol:is> items
+    is_dict = tools.divideExistingAnnotation(inp_str, qualifier = 'bqbiol:is')
+    # construct a new annotation container
+    new_container = self.createEmptyContainerWithQualifiers(meta_id)
+    # convert each item to <bqbiol:is>
+    if is_dict is not None:
+      if des_dict is not None:
+        items = des_dict['items']+is_dict['items'] 
+      else:
+        items = is_dict['items']
+    else:
+      if des_dict is not None:
+        items = des_dict['items']
+      else:
+        items = []
+    # formatting items
+    items = self.cleanItems(items)
+    pubmed_items = [item for item in items if 'pubmed' in item]
+    non_pubmed_items = [item for item in items if 'pubmed' not in item]
+    container = tools.insertItemsBackToContainer(new_container, pubmed_items, qualifier = 'bqbiol:isDescribedBy')
+    res = tools.insertItemsBackToContainer(container, non_pubmed_items, qualifier = 'bqbiol:is')
+    return res
+
+  def createEmptyContainerWithQualifiers(self, meta_id):
+      """
+      Create a new empty annotation container that includes both bqbiol:is
+      and bqbiol:isDescribedBy qualifiers.
+
+      Parameters
+      ----------
+      meta_id : str
+          The meta ID of the element to include in the annotation.
+
+      Returns
+      -------
+      str
+          The annotation string with empty blocks for bqbiol:is and bqbiol:isDescribedBy.
+      """
+      qualifiers = ['bqbiol:is', 'bqbiol:isDescribedBy']
+
+      # Construct the container with RDF_TAG and meta_id
+      container = f'<annotation>\n  <{cn.RDF_TAG}>\n    <rdf:Description rdf:about="#{meta_id}">\n'
+
+      for qualifier in qualifiers:
+          container += f'      <{qualifier}>\n        <rdf:Bag>\n        </rdf:Bag>\n      </{qualifier}>\n'
+
+      container += '    </rdf:Description>\n  </rdf:RDF>\n</annotation>'
+      return container
+
+  def cleanItems(self, items):
+    """
+    Clean items by formatting them.
+    Before; '<rdf:li rdf:resource="urn:miriam:ncbigene:1489671"/>'
+    After; '<rdf:li rdf:resource="http://identifiers.org/ncbigene/1489671"/>'
+    """
+    ontologies = tools.extract_ontology_from_items(items)
+    cleaned_items = []
+    for ontology in ontologies:
+        res = self.createAnnotationItem(ontology[0], ontology[1])
+        cleaned_items.append(res)
+    cleaned_items = sorted(list(set(cleaned_items))) # remove duplicates and sort alphabetically
+    return cleaned_items
+
+  def addCrossReference(self, inp_str, fields):
+    """
+    Add cross reference of NCBI Gene ID to existing annotations.
+
+    Parameters
+    ----------
+    inp_str: str
+        Existing annotation string
+
+    fields: str
+        Fields to add to annotations. Single field or comma-separated. E.g., 'uniprot' or 'uniprot,HGNC'.
+
+    Returns
+    -------
+    :str
+        The updated annotation string with cross reference items given in fields.
+    """
+    # find all existing items, only <bqbiol:is> items
+    annotation_dict = tools.divideExistingAnnotation(inp_str, qualifier = 'bqbiol:is')
+    if annotation_dict is None:
+      return inp_str
+    items = annotation_dict['items']
+    # find all existing ncbi gene ids
+    ontology_list = tools.extract_ontology_from_items(items)
+    ontology_type_list = [val for val in ontology_list if val[0].lower()=='ncbigene']
+    ncbi_ids = [val[1] for val in ontology_type_list]
+    # get the cross reference items of the ncbi ids
+    cross_dict = tools.getCrossReference(ncbi_ids, fields)
+    # add the cross reference items to the annotation
+    field_list = fields.split(",") if "," in fields else [fields]
+    field_list = [field.split(".")[0] if "." in field else field for field in field_list]
+    for field in field_list:
+      for ncbi_id in ncbi_ids:
+        if cross_dict[field][ncbi_id] is not None:
+          for one_item in cross_dict[field][ncbi_id]:
+              items.append(self.createAnnotationItem(field, one_item))
+    items = sorted(list(set(items))) # remove duplicates and sort alphabetically
+    container = annotation_dict['container']
+    res = tools.insertItemsBackToContainer(container, items, qualifier = 'bqbiol:is')
+    return res
+
+  # def extractSBMLQualItems(self, inp_str):
+  #     """
+  #     Extract unique <rdf:li> items from SBML-qual string annotation.
+
+  #     Parameters
+  #     ----------
+  #     inp_str : str
+  #         Input annotation string.
+
+  #     Returns
+  #     -------
+  #     list
+  #         List of unique <rdf:li> items.
+  #     """
+  #     items = set()  # Use a set to ensure uniqueness
+
+  #     # Split the input string into lines
+  #     exist_anot_list = inp_str.split('\n')
+
+  #     for line in exist_anot_list:
+  #         stripped_line = line.strip()
+  #         # Extract <rdf:li> lines
+  #         if stripped_line.startswith('<rdf:li'):
+  #             items.add(stripped_line)
+
+  #     # Return items as a list
+  #     return list(items)
+
+  # def makeAnnotationString(self,
+  #                         items,
+  #                         meta_id):
+  #   """
+  #   Get a string of annotations,
+  #   using a list of items.
+  #   Can replace a whole annotation. 
+
+  #   Parameters
+  #   ----------
+  #   items: list-str
+  #       e.g., ['<rdf:li rdf:resource="http://identifiers.org/ncbigene/12345"/>']
+
+  #   meta_id: str
+  #       Meta ID of the element to be included in the annotation. 
+  #   Returns
+  #   -------
+  #   str
+  #   """
+  #   # First, construct an empty container
+  #   container_items = ['annotation', 
+  #                      RDF_TAG,
+  #                      'rdf:Description rdf:about="#' + str(meta_id) + '"',
+  #                      self.prefix,
+  #                      'rdf:Bag']
+  #   empty_container = self.createAnnotationContainer(container_items)
+  #   # Next, create annotation lines
+  #   items_from = []
+  #   for one_item in items:
+  #     items_from.append(one_item)
+                                                  
+  #   result = self.insertList(insert_to=empty_container,
+  #                            insert_from=items_from)
+  #   return ('\n').join(result)
 
